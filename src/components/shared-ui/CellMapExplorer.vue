@@ -236,6 +236,7 @@ import {
 	CHART_DIVERGING_NEUTRAL,
 	CHART_DIVERGING_POSITIVE,
 	CHART_SEQUENTIAL_TEAL,
+	CHART_TEXT_SECONDARY,
 } from "@/lib/chartTokens";
 import {
 	formatCellLabel,
@@ -531,8 +532,9 @@ function applyDataLayerVisibility() {
 }
 
 // Soft edges for the 0.2° cells: a Gaussian blur over the rendered layer.
-// This is purely visual: values are not interpolated, and colour only
-// bleeds a few pixels past each cell, so no cell gains data it doesn't have.
+// This is purely visual: values are not interpolated. Colour does bleed
+// about half a cell into neighbours, which is why unreliable cells are
+// drawn outside the blur (see renderMap).
 // (Real spatial smoothing — kernel density, kriging — would estimate values
 // between cells; that is a gap-filling question for Filling the Gaps.)
 // The blur radius is a quarter of a cell's on-screen width, so the look
@@ -639,31 +641,47 @@ function renderMap() {
 							cell.monthlyEncounters[selectedMonth.value - 1] ?? 0
 					);
 
-	dataLayer = mapGroup
+	// dataLayer carries visibility and layer opacity. Inside it, reliable
+	// cells are blurred; unreliable ones sit on top unblurred with a dashed
+	// outline, so their uncertainty isn't washed out by neighbours' colour.
+	dataLayer = mapGroup.append("g");
+	applyDataLayerVisibility();
+	const softCells = dataLayer
 		.append("g")
 		.attr("filter", addSoftEdgeFilter(svg, cellWidthPx));
-	applyDataLayerVisibility();
+	const faintCells = dataLayer.append("g");
 
 	if (mode.value === "boats") {
-		drawCruiseCells(dataLayer, cellPath);
+		drawCruiseCells(softCells, cellPath);
 		raiseLines();
 		drawIslandLabels();
 		return;
 	}
 
-	dataLayer
-		.selectAll("path")
-		.data(visibleCells)
-		.join("path")
-		.attr("d", cellPath)
-		.attr("fill", (cell) => encoding.color(encoding.value(cell)))
-		// No borders: under the blur they would only add a grey haze.
-		// Unreliable cells stay recognisable by being much fainter.
-		.attr("opacity", (cell) => (isFaint(cell) ? 0.3 : 1))
-		.on("mousemove", (event: MouseEvent, cell) =>
-			onCellHover(event, cell, encoding.value(cell))
-		)
-		.on("mouseleave", () => hideTooltip(tooltipRef.value));
+	const drawCells = (
+		group: d3.Selection<SVGGElement, unknown, null, undefined>,
+		cells: MonicetGridCell[]
+	) =>
+		group
+			.selectAll("path")
+			.data(cells)
+			.join("path")
+			.attr("d", cellPath)
+			.attr("fill", (cell) => encoding.color(encoding.value(cell)))
+			.on("mousemove", (event: MouseEvent, cell) =>
+				onCellHover(event, cell, encoding.value(cell))
+			)
+			.on("mouseleave", () => hideTooltip(tooltipRef.value));
+
+	drawCells(
+		softCells,
+		visibleCells.filter((cell) => !isFaint(cell))
+	);
+	drawCells(faintCells, visibleCells.filter(isFaint))
+		.attr("fill-opacity", 0.3)
+		.attr("stroke", CHART_TEXT_SECONDARY)
+		.attr("stroke-width", 0.8)
+		.attr("stroke-dasharray", "3,2");
 
 	// Wireframe: coastlines on top of the cells, so the map
 	// stays readable through the data.
