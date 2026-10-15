@@ -190,13 +190,7 @@
 					</ul>
 				</div>
 
-				<div class="caveat">
-					{{
-						mode === "boats"
-							? "Positions are only logged at sightings. A boat that searched an area and found nothing leaves no trace there, so this is where boats stopped for animals, not every place they looked."
-							: mapData?.meta.caveats[0]
-					}}
-				</div>
+				<div v-if="caveat" class="caveat">{{ caveat }}</div>
 			</aside>
 		</div>
 	</div>
@@ -336,6 +330,16 @@ const MODE_COPY: Record<
 };
 
 const copy = computed(() => MODE_COPY[mode.value]);
+
+// Footer caveat per mode. meta.caveats[0] is about the decline metric, so
+// it belongs to decline mode only; species and seasonality have none.
+const caveat = computed(() => {
+	if (mode.value === "decline") return mapData.value?.meta.caveats[0];
+	if (mode.value === "boats") {
+		return "Positions are only logged at sightings. A boat that searched an area and found nothing leaves no trace there, so this is where boats stopped for animals, not every place they looked.";
+	}
+	return null;
+});
 
 // ─── Derived data ────────────────────────────────────────────────────────────
 
