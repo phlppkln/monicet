@@ -231,6 +231,11 @@ export function buildData(
 				Number.parseFloat(row.decimalLongitude),
 				Number.parseFloat(row.decimalLatitude),
 			];
+			if (!Number.isFinite(harbour[0])) {
+				throw new Error(
+					`Cruise ${row.eventID} has no harbour longitude ("${row.decimalLongitude}"), so its island group is unknown`
+				);
+			}
 			cruiseInputs.push({
 				cruiseId: row.eventID,
 				island: islandGroupOf(harbour[0]),

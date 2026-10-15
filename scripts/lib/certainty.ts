@@ -24,6 +24,10 @@ export const ISLAND_GROUPS: readonly IslandGroup[] = [
  * scripts/profile-data.ts. Faial and Pico harbours are too close to split.
  */
 export function islandGroupOf(lon: number): IslandGroup {
+	// NaN fails both comparisons below and would silently become Faial/Pico.
+	if (!Number.isFinite(lon)) {
+		throw new Error(`Cannot assign an island group to longitude ${lon}`);
+	}
 	if (lon > -26.5) return "São Miguel";
 	if (lon > -27.6) return "Terceira";
 	return "Faial/Pico";

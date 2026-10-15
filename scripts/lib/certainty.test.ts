@@ -27,6 +27,10 @@ test("islandGroupOf splits by harbour longitude", () => {
 	assert.equal(islandGroupOf(-28.63), "Faial/Pico");
 });
 
+test("islandGroupOf rejects a missing longitude instead of guessing", () => {
+	assert.throws(() => islandGroupOf(Number.NaN));
+});
+
 test("computeSpeciesCertainty counts cruises, not encounters", () => {
 	const cruises: CruiseInput[] = [
 		{ cruiseId: "c1", island: "São Miguel", year: 2010 },
