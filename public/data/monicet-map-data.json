@@ -1,7 +1,7 @@
 {
   "meta": {
     "source": "MONICET Darwin Core Archive",
-    "generatedAt": "2026-10-15T20:37:45.110Z",
+    "generatedAt": "2026-10-15T20:42:30.970Z",
     "binSizeDegrees": 0.2,
     "totalSampleEvents": 29400,
     "totalCruiseEvents": 8455,
@@ -25,8 +25,8 @@
       2020
     ],
     "dateRange": {
-      "start": "2009-01-06T09:55:00.000Z",
-      "end": "2020-12-29T09:34:00.000Z"
+      "start": "2009-01-06T10:55:00.000Z",
+      "end": "2020-12-29T10:34:00.000Z"
     },
     "bestMonthOverall": {
       "month": 6,

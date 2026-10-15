@@ -109,11 +109,18 @@ interface SpeciesAccumulator {
 }
 
 // eventDate is "start" or "start/end"; only the start is used.
-// NOTE: the timestamps carry no timezone, so `new Date()` parses them in
-// the build machine's local time (see ISSUES.md).
-function parseEventDate(rawValue: string): Date | null {
+//
+// Values are Azores wall-clock times with no offset ("2009-01-06T10:55"),
+// plus two date-only rows. `new Date()` would read the date-times in the
+// build machine's timezone and the date-only ones as UTC. Appending "Z"
+// reads every value as UTC, so getUTC* returns exactly the logged year,
+// month and hour on any machine (ISSUES.md D-7, fixed).
+export function parseEventDate(rawValue: string): Date | null {
 	if (!rawValue) return null;
-	const date = new Date(rawValue.split("/")[0]);
+	const start = rawValue.split("/")[0].trim();
+	const hasOffset = /T.*(Z|[+-]\d{2}:?\d{2})$/.test(start);
+	const iso = start.includes("T") && !hasOffset ? `${start}Z` : start;
+	const date = new Date(iso);
 	return Number.isNaN(date.getTime()) ? null : date;
 }
 

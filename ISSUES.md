@@ -74,15 +74,11 @@ occurrences are identified only to family. That gap is not explained yet.
 False killer whale, Bryde's whale, orca, Sowerby's beaked whale and others
 show their scientific name in the UI. Paper Table 2 lists all common names.
 
-### D-7 Timestamps are parsed in the build machine's timezone [code]
+### ~~D-7 Timestamps are parsed in the build machine's timezone~~ [fixed]
 
-`parseEventDate()` calls `new Date("2009-01-06T10:55")`. With no timezone in
-the string, JavaScript treats it as **local** time. The code then reads it
-back with `getUTC*`. So year and month bucketing depends on the TZ of the
-machine running the build. The committed JSON was generated on a CEST
-machine; the Azores are UTC−1 / UTC+0. In practice only events near midnight
-at a month boundary are affected, but the build is not reproducible across
-timezones.
+Fixed: `parseEventDate()` now reads the offset-less wall-clock values as
+UTC, so year/month bucketing and `pnpm data:check` give the same result on
+any machine. The values remain Azores local time; nothing converts them.
 
 ### D-8 Only the start of an `eventDate` interval is used [code]
 
