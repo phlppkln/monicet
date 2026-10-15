@@ -46,10 +46,11 @@
 		<ViewSection title="The External">
 			<template #reflection>
 				The map from outside. Where are the animals encountered, when in
-				the year, and where do the boats actually go? Switch to
-				<em>Where Do Boats Go?</em> to see the effort behind every other
-				map: the cells that cruises reached, which is also where
-				sightings can happen at all.
+				the year, and where do the boats go? Switch to
+				<em>Where Do Boats Go?</em> to see the cells that cruises
+				reached. Positions are only logged at sightings, so this shows
+				where boats stopped for animals — not where they searched, which
+				the archive does not record.
 			</template>
 			<CellMapExplorer :modes="['species', 'seasonality', 'boats']" />
 		</ViewSection>

@@ -20,10 +20,15 @@ export const ISLAND_GROUPS: readonly IslandGroup[] = [
 ];
 
 /**
- * Island group of a cruise, from its home-harbour longitude. Same rule as
- * scripts/profile-data.ts. Faial and Pico harbours are too close to split.
+ * Island group of a cruise, from its home-harbour longitude. Faial and Pico
+ * harbours are too close to split. The single source of this rule: the app
+ * data and scripts/profile-data.ts both use it.
  */
 export function islandGroupOf(lon: number): IslandGroup {
+	// NaN fails both comparisons below and would silently become Faial/Pico.
+	if (!Number.isFinite(lon)) {
+		throw new Error(`Cannot assign an island group to longitude ${lon}`);
+	}
 	if (lon > -26.5) return "São Miguel";
 	if (lon > -27.6) return "Terceira";
 	return "Faial/Pico";

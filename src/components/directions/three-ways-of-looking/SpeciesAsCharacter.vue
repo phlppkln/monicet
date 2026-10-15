@@ -76,7 +76,7 @@
 						<strong>{{ spatialCoverage }}</strong>
 					</div>
 					<div class="metric-row">
-						<span>Best month</span>
+						<span>Best month (per cruise)</span>
 						<strong>{{ bestMonthLabel }}</strong>
 					</div>
 
@@ -151,6 +151,7 @@ import {
 import ModeSwitch from "@/components/shared-ui/ModeSwitch.vue";
 import {
 	bestMonthIndex,
+	monthlyRates,
 	cellDominance,
 	findSpecies,
 	speciesOptions,
@@ -159,7 +160,9 @@ import {
 import { useMonicetData } from "@/data/useMonicetData";
 import {
 	CHART_ORDINAL_TEAL_RAMP,
+	CHART_PRIMARY,
 	CHART_SEQUENTIAL_TEAL,
+	CHART_TEXT_SECONDARY,
 } from "@/lib/chartTokens";
 import { formatCellLabel, MONTH_LABELS } from "@/lib/format";
 import { renderGradientLegend } from "@/lib/legend";
@@ -225,8 +228,13 @@ const spatialCoverage = computed(() =>
 
 const bestMonthLabel = computed(() => {
 	const monthly = selectedSpecies.value?.monthlyEncounters;
-	if (!monthly) return "n/a";
-	return MONTH_LABELS[bestMonthIndex(monthly)] ?? "n/a";
+	if (!monthly || !mapData.value) return "n/a";
+	// Per cruise, like The External's "Best month overall"; raw counts would
+	// mostly show the month with the most trips.
+	const cruises = mapData.value.monthlySummaries.map((m) => m.cruises);
+	return (
+		MONTH_LABELS[bestMonthIndex(monthlyRates(monthly, cruises))] ?? "n/a"
+	);
 });
 
 // ─── Tooltip ─────────────────────────────────────────────────────────────────
@@ -360,13 +368,14 @@ function renderSparkline() {
 	svg.append("path")
 		.datum(data)
 		.attr("d", area)
-		.attr("fill", "rgba(10,107,100,0.12)");
+		.attr("fill", CHART_PRIMARY)
+		.attr("fill-opacity", 0.12);
 
 	svg.append("path")
 		.datum(data)
 		.attr("d", line)
 		.attr("fill", "none")
-		.attr("stroke", "#0a6b64")
+		.attr("stroke", CHART_PRIMARY)
 		.attr("stroke-width", 1.6);
 
 	svg.selectAll("circle")
@@ -375,7 +384,7 @@ function renderSparkline() {
 		.attr("cx", (d) => x(d.year))
 		.attr("cy", (d) => y(d.count))
 		.attr("r", 2.5)
-		.attr("fill", "#0a6b64");
+		.attr("fill", CHART_PRIMARY);
 
 	const label = (lx: number, ly: number, text: string, anchor?: string) =>
 		svg
@@ -384,7 +393,7 @@ function renderSparkline() {
 			.attr("y", ly)
 			.attr("text-anchor", anchor ?? null)
 			.attr("font-size", 8)
-			.attr("fill", "#6b6b6b")
+			.attr("fill", CHART_TEXT_SECONDARY)
 			.text(text);
 
 	// Y axis: max and zero only; X axis: first and last year only.
@@ -401,13 +410,20 @@ function handleResize() {
 	renderSparkline();
 }
 
+// The component can unmount while load() is still pending (e.g. a quick
+// click on "← MONICET"); onBeforeUnmount has then already run, so nothing
+// may be set up after an await once this is true.
+let unmounted = false;
+
 onMounted(async () => {
 	await load();
+	if (unmounted) return;
 	loading.value = false;
 	if (mapData.value) {
 		selectedSpeciesId.value =
 			mapData.value.speciesSummaries[0]?.speciesId ?? "";
 		await nextTick();
+		if (unmounted) return;
 		renderMap();
 		renderSparkline();
 		window.addEventListener("resize", handleResize, { passive: true });
@@ -415,6 +431,7 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(() => {
+	unmounted = true;
 	window.removeEventListener("resize", handleResize);
 });
 

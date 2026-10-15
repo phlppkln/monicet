@@ -94,11 +94,12 @@ Go?".
 | `share`                                  | `cruises / all cruises`                                          |
 | `cruisesByIsland`                        | the same count split by the cruise's island group (home harbour) |
 
-Positions come from the cruise's `footprintWKT` without its first and last
-point (departure and arrival harbour; the arrival is often wrong, ISSUES
-D-19). What is left are positions logged **at sightings**, so this shows
-where boats stopped for animals, not where they searched. Cruises with no
-position left are counted in `meta.cruisesWithoutPositionsAtSea` (80).
+Positions come from the footprints of the cruise's sighting events (a
+point, or the arrival → departure line), not from the cruise footprint,
+whose harbour points are unreliable (ISSUES D-19). So these are positions
+logged **at sightings**: where boats stopped for animals, not where they
+searched. Cruises without any sighting are counted in
+`meta.cruisesWithoutPositionsAtSea` (76).
 
 ## `speciesCertainty`
 

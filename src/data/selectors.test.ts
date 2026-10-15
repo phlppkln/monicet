@@ -7,6 +7,7 @@ import {
 	averageDecline,
 	bestMonthIndex,
 	cellDominance,
+	monthlyRates,
 	topCruiseCells,
 	topDecliningCells,
 } from "./selectors.ts";
@@ -98,4 +99,24 @@ test("topCruiseCells sorts by cruises and limits", () => {
 		top.map((c) => c.id),
 		["b", "c"]
 	);
+});
+
+test("cellDominance gives tied species the same label", () => {
+	const c = cell({
+		speciesCounts: { a: 3, b: 3, c: 2, d: 2, e: 1 },
+		topSpecies: top(["a", "b", "c"]),
+	});
+	assert.equal(cellDominance(c, "a"), "dominant");
+	assert.equal(cellDominance(c, "b"), "dominant");
+	assert.equal(cellDominance(c, "c"), "notable");
+	assert.equal(cellDominance(c, "d"), "notable");
+	assert.equal(cellDominance(c, "e"), "occasional");
+});
+
+test("monthlyRates divides by cruises and moves the best month", () => {
+	// Many encounters in a busy month, a higher rate in a quiet one.
+	const rates = monthlyRates([10, 100, 0], [20, 400, 0]);
+	assert.deepEqual(rates, [0.5, 0.25, 0]);
+	assert.equal(bestMonthIndex([10, 100, 0]), 1);
+	assert.equal(bestMonthIndex(rates), 0);
 });

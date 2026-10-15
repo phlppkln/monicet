@@ -74,15 +74,11 @@ occurrences are identified only to family. That gap is not explained yet.
 False killer whale, Bryde's whale, orca, Sowerby's beaked whale and others
 show their scientific name in the UI. Paper Table 2 lists all common names.
 
-### D-7 Timestamps are parsed in the build machine's timezone [code]
+### ~~D-7 Timestamps are parsed in the build machine's timezone~~ [fixed]
 
-`parseEventDate()` calls `new Date("2009-01-06T10:55")`. With no timezone in
-the string, JavaScript treats it as **local** time. The code then reads it
-back with `getUTC*`. So year and month bucketing depends on the TZ of the
-machine running the build. The committed JSON was generated on a CEST
-machine; the Azores are UTC−1 / UTC+0. In practice only events near midnight
-at a month boundary are affected, but the build is not reproducible across
-timezones.
+Fixed: `parseEventDate()` now reads the offset-less wall-clock values as
+UTC, so year/month bucketing and `pnpm data:check` give the same result on
+any machine. The values remain Azores local time; nothing converts them.
 
 ### D-8 Only the start of an `eventDate` interval is used [code]
 
@@ -166,9 +162,12 @@ A cruise's `footprintWKT` is departure harbour → sighting positions →
 arrival harbour. The departure always matches the cruise's harbour, but the
 arrival is `-25.66444 37.73472` (Ponta Delgada) for 5,261 of 8,455 cruises,
 including all 2,027 Faial/Pico and 411 Terceira cruises, which cannot have
-ended 100–300 km away. It looks like a data-entry default. The build drops
-first and last points (`scripts/lib/cruise-reach.ts`), so `cruiseCells` is
-not affected; anything else reading footprints must do the same.
+ended 100–300 km away. It looks like a data-entry default. The structure
+isn't even consistent: 82 cruises end on a sighting position instead of a
+harbour, and 66 have a harbour point in the middle. The build therefore
+ignores cruise footprints and takes positions from the cruise's sighting
+events (`scripts/build-data.ts`, `scripts/lib/cruise-reach.ts`); anything
+else needing positions should do the same.
 
 ---
 

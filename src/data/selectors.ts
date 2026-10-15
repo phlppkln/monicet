@@ -76,6 +76,21 @@ export function speciesHotspots(
 }
 
 /** Index (0–11) of the month with the most encounters; first wins ties. */
+/**
+ * Encounters per cruise for each calendar month. Raw monthly counts mostly
+ * follow how many trips ran (July has ~15× the cruises of January); dividing
+ * by cruises asks "if I go out this month, how likely is a sighting?".
+ * Months without cruises get 0.
+ */
+export function monthlyRates(
+	monthlyEncounters: number[],
+	monthlyCruises: number[]
+): number[] {
+	return monthlyEncounters.map((count, i) =>
+		monthlyCruises[i] ? count / monthlyCruises[i] : 0
+	);
+}
+
 export function bestMonthIndex(monthly: number[]): number {
 	return monthly.indexOf(Math.max(...monthly));
 }
@@ -89,11 +104,14 @@ export function cellDominance(
 	cell: MonicetGridCell,
 	speciesId: string
 ): DominanceCategory {
-	if (!cell.speciesCounts[speciesId]) return "absent";
-	if (cell.topSpecies[0]?.speciesId === speciesId) return "dominant";
-	return cell.topSpecies.some((t) => t.speciesId === speciesId)
-		? "notable"
-		: "occasional";
+	const count = cell.speciesCounts[speciesId] ?? 0;
+	if (!count) return "absent";
+	// Compare counts, not positions in topSpecies: species with equal counts
+	// must get the same label, whatever order the archive listed them in.
+	const counts = Object.values(cell.speciesCounts).sort((a, b) => b - a);
+	const thirdHighest = counts[Math.min(2, counts.length - 1)];
+	if (count >= counts[0]) return "dominant";
+	return count >= thirdHighest ? "notable" : "occasional";
 }
 
 /** Per-year encounter counts for a cell, only years with > 0 encounters. */

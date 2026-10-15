@@ -190,13 +190,7 @@
 					</ul>
 				</div>
 
-				<div class="caveat">
-					{{
-						mode === "boats"
-							? "Positions are only logged at sightings. A boat that searched an area and found nothing leaves no trace there, so this is where boats stopped for animals, not every place they looked."
-							: mapData?.meta.caveats[0]
-					}}
-				</div>
+				<div v-if="caveat" class="caveat">{{ caveat }}</div>
 			</aside>
 		</div>
 	</div>
@@ -216,6 +210,7 @@ import {
 	onBeforeUnmount,
 	onMounted,
 	ref,
+	useId,
 	watch,
 } from "vue";
 
@@ -236,6 +231,7 @@ import {
 	CHART_DIVERGING_NEUTRAL,
 	CHART_DIVERGING_POSITIVE,
 	CHART_SEQUENTIAL_TEAL,
+	CHART_TEXT_SECONDARY,
 } from "@/lib/chartTokens";
 import {
 	formatCellLabel,
@@ -263,6 +259,10 @@ const props = defineProps<{
 }>();
 
 const mode = ref<MonicetInsightMode>(props.modes[0]);
+
+// SVG ids (blur filter, legend gradient) are document-wide; prefix them per
+// instance so two explorers on one page don't use each other's defs.
+const svgIdPrefix = `cme${useId()}`;
 const selectedSpeciesId = ref("");
 const selectedMonth = ref(6);
 const reliableOnly = ref(true);
@@ -330,6 +330,16 @@ const MODE_COPY: Record<
 };
 
 const copy = computed(() => MODE_COPY[mode.value]);
+
+// Footer caveat per mode. meta.caveats[0] is about the decline metric, so
+// it belongs to decline mode only; species and seasonality have none.
+const caveat = computed(() => {
+	if (mode.value === "decline") return mapData.value?.meta.caveats[0];
+	if (mode.value === "boats") {
+		return "Positions are only logged at sightings. A boat that searched an area and found nothing leaves no trace there, so this is where boats stopped for animals, not every place they looked.";
+	}
+	return null;
+});
 
 // ─── Derived data ────────────────────────────────────────────────────────────
 
@@ -408,6 +418,10 @@ function onCellHover(
 		valueLabel = `${selectedMonthSummary.value?.label ?? "Month"}: ${(value ?? 0).toLocaleString()} encounters`;
 	}
 
+	// topSpecies counts all months; in seasonality mode it sits right under
+	// the selected month's count, so say so.
+	const topSpeciesLabel =
+		mode.value === "seasonality" ? "Top species (all year)" : "Top species";
 	const topSpecies = cell.topSpecies
 		.map((entry) => `${entry.commonName} (${entry.count})`)
 		.slice(0, 2)
@@ -421,7 +435,7 @@ function onCellHover(
 		<div class="tip-title">${formatCellLabel(cell)}</div>
 		<div class="tip-line">${valueLabel}</div>
 		<div class="tip-line">Total encounters: ${cell.encounterCount.toLocaleString()}</div>
-		<div class="tip-line">Top species: ${topSpecies || "n/a"}</div>
+		<div class="tip-line">${topSpeciesLabel}: ${topSpecies || "n/a"}</div>
 	`
 	);
 }
@@ -464,7 +478,7 @@ function countEncoding(
 	if (legendContainer.value) {
 		renderGradientLegend(
 			legendContainer.value,
-			`legend-${mode.value}`,
+			`${svgIdPrefix}-legend-${mode.value}`,
 			(t) => scale(t * maxValue),
 			{
 				left: "0",
@@ -503,7 +517,7 @@ function declineEncoding(visibleCells: MonicetGridCell[]): Encoding {
 	if (legendContainer.value) {
 		renderGradientLegend(
 			legendContainer.value,
-			`legend-${mode.value}`,
+			`${svgIdPrefix}-legend-${mode.value}`,
 			(t) => scale(-maxAbs + t * maxAbs * 2),
 			{
 				left: `-${maxAbs.toFixed(0)}%`,
@@ -531,8 +545,9 @@ function applyDataLayerVisibility() {
 }
 
 // Soft edges for the 0.2° cells: a Gaussian blur over the rendered layer.
-// This is purely visual: values are not interpolated, and colour only
-// bleeds a few pixels past each cell, so no cell gains data it doesn't have.
+// This is purely visual: values are not interpolated. Colour does bleed
+// about half a cell into neighbours, which is why unreliable cells are
+// drawn outside the blur (see renderMap).
 // (Real spatial smoothing — kernel density, kriging — would estimate values
 // between cells; that is a gap-filling question for Filling the Gaps.)
 // The blur radius is a quarter of a cell's on-screen width, so the look
@@ -543,14 +558,14 @@ function addSoftEdgeFilter(
 ) {
 	svg.append("defs")
 		.append("filter")
-		.attr("id", "soft-cells")
+		.attr("id", `${svgIdPrefix}-soft-cells`)
 		.attr("x", "-10%")
 		.attr("y", "-10%")
 		.attr("width", "120%")
 		.attr("height", "120%")
 		.append("feGaussianBlur")
 		.attr("stdDeviation", Math.max(1, cellWidthPx / 4));
-	return "url(#soft-cells)";
+	return `url(#${svgIdPrefix}-soft-cells)`;
 }
 
 /**
@@ -571,7 +586,7 @@ function drawCruiseCells(
 	if (legendContainer.value) {
 		renderGradientLegend(
 			legendContainer.value,
-			"legend-boats",
+			`${svgIdPrefix}-legend-boats`,
 			(t) => scale(Math.pow(max, t)),
 			{
 				left: "1",
@@ -593,17 +608,26 @@ function drawCruiseCells(
 		.on("mouseleave", () => hideTooltip(tooltipRef.value));
 }
 
+// Two levels of redraw. renderMap() rebuilds the basemap (tiles, lines,
+// labels) and is needed only when the basemap or the size changes.
+// renderDataLayer() redraws cells and legend only, so mode, species, month
+// and reliability changes don't re-create every tile image.
+let base: {
+	cellPath: ReturnType<typeof drawBaseMap>["cellPath"];
+	insertDataLayer: ReturnType<typeof drawBaseMap>["insertDataLayer"];
+	softFilterUrl: string;
+} | null = null;
+
 function renderMap() {
 	if (!mapContainer.value || !mapData.value || !basemap.value) return;
 
-	hideTooltip(tooltipRef.value);
 	const { theme, tiles } = BASEMAPS[basemapId.value];
 	const {
 		svg,
-		mapGroup,
 		cellPath,
 		cellWidthPx,
 		raiseLines,
+		insertDataLayer,
 		drawIslandLabels,
 	} = drawBaseMap(mapContainer.value, basemap.value, {
 		theme,
@@ -613,6 +637,37 @@ function renderMap() {
 		minHeight: 420,
 		aspect: 0.62,
 	});
+
+	// Wireframe: coastlines on top of the cells, so the map stays readable
+	// through the data. The data layer is inserted below them.
+	raiseLines();
+	drawIslandLabels();
+
+	base = {
+		cellPath,
+		insertDataLayer,
+		softFilterUrl: addSoftEdgeFilter(svg, cellWidthPx),
+	};
+	renderDataLayer();
+}
+
+function renderDataLayer() {
+	if (!base || !mapData.value) return;
+	hideTooltip(tooltipRef.value);
+
+	// dataLayer carries visibility and layer opacity. Inside it, reliable
+	// cells are blurred; unreliable ones sit on top unblurred with a dashed
+	// outline, so their uncertainty isn't washed out by neighbours' colour.
+	dataLayer?.remove();
+	dataLayer = base.insertDataLayer();
+	applyDataLayerVisibility();
+	const softCells = dataLayer.append("g").attr("filter", base.softFilterUrl);
+	const faintCells = dataLayer.append("g");
+
+	if (mode.value === "boats") {
+		drawCruiseCells(softCells, base.cellPath);
+		return;
+	}
 
 	// With "reliable only" on, unreliable cells are hidden entirely. With it
 	// off, they are drawn faint so the uncertainty stays visible.
@@ -639,42 +694,48 @@ function renderMap() {
 							cell.monthlyEncounters[selectedMonth.value - 1] ?? 0
 					);
 
-	dataLayer = mapGroup
-		.append("g")
-		.attr("filter", addSoftEdgeFilter(svg, cellWidthPx));
-	applyDataLayerVisibility();
+	const cellPath = base.cellPath;
+	const drawCells = (
+		group: d3.Selection<SVGGElement, unknown, null, undefined>,
+		cells: MonicetGridCell[]
+	) =>
+		group
+			.selectAll("path")
+			.data(cells)
+			.join("path")
+			.attr("d", cellPath)
+			.attr("fill", (cell) => encoding.color(encoding.value(cell)))
+			.on("mousemove", (event: MouseEvent, cell) =>
+				onCellHover(event, cell, encoding.value(cell))
+			)
+			.on("mouseleave", () => hideTooltip(tooltipRef.value));
 
-	if (mode.value === "boats") {
-		drawCruiseCells(dataLayer, cellPath);
-		raiseLines();
-		drawIslandLabels();
-		return;
-	}
-
-	dataLayer
-		.selectAll("path")
-		.data(visibleCells)
-		.join("path")
-		.attr("d", cellPath)
-		.attr("fill", (cell) => encoding.color(encoding.value(cell)))
-		// No borders: under the blur they would only add a grey haze.
-		// Unreliable cells stay recognisable by being much fainter.
-		.attr("opacity", (cell) => (isFaint(cell) ? 0.3 : 1))
-		.on("mousemove", (event: MouseEvent, cell) =>
-			onCellHover(event, cell, encoding.value(cell))
-		)
-		.on("mouseleave", () => hideTooltip(tooltipRef.value));
-
-	// Wireframe: coastlines on top of the cells, so the map
-	// stays readable through the data.
-	raiseLines();
-	drawIslandLabels();
+	drawCells(
+		softCells,
+		visibleCells.filter((cell) => !isFaint(cell))
+	);
+	drawCells(faintCells, visibleCells.filter(isFaint))
+		.attr("fill-opacity", 0.3)
+		.attr("stroke", CHART_TEXT_SECONDARY)
+		.attr("stroke-width", 0.8)
+		.attr("stroke-dasharray", "3,2");
 }
 
 // ─── Lifecycle ───────────────────────────────────────────────────────────────
 
+// The component can unmount while load() is still pending (e.g. a quick
+// click on "← MONICET"); onBeforeUnmount has then already run, so nothing
+// may be set up after an await once this is true.
+let unmounted = false;
+
 onMounted(async () => {
 	await load();
+	if (unmounted) return;
+	// Coastlines (4 KB): drawn by the wireframe and, on tiled basemaps, as
+	// the fallback under the tiles. Not awaited; redraw once they arrive.
+	void loadMapLines().then(() => {
+		if (!unmounted && !loading.value) renderMap();
+	});
 	loading.value = false;
 
 	if (mapData.value) {
@@ -682,25 +743,23 @@ onMounted(async () => {
 			mapData.value.speciesSummaries[0]?.speciesId ?? "";
 		selectedMonth.value = mapData.value.meta.bestMonthOverall?.month ?? 6;
 		await nextTick();
+		if (unmounted) return;
 		renderMap();
 		window.addEventListener("resize", renderMap, { passive: true });
 	}
 });
 
 onBeforeUnmount(() => {
+	unmounted = true;
 	window.removeEventListener("resize", renderMap);
 });
 
-watch([mode, selectedSpeciesId, selectedMonth, reliableOnly, basemapId], () => {
-	if (loading.value) return;
-	renderMap();
+watch(basemapId, () => {
+	if (!loading.value) renderMap();
 });
 
-// Coastlines are fetched on first use; redraw once they arrive.
-watch(basemapId, async (id) => {
-	if (id !== "wireframe" || mapLines.value) return;
-	await loadMapLines();
-	if (!loading.value) renderMap();
+watch([mode, selectedSpeciesId, selectedMonth, reliableOnly], () => {
+	if (!loading.value) renderDataLayer();
 });
 
 watch(dataLayerOpacity, applyDataLayerVisibility);

@@ -36,6 +36,10 @@ it; they ignore the mouse so cell hover still works. On tiled basemaps the
 D3 islands have no fill or stroke (the tiles show the coast) and only their
 labels remain.
 
+Under the tiles sits a plain coastline outline (or the island boxes until
+the coastlines have loaded). The tiles are opaque, so it is only visible
+when they fail to load: offline, behind a blocker, or during an outage.
+
 The data layer toggle hides the cell group with `display: none` instead of
 redrawing, so tiles are not requested again.
 

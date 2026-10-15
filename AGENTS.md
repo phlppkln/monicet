@@ -140,7 +140,8 @@ Layer rules:
   algorithms in the browser. That is an undecided design question
   (`docs/ideas/imputation-lab.md`), so ask the user before building it.
 - **Scripts** may import types from `src/types/` (`import type … from
-"../src/types/monicet.ts"`) and must use only erasable TypeScript syntax
+"../src/types/monicet.ts"`) and values from the pure `src/lib/format.ts`
+  (e.g. `MONTH_LABELS`), and must use only erasable TypeScript syntax
   (no `enum`, no `namespace`, no parameter properties). `tsconfig` enforces
   this with `erasableSyntaxOnly`.
 

@@ -14,8 +14,8 @@ const basemap = ref<BasemapFeatureCollection | null>(null);
 const error = ref<string>("");
 let loadPromise: Promise<void> | null = null;
 
-// Coastlines, only needed by the wireframe basemap, so
-// fetched on first use instead of with the page.
+// Coastlines for the map explorer (wireframe, and the fallback under tiled
+// basemaps). Fetched separately so the other views don't wait for them.
 const mapLines = ref<MapLineCollection | null>(null);
 let mapLinesPromise: Promise<void> | null = null;
 
@@ -28,6 +28,9 @@ export function useMonicetData() {
 		if (loadPromise) return loadPromise;
 
 		loadPromise = (async () => {
+			// A previous attempt may have failed; clear its message so a
+			// successful retry doesn't keep showing it.
+			error.value = "";
 			try {
 				const [mapRes, basemapRes] = await Promise.all([
 					fetch(DATA_URL),
