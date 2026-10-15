@@ -146,6 +146,7 @@ import {
 	cellSpeciesList,
 } from "@/data/selectors";
 import { useMonicetData } from "@/data/useMonicetData";
+import { CHART_PRIMARY } from "@/lib/chartTokens";
 import { formatCellLabel } from "@/lib/format";
 import { drawBaseMap, type MapTheme } from "@/lib/map";
 import { hideTooltip, showTooltip } from "@/lib/tooltip";
@@ -254,7 +255,9 @@ function renderMap() {
 		.join("path")
 		.attr("d", cellPath)
 		.attr("fill", (cell) => blueScale(cell.yearsWithEncounters))
-		.attr("stroke", (cell) => (isSelected(cell) ? "#0a6b64" : "#ffffff"))
+		.attr("stroke", (cell) =>
+			isSelected(cell) ? CHART_PRIMARY : "#ffffff"
+		)
 		.attr("stroke-width", (cell) => (isSelected(cell) ? 1.8 : 0.7))
 		.attr("opacity", 0.88)
 		.style("cursor", "pointer")

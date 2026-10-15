@@ -160,7 +160,9 @@ import {
 import { useMonicetData } from "@/data/useMonicetData";
 import {
 	CHART_ORDINAL_TEAL_RAMP,
+	CHART_PRIMARY,
 	CHART_SEQUENTIAL_TEAL,
+	CHART_TEXT_SECONDARY,
 } from "@/lib/chartTokens";
 import { formatCellLabel, MONTH_LABELS } from "@/lib/format";
 import { renderGradientLegend } from "@/lib/legend";
@@ -366,13 +368,14 @@ function renderSparkline() {
 	svg.append("path")
 		.datum(data)
 		.attr("d", area)
-		.attr("fill", "rgba(10,107,100,0.12)");
+		.attr("fill", CHART_PRIMARY)
+		.attr("fill-opacity", 0.12);
 
 	svg.append("path")
 		.datum(data)
 		.attr("d", line)
 		.attr("fill", "none")
-		.attr("stroke", "#0a6b64")
+		.attr("stroke", CHART_PRIMARY)
 		.attr("stroke-width", 1.6);
 
 	svg.selectAll("circle")
@@ -381,7 +384,7 @@ function renderSparkline() {
 		.attr("cx", (d) => x(d.year))
 		.attr("cy", (d) => y(d.count))
 		.attr("r", 2.5)
-		.attr("fill", "#0a6b64");
+		.attr("fill", CHART_PRIMARY);
 
 	const label = (lx: number, ly: number, text: string, anchor?: string) =>
 		svg
@@ -390,7 +393,7 @@ function renderSparkline() {
 			.attr("y", ly)
 			.attr("text-anchor", anchor ?? null)
 			.attr("font-size", 8)
-			.attr("fill", "#6b6b6b")
+			.attr("fill", CHART_TEXT_SECONDARY)
 			.text(text);
 
 	// Y axis: max and zero only; X axis: first and last year only.
