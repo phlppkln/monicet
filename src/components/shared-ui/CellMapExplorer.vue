@@ -409,6 +409,10 @@ function onCellHover(
 		valueLabel = `${selectedMonthSummary.value?.label ?? "Month"}: ${(value ?? 0).toLocaleString()} encounters`;
 	}
 
+	// topSpecies counts all months; in seasonality mode it sits right under
+	// the selected month's count, so say so.
+	const topSpeciesLabel =
+		mode.value === "seasonality" ? "Top species (all year)" : "Top species";
 	const topSpecies = cell.topSpecies
 		.map((entry) => `${entry.commonName} (${entry.count})`)
 		.slice(0, 2)
@@ -422,7 +426,7 @@ function onCellHover(
 		<div class="tip-title">${formatCellLabel(cell)}</div>
 		<div class="tip-line">${valueLabel}</div>
 		<div class="tip-line">Total encounters: ${cell.encounterCount.toLocaleString()}</div>
-		<div class="tip-line">Top species: ${topSpecies || "n/a"}</div>
+		<div class="tip-line">${topSpeciesLabel}: ${topSpecies || "n/a"}</div>
 	`
 	);
 }
