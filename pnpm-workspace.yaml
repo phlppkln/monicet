@@ -1,0 +1,4 @@
+# Install-script policy (pnpm 11). @parcel/watcher is an optional native
+# file watcher pulled in by sass; Vite does its own watching, so skip it.
+allowBuilds:
+    "@parcel/watcher": false

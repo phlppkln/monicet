@@ -1,0 +1,9 @@
+node_modules
+dist
+.DS_Store
+*.log
+.env*
+
+# Raw Darwin Core Archive — fetch with `pnpm data:fetch` (see data/README.md)
+data/raw/*
+!data/raw/.gitkeep

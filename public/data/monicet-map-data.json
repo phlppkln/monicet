@@ -1,0 +1,7132 @@
+{
+  "meta": {
+    "source": "MONICET Darwin Core Archive",
+    "generatedAt": "2026-06-14T14:31:31.713Z",
+    "binSizeDegrees": 0.2,
+    "totalSampleEvents": 29400,
+    "totalCruiseEvents": 8455,
+    "totalOccurrenceRows": 77572,
+    "totalUniqueSpeciesEncounters": 30050,
+    "excludedNonSpeciesRows": 361,
+    "rowsWithoutMatchingEvent": 0,
+    "years": [
+      2009,
+      2010,
+      2011,
+      2012,
+      2013,
+      2014,
+      2015,
+      2016,
+      2017,
+      2018,
+      2019,
+      2020
+    ],
+    "dateRange": {
+      "start": "2009-01-06T09:55:00.000Z",
+      "end": "2020-12-29T09:34:00.000Z"
+    },
+    "bestMonthOverall": {
+      "month": 6,
+      "label": "Jun",
+      "rate": 4.155626496408619
+    },
+    "thresholds": {
+      "reliableCellMinEncounters": 24,
+      "reliableCellMinYears": 3
+    },
+    "caveats": [
+      "Decline is computed as encounter-rate trend, not direct population decline.",
+      "Rates are normalized by total cruises per year/month from MONICET event records.",
+      "Only species-rank records are included for map insights."
+    ]
+  },
+  "bounds": {
+    "minLat": 37.3118,
+    "maxLat": 38.908,
+    "minLon": -28.9987,
+    "maxLon": -25.0008,
+    "minLatGrid": 37.2,
+    "minLonGrid": -29
+  },
+  "speciesLookup": {
+    "urn:lsid:marinespecies.org:taxname:137119": {
+      "scientificName": "Physeter macrocephalus",
+      "commonName": "Sperm whale"
+    },
+    "urn:lsid:marinespecies.org:taxname:137111": {
+      "scientificName": "Tursiops truncatus",
+      "commonName": "Common bottlenose dolphin"
+    },
+    "urn:lsid:marinespecies.org:taxname:137094": {
+      "scientificName": "Delphinus delphis",
+      "commonName": "Common dolphin"
+    },
+    "urn:lsid:marinespecies.org:taxname:137108": {
+      "scientificName": "Stenella frontalis",
+      "commonName": "Atlantic spotted dolphin"
+    },
+    "urn:lsid:marinespecies.org:taxname:137127": {
+      "scientificName": "Ziphius cavirostris",
+      "commonName": "Cuvier's beaked whale"
+    },
+    "urn:lsid:marinespecies.org:taxname:137098": {
+      "scientificName": "Grampus griseus",
+      "commonName": "Risso's dolphin"
+    },
+    "urn:lsid:marinespecies.org:taxname:137091": {
+      "scientificName": "Balaenoptera physalus",
+      "commonName": "Fin whale"
+    },
+    "urn:lsid:marinespecies.org:taxname:137088": {
+      "scientificName": "Balaenoptera borealis",
+      "commonName": "Sei whale"
+    },
+    "urn:lsid:marinespecies.org:taxname:137090": {
+      "scientificName": "Balaenoptera musculus",
+      "commonName": "Blue whale"
+    },
+    "urn:lsid:marinespecies.org:taxname:137205": {
+      "scientificName": "Caretta caretta",
+      "commonName": "Loggerhead sea turtle"
+    },
+    "urn:lsid:marinespecies.org:taxname:137096": {
+      "scientificName": "Globicephala macrorhynchus",
+      "commonName": "Short-finned pilot whale"
+    },
+    "urn:lsid:marinespecies.org:taxname:137126": {
+      "scientificName": "Mesoplodon mirus",
+      "commonName": "True's beaked whale"
+    },
+    "urn:lsid:marinespecies.org:taxname:137107": {
+      "scientificName": "Stenella coeruleoalba",
+      "commonName": "Striped dolphin"
+    },
+    "urn:lsid:marinespecies.org:taxname:137092": {
+      "scientificName": "Megaptera novaeangliae",
+      "commonName": "Humpback whale"
+    },
+    "urn:lsid:marinespecies.org:taxname:137121": {
+      "scientificName": "Mesoplodon bidens",
+      "commonName": "Mesoplodon bidens"
+    },
+    "urn:lsid:marinespecies.org:taxname:343899": {
+      "scientificName": "Hyperoodon ampullatus",
+      "commonName": "Hyperoodon ampullatus"
+    },
+    "urn:lsid:marinespecies.org:taxname:137104": {
+      "scientificName": "Pseudorca crassidens",
+      "commonName": "Pseudorca crassidens"
+    },
+    "urn:lsid:marinespecies.org:taxname:137087": {
+      "scientificName": "Balaenoptera acutorostrata",
+      "commonName": "Balaenoptera acutorostrata"
+    },
+    "urn:lsid:marinespecies.org:taxname:137089": {
+      "scientificName": "Balaenoptera edeni",
+      "commonName": "Balaenoptera edeni"
+    },
+    "urn:lsid:marinespecies.org:taxname:137209": {
+      "scientificName": "Dermochelys coriacea",
+      "commonName": "Dermochelys coriacea"
+    },
+    "urn:lsid:marinespecies.org:taxname:137122": {
+      "scientificName": "Mesoplodon densirostris",
+      "commonName": "Mesoplodon densirostris"
+    },
+    "urn:lsid:marinespecies.org:taxname:137102": {
+      "scientificName": "Orcinus orca",
+      "commonName": "Orcinus orca"
+    },
+    "urn:lsid:marinespecies.org:taxname:137097": {
+      "scientificName": "Globicephala melas",
+      "commonName": "Globicephala melas"
+    },
+    "urn:lsid:marinespecies.org:taxname:137206": {
+      "scientificName": "Chelonia mydas",
+      "commonName": "Chelonia mydas"
+    },
+    "urn:lsid:marinespecies.org:taxname:137113": {
+      "scientificName": "Kogia breviceps",
+      "commonName": "Kogia breviceps"
+    }
+  },
+  "monthlySummaries": [
+    {
+      "month": 1,
+      "label": "Jan",
+      "encounters": 158,
+      "cruises": 66,
+      "rate": 2.393939393939394,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 91,
+          "share": 0.5759493670886076,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 21,
+          "share": 0.13291139240506328,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137111",
+          "count": 21,
+          "share": 0.13291139240506328,
+          "scientificName": "Tursiops truncatus",
+          "commonName": "Common bottlenose dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137091",
+          "count": 6,
+          "share": 0.0379746835443038,
+          "scientificName": "Balaenoptera physalus",
+          "commonName": "Fin whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137092",
+          "count": 5,
+          "share": 0.03164556962025317,
+          "scientificName": "Megaptera novaeangliae",
+          "commonName": "Humpback whale"
+        }
+      ]
+    },
+    {
+      "month": 2,
+      "label": "Feb",
+      "encounters": 240,
+      "cruises": 100,
+      "rate": 2.4,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 140,
+          "share": 0.5833333333333334,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137111",
+          "count": 32,
+          "share": 0.13333333333333333,
+          "scientificName": "Tursiops truncatus",
+          "commonName": "Common bottlenose dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 20,
+          "share": 0.08333333333333333,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137091",
+          "count": 18,
+          "share": 0.075,
+          "scientificName": "Balaenoptera physalus",
+          "commonName": "Fin whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137098",
+          "count": 10,
+          "share": 0.041666666666666664,
+          "scientificName": "Grampus griseus",
+          "commonName": "Risso's dolphin"
+        }
+      ]
+    },
+    {
+      "month": 3,
+      "label": "Mar",
+      "encounters": 761,
+      "cruises": 266,
+      "rate": 2.8609022556390977,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 274,
+          "share": 0.3600525624178712,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137111",
+          "count": 112,
+          "share": 0.1471747700394218,
+          "scientificName": "Tursiops truncatus",
+          "commonName": "Common bottlenose dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137091",
+          "count": 99,
+          "share": 0.13009198423127463,
+          "scientificName": "Balaenoptera physalus",
+          "commonName": "Fin whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 70,
+          "share": 0.09198423127463863,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137205",
+          "count": 57,
+          "share": 0.07490144546649145,
+          "scientificName": "Caretta caretta",
+          "commonName": "Loggerhead sea turtle"
+        }
+      ]
+    },
+    {
+      "month": 4,
+      "label": "Apr",
+      "encounters": 2517,
+      "cruises": 788,
+      "rate": 3.1941624365482233,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 724,
+          "share": 0.2876440206595153,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137091",
+          "count": 377,
+          "share": 0.14978148589590784,
+          "scientificName": "Balaenoptera physalus",
+          "commonName": "Fin whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 311,
+          "share": 0.12355979340484705,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137111",
+          "count": 266,
+          "share": 0.10568136670639651,
+          "scientificName": "Tursiops truncatus",
+          "commonName": "Common bottlenose dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137090",
+          "count": 255,
+          "share": 0.10131108462455304,
+          "scientificName": "Balaenoptera musculus",
+          "commonName": "Blue whale"
+        }
+      ]
+    },
+    {
+      "month": 5,
+      "label": "May",
+      "encounters": 3961,
+      "cruises": 993,
+      "rate": 3.988922457200403,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 926,
+          "share": 0.23377934864933098,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137091",
+          "count": 782,
+          "share": 0.19742489270386265,
+          "scientificName": "Balaenoptera physalus",
+          "commonName": "Fin whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 656,
+          "share": 0.1656147437515779,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137111",
+          "count": 438,
+          "share": 0.1105781368341328,
+          "scientificName": "Tursiops truncatus",
+          "commonName": "Common bottlenose dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137090",
+          "count": 376,
+          "share": 0.09492552385761172,
+          "scientificName": "Balaenoptera musculus",
+          "commonName": "Blue whale"
+        }
+      ]
+    },
+    {
+      "month": 6,
+      "label": "Jun",
+      "encounters": 5207,
+      "cruises": 1253,
+      "rate": 4.155626496408619,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 1524,
+          "share": 0.2926829268292683,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 1162,
+          "share": 0.22316112924908776,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137111",
+          "count": 598,
+          "share": 0.11484540042250817,
+          "scientificName": "Tursiops truncatus",
+          "commonName": "Common bottlenose dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137091",
+          "count": 410,
+          "share": 0.07874015748031496,
+          "scientificName": "Balaenoptera physalus",
+          "commonName": "Fin whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137098",
+          "count": 337,
+          "share": 0.06472056846552718,
+          "scientificName": "Grampus griseus",
+          "commonName": "Risso's dolphin"
+        }
+      ]
+    },
+    {
+      "month": 7,
+      "label": "Jul",
+      "encounters": 6618,
+      "cruises": 1725,
+      "rate": 3.836521739130435,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 2280,
+          "share": 0.3445149592021759,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 1248,
+          "share": 0.1885766092475068,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137108",
+          "count": 987,
+          "share": 0.14913871260199457,
+          "scientificName": "Stenella frontalis",
+          "commonName": "Atlantic spotted dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137111",
+          "count": 641,
+          "share": 0.09685705651254155,
+          "scientificName": "Tursiops truncatus",
+          "commonName": "Common bottlenose dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137098",
+          "count": 391,
+          "share": 0.05908129344212753,
+          "scientificName": "Grampus griseus",
+          "commonName": "Risso's dolphin"
+        }
+      ]
+    },
+    {
+      "month": 8,
+      "label": "Aug",
+      "encounters": 5512,
+      "cruises": 1611,
+      "rate": 3.4214773432650527,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 1580,
+          "share": 0.28664731494920176,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137108",
+          "count": 1095,
+          "share": 0.19865747460087083,
+          "scientificName": "Stenella frontalis",
+          "commonName": "Atlantic spotted dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 916,
+          "share": 0.16618287373004353,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137111",
+          "count": 701,
+          "share": 0.12717706821480407,
+          "scientificName": "Tursiops truncatus",
+          "commonName": "Common bottlenose dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137098",
+          "count": 407,
+          "share": 0.0738388969521045,
+          "scientificName": "Grampus griseus",
+          "commonName": "Risso's dolphin"
+        }
+      ]
+    },
+    {
+      "month": 9,
+      "label": "Sep",
+      "encounters": 3164,
+      "cruises": 960,
+      "rate": 3.2958333333333334,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 1035,
+          "share": 0.32711757269279396,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 634,
+          "share": 0.20037926675094817,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137108",
+          "count": 510,
+          "share": 0.1611883691529709,
+          "scientificName": "Stenella frontalis",
+          "commonName": "Atlantic spotted dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137111",
+          "count": 472,
+          "share": 0.14917825537294563,
+          "scientificName": "Tursiops truncatus",
+          "commonName": "Common bottlenose dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137098",
+          "count": 213,
+          "share": 0.06731984829329962,
+          "scientificName": "Grampus griseus",
+          "commonName": "Risso's dolphin"
+        }
+      ]
+    },
+    {
+      "month": 10,
+      "label": "Oct",
+      "encounters": 1405,
+      "cruises": 479,
+      "rate": 2.933194154488518,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 365,
+          "share": 0.2597864768683274,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 364,
+          "share": 0.2590747330960854,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137111",
+          "count": 206,
+          "share": 0.14661921708185052,
+          "scientificName": "Tursiops truncatus",
+          "commonName": "Common bottlenose dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137108",
+          "count": 190,
+          "share": 0.13523131672597866,
+          "scientificName": "Stenella frontalis",
+          "commonName": "Atlantic spotted dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137098",
+          "count": 114,
+          "share": 0.08113879003558719,
+          "scientificName": "Grampus griseus",
+          "commonName": "Risso's dolphin"
+        }
+      ]
+    },
+    {
+      "month": 11,
+      "label": "Nov",
+      "encounters": 382,
+      "cruises": 157,
+      "rate": 2.43312101910828,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 135,
+          "share": 0.35340314136125656,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 71,
+          "share": 0.18586387434554974,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137111",
+          "count": 57,
+          "share": 0.14921465968586387,
+          "scientificName": "Tursiops truncatus",
+          "commonName": "Common bottlenose dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137108",
+          "count": 41,
+          "share": 0.10732984293193717,
+          "scientificName": "Stenella frontalis",
+          "commonName": "Atlantic spotted dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137098",
+          "count": 19,
+          "share": 0.049738219895287955,
+          "scientificName": "Grampus griseus",
+          "commonName": "Risso's dolphin"
+        }
+      ]
+    },
+    {
+      "month": 12,
+      "label": "Dec",
+      "encounters": 125,
+      "cruises": 57,
+      "rate": 2.192982456140351,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 55,
+          "share": 0.44,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 17,
+          "share": 0.136,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137098",
+          "count": 17,
+          "share": 0.136,
+          "scientificName": "Grampus griseus",
+          "commonName": "Risso's dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137111",
+          "count": 16,
+          "share": 0.128,
+          "scientificName": "Tursiops truncatus",
+          "commonName": "Common bottlenose dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137108",
+          "count": 5,
+          "share": 0.04,
+          "scientificName": "Stenella frontalis",
+          "commonName": "Atlantic spotted dolphin"
+        }
+      ]
+    }
+  ],
+  "speciesSummaries": [
+    {
+      "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+      "scientificName": "Physeter macrocephalus",
+      "commonName": "Sperm whale",
+      "totalEncounters": 7949,
+      "yearlyEncounters": {
+        "2009": 201,
+        "2010": 537,
+        "2011": 506,
+        "2012": 547,
+        "2013": 456,
+        "2014": 381,
+        "2015": 730,
+        "2016": 699,
+        "2017": 1020,
+        "2018": 1397,
+        "2019": 1162,
+        "2020": 313
+      },
+      "monthlyEncounters": [
+        21,
+        20,
+        70,
+        311,
+        656,
+        1524,
+        2280,
+        1580,
+        1035,
+        364,
+        71,
+        17
+      ],
+      "cellCounts": {
+        "2:16": 630,
+        "1:18": 228,
+        "2:15": 168,
+        "2:17": 896,
+        "1:17": 459,
+        "2:18": 1103,
+        "1:15": 3,
+        "1:16": 285,
+        "2:19": 50,
+        "1:19": 16,
+        "4:15": 17,
+        "3:15": 115,
+        "3:14": 41,
+        "2:14": 13,
+        "7:2": 509,
+        "6:2": 229,
+        "5:2": 529,
+        "7:1": 545,
+        "5:3": 580,
+        "6:3": 64,
+        "6:0": 121,
+        "6:1": 416,
+        "4:4": 67,
+        "4:2": 5,
+        "7:3": 47,
+        "1:14": 1,
+        "5:4": 288,
+        "7:0": 60,
+        "5:1": 23,
+        "8:1": 8,
+        "8:2": 4,
+        "4:3": 19,
+        "7:8": 57,
+        "6:8": 62,
+        "6:9": 21,
+        "5:0": 3,
+        "6:4": 12,
+        "7:7": 13,
+        "3:16": 178,
+        "4:1": 1,
+        "6:7": 3,
+        "0:18": 7,
+        "5:5": 8,
+        "8:0": 5,
+        "4:16": 22,
+        "3:17": 10,
+        "4:17": 1,
+        "0:17": 2,
+        "5:7": 4,
+        "0:16": 1
+      }
+    },
+    {
+      "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+      "scientificName": "Delphinus delphis",
+      "commonName": "Common dolphin",
+      "totalEncounters": 6670,
+      "yearlyEncounters": {
+        "2009": 225,
+        "2010": 318,
+        "2011": 316,
+        "2012": 499,
+        "2013": 511,
+        "2014": 544,
+        "2015": 777,
+        "2016": 864,
+        "2017": 1064,
+        "2018": 679,
+        "2019": 718,
+        "2020": 155
+      },
+      "monthlyEncounters": [
+        91,
+        140,
+        274,
+        724,
+        926,
+        1162,
+        1248,
+        916,
+        634,
+        365,
+        135,
+        55
+      ],
+      "cellCounts": {
+        "2:17": 1630,
+        "3:15": 67,
+        "2:15": 165,
+        "2:16": 1439,
+        "2:18": 1111,
+        "1:16": 25,
+        "1:18": 56,
+        "1:17": 89,
+        "2:19": 21,
+        "5:2": 167,
+        "6:2": 398,
+        "7:2": 191,
+        "7:1": 222,
+        "6:1": 275,
+        "6:0": 22,
+        "5:3": 264,
+        "7:3": 3,
+        "6:3": 18,
+        "5:1": 13,
+        "1:15": 1,
+        "1:19": 2,
+        "2:14": 3,
+        "7:0": 6,
+        "7:8": 176,
+        "6:8": 58,
+        "7:9": 49,
+        "6:9": 20,
+        "5:0": 3,
+        "5:4": 125,
+        "3:17": 2,
+        "3:16": 15,
+        "8:2": 1,
+        "7:7": 3,
+        "5:5": 1,
+        "4:4": 15,
+        "0:18": 3,
+        "6:7": 1,
+        "0:16": 1,
+        "5:9": 1,
+        "7:4": 1,
+        "4:3": 1,
+        "4:15": 1,
+        "4:16": 2,
+        "3:14": 2,
+        "6:6": 1
+      }
+    },
+    {
+      "speciesId": "urn:lsid:marinespecies.org:taxname:137111",
+      "scientificName": "Tursiops truncatus",
+      "commonName": "Common bottlenose dolphin",
+      "totalEncounters": 3560,
+      "yearlyEncounters": {
+        "2009": 223,
+        "2010": 235,
+        "2011": 140,
+        "2012": 134,
+        "2013": 228,
+        "2014": 208,
+        "2015": 368,
+        "2016": 464,
+        "2017": 488,
+        "2018": 573,
+        "2019": 410,
+        "2020": 89
+      },
+      "monthlyEncounters": [
+        21,
+        32,
+        112,
+        266,
+        438,
+        598,
+        641,
+        701,
+        472,
+        206,
+        57,
+        16
+      ],
+      "cellCounts": {
+        "2:17": 989,
+        "2:16": 882,
+        "2:15": 151,
+        "2:18": 480,
+        "1:18": 22,
+        "1:17": 68,
+        "3:15": 59,
+        "1:16": 48,
+        "2:19": 7,
+        "1:19": 2,
+        "6:2": 136,
+        "5:2": 42,
+        "1:15": 4,
+        "7:2": 70,
+        "6:1": 103,
+        "7:1": 115,
+        "5:3": 82,
+        "2:14": 3,
+        "6:3": 10,
+        "5:1": 6,
+        "7:3": 4,
+        "6:0": 12,
+        "7:8": 68,
+        "6:8": 28,
+        "7:9": 20,
+        "6:9": 18,
+        "5:4": 79,
+        "3:16": 23,
+        "7:0": 2,
+        "6:7": 2,
+        "4:4": 14,
+        "7:7": 3,
+        "4:16": 3,
+        "3:14": 1,
+        "0:18": 1,
+        "3:17": 1,
+        "4:3": 2
+      }
+    },
+    {
+      "speciesId": "urn:lsid:marinespecies.org:taxname:137108",
+      "scientificName": "Stenella frontalis",
+      "commonName": "Atlantic spotted dolphin",
+      "totalEncounters": 2996,
+      "yearlyEncounters": {
+        "2009": 255,
+        "2010": 178,
+        "2011": 207,
+        "2012": 193,
+        "2013": 235,
+        "2014": 114,
+        "2015": 169,
+        "2016": 141,
+        "2017": 735,
+        "2018": 320,
+        "2019": 275,
+        "2020": 174
+      },
+      "monthlyEncounters": [
+        3,
+        0,
+        1,
+        2,
+        4,
+        158,
+        987,
+        1095,
+        510,
+        190,
+        41,
+        5
+      ],
+      "cellCounts": {
+        "2:18": 705,
+        "2:17": 512,
+        "1:17": 132,
+        "1:16": 65,
+        "2:16": 317,
+        "2:15": 116,
+        "1:18": 65,
+        "2:19": 17,
+        "3:15": 30,
+        "2:14": 1,
+        "5:2": 93,
+        "5:3": 161,
+        "7:1": 108,
+        "6:2": 87,
+        "7:2": 83,
+        "6:1": 84,
+        "8:2": 1,
+        "6:0": 11,
+        "6:3": 6,
+        "7:0": 8,
+        "5:1": 3,
+        "6:8": 50,
+        "7:8": 48,
+        "6:9": 11,
+        "5:4": 173,
+        "0:18": 3,
+        "7:9": 1,
+        "8:1": 2,
+        "3:14": 1,
+        "4:3": 8,
+        "4:4": 53,
+        "7:7": 2,
+        "6:4": 1,
+        "7:3": 6,
+        "1:15": 2,
+        "3:16": 20,
+        "1:19": 4,
+        "4:17": 1,
+        "4:16": 2,
+        "4:15": 1,
+        "0:17": 1,
+        "5:7": 1
+      }
+    },
+    {
+      "speciesId": "urn:lsid:marinespecies.org:taxname:137091",
+      "scientificName": "Balaenoptera physalus",
+      "commonName": "Fin whale",
+      "totalEncounters": 1911,
+      "yearlyEncounters": {
+        "2009": 21,
+        "2010": 46,
+        "2011": 30,
+        "2012": 62,
+        "2013": 63,
+        "2014": 123,
+        "2015": 263,
+        "2016": 358,
+        "2017": 550,
+        "2018": 342,
+        "2019": 46,
+        "2020": 7
+      },
+      "monthlyEncounters": [
+        6,
+        18,
+        99,
+        377,
+        782,
+        410,
+        122,
+        68,
+        8,
+        9,
+        10,
+        2
+      ],
+      "cellCounts": {
+        "2:15": 86,
+        "2:18": 257,
+        "2:17": 197,
+        "2:16": 304,
+        "1:16": 45,
+        "1:17": 103,
+        "2:14": 6,
+        "1:15": 6,
+        "1:18": 57,
+        "5:2": 104,
+        "5:3": 135,
+        "6:2": 72,
+        "6:1": 157,
+        "5:1": 37,
+        "7:2": 74,
+        "3:15": 15,
+        "6:0": 24,
+        "1:19": 5,
+        "7:1": 42,
+        "7:8": 25,
+        "7:7": 11,
+        "6:8": 50,
+        "6:9": 5,
+        "6:7": 2,
+        "3:14": 5,
+        "7:3": 6,
+        "7:9": 3,
+        "5:4": 57,
+        "2:19": 10,
+        "4:4": 5,
+        "0:18": 1,
+        "7:0": 2,
+        "4:3": 1,
+        "4:15": 1,
+        "3:16": 1
+      }
+    },
+    {
+      "speciesId": "urn:lsid:marinespecies.org:taxname:137098",
+      "scientificName": "Grampus griseus",
+      "commonName": "Risso's dolphin",
+      "totalEncounters": 1815,
+      "yearlyEncounters": {
+        "2009": 101,
+        "2010": 87,
+        "2011": 64,
+        "2012": 116,
+        "2013": 90,
+        "2014": 52,
+        "2015": 115,
+        "2016": 170,
+        "2017": 453,
+        "2018": 325,
+        "2019": 181,
+        "2020": 61
+      },
+      "monthlyEncounters": [
+        2,
+        10,
+        25,
+        111,
+        169,
+        337,
+        391,
+        407,
+        213,
+        114,
+        19,
+        17
+      ],
+      "cellCounts": {
+        "2:17": 304,
+        "2:18": 373,
+        "1:17": 40,
+        "1:18": 20,
+        "2:15": 10,
+        "2:16": 76,
+        "6:2": 107,
+        "6:3": 18,
+        "5:2": 56,
+        "5:3": 226,
+        "7:1": 44,
+        "7:2": 38,
+        "1:16": 12,
+        "5:1": 1,
+        "6:1": 50,
+        "6:8": 37,
+        "7:8": 105,
+        "6:9": 9,
+        "7:9": 6,
+        "3:15": 18,
+        "2:19": 3,
+        "5:4": 215,
+        "6:0": 7,
+        "4:4": 19,
+        "7:7": 2,
+        "4:3": 3,
+        "3:16": 7,
+        "2:14": 1,
+        "4:15": 1,
+        "4:16": 2,
+        "6:4": 1,
+        "5:5": 1,
+        "0:18": 2,
+        "6:5": 1
+      }
+    },
+    {
+      "speciesId": "urn:lsid:marinespecies.org:taxname:137205",
+      "scientificName": "Caretta caretta",
+      "commonName": "Loggerhead sea turtle",
+      "totalEncounters": 1199,
+      "yearlyEncounters": {
+        "2009": 14,
+        "2010": 34,
+        "2011": 22,
+        "2012": 30,
+        "2013": 33,
+        "2014": 50,
+        "2015": 201,
+        "2016": 292,
+        "2017": 189,
+        "2018": 180,
+        "2019": 123,
+        "2020": 31
+      },
+      "monthlyEncounters": [
+        3,
+        8,
+        57,
+        183,
+        237,
+        255,
+        178,
+        139,
+        90,
+        32,
+        12,
+        5
+      ],
+      "cellCounts": {
+        "2:18": 139,
+        "2:17": 222,
+        "2:16": 241,
+        "1:16": 22,
+        "1:17": 21,
+        "1:18": 13,
+        "3:15": 21,
+        "2:15": 35,
+        "5:2": 62,
+        "7:1": 31,
+        "7:2": 49,
+        "5:3": 50,
+        "6:2": 103,
+        "5:1": 8,
+        "6:1": 95,
+        "6:3": 11,
+        "6:0": 11,
+        "6:8": 11,
+        "7:8": 9,
+        "5:4": 9,
+        "3:14": 1,
+        "7:3": 4,
+        "5:0": 1,
+        "7:0": 4,
+        "2:19": 8,
+        "6:9": 4,
+        "1:19": 1,
+        "2:14": 1,
+        "3:16": 8,
+        "3:17": 2,
+        "6:6": 1,
+        "4:3": 1
+      }
+    },
+    {
+      "speciesId": "urn:lsid:marinespecies.org:taxname:137107",
+      "scientificName": "Stenella coeruleoalba",
+      "commonName": "Striped dolphin",
+      "totalEncounters": 871,
+      "yearlyEncounters": {
+        "2009": 27,
+        "2010": 77,
+        "2011": 35,
+        "2012": 43,
+        "2013": 57,
+        "2014": 26,
+        "2015": 47,
+        "2016": 77,
+        "2017": 123,
+        "2018": 170,
+        "2019": 161,
+        "2020": 28
+      },
+      "monthlyEncounters": [
+        2,
+        6,
+        23,
+        56,
+        95,
+        240,
+        201,
+        156,
+        56,
+        31,
+        3,
+        2
+      ],
+      "cellCounts": {
+        "2:17": 94,
+        "2:18": 219,
+        "1:18": 33,
+        "1:17": 50,
+        "2:19": 8,
+        "2:16": 51,
+        "2:15": 24,
+        "1:16": 11,
+        "3:15": 18,
+        "5:2": 33,
+        "6:2": 20,
+        "7:1": 15,
+        "5:3": 78,
+        "6:1": 36,
+        "6:3": 2,
+        "7:2": 26,
+        "5:1": 7,
+        "6:0": 1,
+        "7:0": 1,
+        "6:8": 26,
+        "6:9": 3,
+        "7:8": 18,
+        "4:16": 1,
+        "7:7": 4,
+        "5:4": 58,
+        "7:3": 2,
+        "4:4": 14,
+        "1:15": 2,
+        "2:14": 1,
+        "3:16": 9,
+        "5:5": 1,
+        "4:3": 1,
+        "3:14": 2,
+        "6:6": 1,
+        "0:18": 1
+      }
+    },
+    {
+      "speciesId": "urn:lsid:marinespecies.org:taxname:137090",
+      "scientificName": "Balaenoptera musculus",
+      "commonName": "Blue whale",
+      "totalEncounters": 770,
+      "yearlyEncounters": {
+        "2009": 2,
+        "2010": 40,
+        "2011": 8,
+        "2012": 45,
+        "2013": 30,
+        "2014": 48,
+        "2015": 67,
+        "2016": 67,
+        "2017": 215,
+        "2018": 202,
+        "2019": 46
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        33,
+        255,
+        376,
+        93,
+        8,
+        1,
+        3,
+        1,
+        0,
+        0
+      ],
+      "cellCounts": {
+        "2:18": 51,
+        "1:17": 51,
+        "1:16": 32,
+        "2:17": 85,
+        "2:16": 86,
+        "1:15": 4,
+        "2:19": 5,
+        "2:15": 32,
+        "5:2": 96,
+        "5:3": 80,
+        "1:18": 30,
+        "7:2": 11,
+        "6:1": 79,
+        "5:1": 33,
+        "5:4": 28,
+        "6:2": 24,
+        "6:0": 6,
+        "7:1": 7,
+        "6:3": 1,
+        "7:3": 5,
+        "7:8": 5,
+        "5:0": 1,
+        "3:14": 2,
+        "6:8": 8,
+        "6:7": 2,
+        "4:4": 2,
+        "7:7": 2,
+        "0:17": 1,
+        "3:15": 1
+      }
+    },
+    {
+      "speciesId": "urn:lsid:marinespecies.org:taxname:137088",
+      "scientificName": "Balaenoptera borealis",
+      "commonName": "Sei whale",
+      "totalEncounters": 685,
+      "yearlyEncounters": {
+        "2009": 17,
+        "2010": 62,
+        "2011": 18,
+        "2012": 45,
+        "2013": 31,
+        "2014": 33,
+        "2015": 46,
+        "2016": 48,
+        "2017": 109,
+        "2018": 101,
+        "2019": 83,
+        "2020": 92
+      },
+      "monthlyEncounters": [
+        2,
+        0,
+        7,
+        96,
+        109,
+        159,
+        109,
+        98,
+        57,
+        35,
+        13,
+        0
+      ],
+      "cellCounts": {
+        "2:19": 7,
+        "2:17": 105,
+        "2:16": 123,
+        "2:15": 57,
+        "2:18": 62,
+        "1:17": 42,
+        "1:16": 11,
+        "1:18": 31,
+        "6:1": 21,
+        "5:2": 26,
+        "5:3": 54,
+        "6:2": 15,
+        "5:1": 8,
+        "7:2": 4,
+        "7:1": 10,
+        "6:0": 3,
+        "3:15": 5,
+        "4:4": 28,
+        "7:7": 1,
+        "4:3": 13,
+        "6:8": 12,
+        "7:8": 5,
+        "6:9": 4,
+        "1:19": 4,
+        "5:4": 27,
+        "0:18": 1,
+        "7:3": 2,
+        "5:5": 1,
+        "7:0": 1,
+        "3:16": 1,
+        "1:15": 1
+      }
+    },
+    {
+      "speciesId": "urn:lsid:marinespecies.org:taxname:137096",
+      "scientificName": "Globicephala macrorhynchus",
+      "commonName": "Short-finned pilot whale",
+      "totalEncounters": 655,
+      "yearlyEncounters": {
+        "2009": 65,
+        "2010": 122,
+        "2011": 84,
+        "2012": 43,
+        "2013": 29,
+        "2014": 17,
+        "2015": 31,
+        "2016": 24,
+        "2017": 41,
+        "2018": 81,
+        "2019": 66,
+        "2020": 52
+      },
+      "monthlyEncounters": [
+        1,
+        2,
+        3,
+        6,
+        22,
+        182,
+        233,
+        115,
+        36,
+        39,
+        14,
+        2
+      ],
+      "cellCounts": {
+        "2:17": 92,
+        "2:18": 229,
+        "1:18": 32,
+        "2:16": 23,
+        "1:17": 51,
+        "1:16": 11,
+        "2:19": 9,
+        "2:15": 11,
+        "3:14": 3,
+        "5:3": 57,
+        "7:2": 7,
+        "5:2": 32,
+        "6:2": 4,
+        "6:1": 2,
+        "7:1": 1,
+        "6:8": 6,
+        "3:15": 5,
+        "7:8": 3,
+        "5:4": 38,
+        "4:4": 27,
+        "7:7": 2,
+        "3:16": 5,
+        "4:16": 2,
+        "4:3": 3
+      }
+    },
+    {
+      "speciesId": "urn:lsid:marinespecies.org:taxname:137092",
+      "scientificName": "Megaptera novaeangliae",
+      "commonName": "Humpback whale",
+      "totalEncounters": 263,
+      "yearlyEncounters": {
+        "2009": 3,
+        "2010": 5,
+        "2011": 9,
+        "2012": 3,
+        "2013": 2,
+        "2014": 29,
+        "2015": 12,
+        "2016": 44,
+        "2017": 68,
+        "2018": 46,
+        "2019": 37,
+        "2020": 5
+      },
+      "monthlyEncounters": [
+        5,
+        2,
+        39,
+        65,
+        94,
+        33,
+        18,
+        2,
+        0,
+        4,
+        1,
+        0
+      ],
+      "cellCounts": {
+        "2:17": 37,
+        "2:18": 22,
+        "1:18": 5,
+        "2:16": 52,
+        "5:3": 23,
+        "5:2": 16,
+        "5:1": 2,
+        "1:17": 6,
+        "6:2": 21,
+        "6:3": 3,
+        "6:1": 22,
+        "7:1": 6,
+        "3:15": 4,
+        "6:8": 5,
+        "7:2": 9,
+        "6:9": 1,
+        "7:8": 3,
+        "5:4": 12,
+        "2:15": 13,
+        "2:19": 1
+      }
+    },
+    {
+      "speciesId": "urn:lsid:marinespecies.org:taxname:137104",
+      "scientificName": "Pseudorca crassidens",
+      "commonName": "Pseudorca crassidens",
+      "totalEncounters": 171,
+      "yearlyEncounters": {
+        "2009": 4,
+        "2010": 6,
+        "2011": 1,
+        "2012": 2,
+        "2013": 8,
+        "2014": 16,
+        "2015": 22,
+        "2016": 36,
+        "2017": 36,
+        "2018": 20,
+        "2019": 12,
+        "2020": 8
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        3,
+        28,
+        18,
+        15,
+        46,
+        33,
+        11,
+        10,
+        3,
+        4
+      ],
+      "cellCounts": {
+        "2:16": 23,
+        "2:15": 4,
+        "1:16": 2,
+        "2:17": 31,
+        "2:18": 15,
+        "3:15": 5,
+        "5:2": 12,
+        "6:2": 16,
+        "5:3": 9,
+        "1:18": 2,
+        "7:1": 11,
+        "6:1": 5,
+        "7:2": 5,
+        "7:8": 11,
+        "6:8": 2,
+        "6:9": 1,
+        "5:4": 6,
+        "4:4": 7,
+        "7:9": 1,
+        "1:17": 2,
+        "1:15": 1
+      }
+    },
+    {
+      "speciesId": "urn:lsid:marinespecies.org:taxname:137121",
+      "scientificName": "Mesoplodon bidens",
+      "commonName": "Mesoplodon bidens",
+      "totalEncounters": 161,
+      "yearlyEncounters": {
+        "2009": 3,
+        "2010": 6,
+        "2011": 1,
+        "2012": 3,
+        "2013": 4,
+        "2014": 9,
+        "2015": 7,
+        "2016": 23,
+        "2017": 37,
+        "2018": 38,
+        "2019": 16,
+        "2020": 14
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        0,
+        2,
+        1,
+        22,
+        68,
+        59,
+        8,
+        0,
+        1,
+        0
+      ],
+      "cellCounts": {
+        "2:18": 17,
+        "2:17": 11,
+        "1:18": 4,
+        "6:0": 1,
+        "5:3": 22,
+        "7:1": 7,
+        "6:2": 3,
+        "5:2": 7,
+        "6:1": 4,
+        "6:8": 16,
+        "7:8": 13,
+        "2:16": 4,
+        "5:4": 36,
+        "7:7": 1,
+        "1:16": 1,
+        "3:16": 4,
+        "4:4": 1,
+        "4:3": 1,
+        "7:2": 3,
+        "3:15": 1,
+        "7:0": 1,
+        "6:3": 1,
+        "2:19": 1,
+        "5:7": 1
+      }
+    },
+    {
+      "speciesId": "urn:lsid:marinespecies.org:taxname:137089",
+      "scientificName": "Balaenoptera edeni",
+      "commonName": "Balaenoptera edeni",
+      "totalEncounters": 145,
+      "yearlyEncounters": {
+        "2009": 7,
+        "2012": 1,
+        "2013": 14,
+        "2015": 3,
+        "2017": 98,
+        "2018": 10,
+        "2019": 2,
+        "2020": 10
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        26,
+        100,
+        17,
+        2,
+        0,
+        0
+      ],
+      "cellCounts": {
+        "2:17": 26,
+        "2:18": 18,
+        "2:16": 21,
+        "5:2": 4,
+        "6:1": 6,
+        "6:2": 4,
+        "6:0": 1,
+        "1:16": 6,
+        "1:15": 3,
+        "5:4": 6,
+        "4:4": 4,
+        "2:15": 4,
+        "0:17": 1,
+        "1:17": 5,
+        "1:18": 3,
+        "6:8": 2,
+        "5:3": 4,
+        "7:7": 1,
+        "6:9": 4,
+        "6:3": 1,
+        "7:1": 9,
+        "7:2": 7,
+        "7:3": 3,
+        "7:0": 1,
+        "7:8": 1
+      }
+    },
+    {
+      "speciesId": "urn:lsid:marinespecies.org:taxname:343899",
+      "scientificName": "Hyperoodon ampullatus",
+      "commonName": "Hyperoodon ampullatus",
+      "totalEncounters": 52,
+      "yearlyEncounters": {
+        "2009": 4,
+        "2010": 2,
+        "2011": 1,
+        "2012": 1,
+        "2013": 4,
+        "2014": 5,
+        "2015": 6,
+        "2016": 4,
+        "2017": 9,
+        "2018": 3,
+        "2019": 4,
+        "2020": 9
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        36,
+        14,
+        1,
+        0,
+        0,
+        0
+      ],
+      "cellCounts": {
+        "1:18": 5,
+        "2:18": 11,
+        "1:17": 3,
+        "2:16": 2,
+        "6:1": 1,
+        "5:1": 1,
+        "5:3": 4,
+        "6:2": 1,
+        "5:2": 2,
+        "7:2": 1,
+        "7:8": 3,
+        "6:8": 1,
+        "5:4": 8,
+        "7:7": 2,
+        "4:4": 5,
+        "7:1": 2
+      }
+    },
+    {
+      "speciesId": "urn:lsid:marinespecies.org:taxname:137102",
+      "scientificName": "Orcinus orca",
+      "commonName": "Orcinus orca",
+      "totalEncounters": 44,
+      "yearlyEncounters": {
+        "2012": 6,
+        "2013": 13,
+        "2016": 5,
+        "2017": 9,
+        "2018": 4,
+        "2019": 7
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        9,
+        16,
+        16,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "cellCounts": {
+        "1:17": 5,
+        "2:16": 10,
+        "2:17": 12,
+        "2:15": 3,
+        "2:18": 5,
+        "6:1": 2,
+        "5:3": 2,
+        "1:18": 3,
+        "5:2": 1,
+        "5:4": 1
+      }
+    },
+    {
+      "speciesId": "urn:lsid:marinespecies.org:taxname:137127",
+      "scientificName": "Ziphius cavirostris",
+      "commonName": "Cuvier's beaked whale",
+      "totalEncounters": 41,
+      "yearlyEncounters": {
+        "2009": 3,
+        "2011": 1,
+        "2012": 1,
+        "2014": 1,
+        "2015": 3,
+        "2016": 5,
+        "2017": 14,
+        "2018": 12,
+        "2019": 1
+      },
+      "monthlyEncounters": [
+        0,
+        1,
+        2,
+        3,
+        3,
+        6,
+        7,
+        13,
+        6,
+        0,
+        0,
+        0
+      ],
+      "cellCounts": {
+        "2:16": 1,
+        "2:17": 2,
+        "2:18": 3,
+        "1:17": 2,
+        "7:2": 2,
+        "1:18": 1,
+        "6:8": 3,
+        "7:8": 2,
+        "6:0": 1,
+        "6:1": 1,
+        "5:2": 2,
+        "5:1": 1,
+        "5:3": 8,
+        "7:1": 4,
+        "7:7": 1,
+        "6:2": 2,
+        "4:4": 1,
+        "5:4": 4
+      }
+    },
+    {
+      "speciesId": "urn:lsid:marinespecies.org:taxname:137087",
+      "scientificName": "Balaenoptera acutorostrata",
+      "commonName": "Balaenoptera acutorostrata",
+      "totalEncounters": 32,
+      "yearlyEncounters": {
+        "2009": 1,
+        "2010": 2,
+        "2012": 8,
+        "2013": 3,
+        "2014": 2,
+        "2015": 2,
+        "2016": 4,
+        "2017": 2,
+        "2018": 4,
+        "2019": 4
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        1,
+        14,
+        5,
+        2,
+        4,
+        1,
+        2,
+        2,
+        1,
+        0
+      ],
+      "cellCounts": {
+        "2:17": 3,
+        "2:16": 3,
+        "1:16": 1,
+        "2:18": 10,
+        "1:17": 3,
+        "5:2": 2,
+        "1:18": 1,
+        "5:1": 1,
+        "6:2": 2,
+        "7:1": 2,
+        "7:8": 1,
+        "5:4": 1,
+        "6:8": 2
+      }
+    },
+    {
+      "speciesId": "urn:lsid:marinespecies.org:taxname:137122",
+      "scientificName": "Mesoplodon densirostris",
+      "commonName": "Mesoplodon densirostris",
+      "totalEncounters": 29,
+      "yearlyEncounters": {
+        "2011": 1,
+        "2012": 2,
+        "2015": 1,
+        "2016": 3,
+        "2017": 3,
+        "2018": 6,
+        "2019": 10,
+        "2020": 3
+      },
+      "monthlyEncounters": [
+        1,
+        1,
+        1,
+        0,
+        5,
+        2,
+        8,
+        8,
+        2,
+        0,
+        1,
+        0
+      ],
+      "cellCounts": {
+        "2:18": 16,
+        "3:14": 1,
+        "2:17": 9,
+        "1:18": 1,
+        "1:16": 1,
+        "5:4": 1
+      }
+    },
+    {
+      "speciesId": "urn:lsid:marinespecies.org:taxname:137209",
+      "scientificName": "Dermochelys coriacea",
+      "commonName": "Dermochelys coriacea",
+      "totalEncounters": 15,
+      "yearlyEncounters": {
+        "2010": 3,
+        "2012": 3,
+        "2014": 5,
+        "2015": 4
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        0,
+        1,
+        1,
+        5,
+        3,
+        5,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cellCounts": {
+        "1:18": 1,
+        "2:16": 1,
+        "2:17": 3,
+        "6:2": 2,
+        "5:2": 2,
+        "5:3": 2,
+        "6:1": 1,
+        "5:1": 1,
+        "6:3": 1,
+        "5:4": 1
+      }
+    },
+    {
+      "speciesId": "urn:lsid:marinespecies.org:taxname:137126",
+      "scientificName": "Mesoplodon mirus",
+      "commonName": "True's beaked whale",
+      "totalEncounters": 6,
+      "yearlyEncounters": {
+        "2009": 2,
+        "2013": 2,
+        "2018": 1,
+        "2020": 1
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        1,
+        0,
+        3,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cellCounts": {
+        "2:17": 2,
+        "6:2": 1,
+        "2:18": 2,
+        "5:3": 1
+      }
+    },
+    {
+      "speciesId": "urn:lsid:marinespecies.org:taxname:137206",
+      "scientificName": "Chelonia mydas",
+      "commonName": "Chelonia mydas",
+      "totalEncounters": 5,
+      "yearlyEncounters": {
+        "2015": 1,
+        "2016": 1,
+        "2018": 1,
+        "2019": 1,
+        "2020": 1
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0
+      ],
+      "cellCounts": {
+        "2:18": 2,
+        "3:16": 1,
+        "3:15": 1,
+        "2:17": 1
+      }
+    },
+    {
+      "speciesId": "urn:lsid:marinespecies.org:taxname:137097",
+      "scientificName": "Globicephala melas",
+      "commonName": "Globicephala melas",
+      "totalEncounters": 3,
+      "yearlyEncounters": {
+        "2014": 1,
+        "2018": 2
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0
+      ],
+      "cellCounts": {
+        "2:18": 1,
+        "6:8": 2
+      }
+    },
+    {
+      "speciesId": "urn:lsid:marinespecies.org:taxname:137113",
+      "scientificName": "Kogia breviceps",
+      "commonName": "Kogia breviceps",
+      "totalEncounters": 2,
+      "yearlyEncounters": {
+        "2017": 1,
+        "2019": 1
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cellCounts": {
+        "5:4": 1,
+        "5:3": 1
+      }
+    }
+  ],
+  "gridCells": [
+    {
+      "id": "2:16",
+      "row": 2,
+      "col": 16,
+      "lat0": 37.6,
+      "lon0": -25.8,
+      "centerLat": 37.7,
+      "centerLon": -25.7,
+      "polygon": [
+        [
+          -25.8,
+          37.6
+        ],
+        [
+          -25.6,
+          37.6
+        ],
+        [
+          -25.6,
+          37.800000000000004
+        ],
+        [
+          -25.8,
+          37.800000000000004
+        ],
+        [
+          -25.8,
+          37.6
+        ]
+      ],
+      "encounterCount": 4289,
+      "yearlyEncounters": {
+        "2009": 226,
+        "2010": 243,
+        "2011": 139,
+        "2012": 215,
+        "2013": 195,
+        "2014": 194,
+        "2015": 420,
+        "2016": 842,
+        "2017": 725,
+        "2018": 392,
+        "2019": 670,
+        "2020": 28
+      },
+      "monthlyEncounters": [
+        36,
+        67,
+        193,
+        485,
+        690,
+        683,
+        774,
+        602,
+        398,
+        243,
+        88,
+        30
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137119": 630,
+        "urn:lsid:marinespecies.org:taxname:137094": 1439,
+        "urn:lsid:marinespecies.org:taxname:137127": 1,
+        "urn:lsid:marinespecies.org:taxname:137111": 882,
+        "urn:lsid:marinespecies.org:taxname:137091": 304,
+        "urn:lsid:marinespecies.org:taxname:137088": 123,
+        "urn:lsid:marinespecies.org:taxname:137108": 317,
+        "urn:lsid:marinespecies.org:taxname:137096": 23,
+        "urn:lsid:marinespecies.org:taxname:137107": 51,
+        "urn:lsid:marinespecies.org:taxname:137098": 76,
+        "urn:lsid:marinespecies.org:taxname:137104": 23,
+        "urn:lsid:marinespecies.org:taxname:137089": 21,
+        "urn:lsid:marinespecies.org:taxname:137205": 241,
+        "urn:lsid:marinespecies.org:taxname:137087": 3,
+        "urn:lsid:marinespecies.org:taxname:137090": 86,
+        "urn:lsid:marinespecies.org:taxname:137209": 1,
+        "urn:lsid:marinespecies.org:taxname:137092": 52,
+        "urn:lsid:marinespecies.org:taxname:137102": 10,
+        "urn:lsid:marinespecies.org:taxname:343899": 2,
+        "urn:lsid:marinespecies.org:taxname:137121": 4
+      },
+      "earlyRate": 0.43316654753395284,
+      "lateRate": 0.5439278769665901,
+      "declinePct": 25.570148494432253,
+      "trendSlope": -0.004145534287412658,
+      "yearsWithEncounters": 12,
+      "confidenceScore": 1,
+      "isReliable": true,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 1439,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137111",
+          "count": 882,
+          "scientificName": "Tursiops truncatus",
+          "commonName": "Common bottlenose dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 630,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        }
+      ]
+    },
+    {
+      "id": "2:17",
+      "row": 2,
+      "col": 17,
+      "lat0": 37.6,
+      "lon0": -25.6,
+      "centerLat": 37.7,
+      "centerLon": -25.5,
+      "polygon": [
+        [
+          -25.6,
+          37.6
+        ],
+        [
+          -25.400000000000002,
+          37.6
+        ],
+        [
+          -25.400000000000002,
+          37.800000000000004
+        ],
+        [
+          -25.6,
+          37.800000000000004
+        ],
+        [
+          -25.6,
+          37.6
+        ]
+      ],
+      "encounterCount": 5263,
+      "yearlyEncounters": {
+        "2009": 333,
+        "2010": 602,
+        "2011": 344,
+        "2012": 415,
+        "2013": 280,
+        "2014": 367,
+        "2015": 591,
+        "2016": 537,
+        "2017": 561,
+        "2018": 496,
+        "2019": 550,
+        "2020": 187
+      },
+      "monthlyEncounters": [
+        49,
+        57,
+        164,
+        447,
+        701,
+        876,
+        975,
+        838,
+        631,
+        356,
+        131,
+        38
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137111": 989,
+        "urn:lsid:marinespecies.org:taxname:137094": 1630,
+        "urn:lsid:marinespecies.org:taxname:137108": 512,
+        "urn:lsid:marinespecies.org:taxname:137098": 304,
+        "urn:lsid:marinespecies.org:taxname:137091": 197,
+        "urn:lsid:marinespecies.org:taxname:137119": 896,
+        "urn:lsid:marinespecies.org:taxname:137096": 92,
+        "urn:lsid:marinespecies.org:taxname:137126": 2,
+        "urn:lsid:marinespecies.org:taxname:137107": 94,
+        "urn:lsid:marinespecies.org:taxname:137092": 37,
+        "urn:lsid:marinespecies.org:taxname:137127": 2,
+        "urn:lsid:marinespecies.org:taxname:137088": 105,
+        "urn:lsid:marinespecies.org:taxname:137121": 11,
+        "urn:lsid:marinespecies.org:taxname:137205": 222,
+        "urn:lsid:marinespecies.org:taxname:137087": 3,
+        "urn:lsid:marinespecies.org:taxname:137089": 26,
+        "urn:lsid:marinespecies.org:taxname:137104": 31,
+        "urn:lsid:marinespecies.org:taxname:137090": 85,
+        "urn:lsid:marinespecies.org:taxname:137209": 3,
+        "urn:lsid:marinespecies.org:taxname:137102": 12,
+        "urn:lsid:marinespecies.org:taxname:137122": 9,
+        "urn:lsid:marinespecies.org:taxname:137206": 1
+      },
+      "earlyRate": 0.8366690493209435,
+      "lateRate": 0.5165281951564433,
+      "declinePct": -38.26373814405261,
+      "trendSlope": -0.040454051791971694,
+      "yearsWithEncounters": 12,
+      "confidenceScore": 1,
+      "isReliable": true,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 1630,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137111",
+          "count": 989,
+          "scientificName": "Tursiops truncatus",
+          "commonName": "Common bottlenose dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 896,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        }
+      ]
+    },
+    {
+      "id": "2:18",
+      "row": 2,
+      "col": 18,
+      "lat0": 37.6,
+      "lon0": -25.4,
+      "centerLat": 37.7,
+      "centerLon": -25.299999999999997,
+      "polygon": [
+        [
+          -25.4,
+          37.6
+        ],
+        [
+          -25.2,
+          37.6
+        ],
+        [
+          -25.2,
+          37.800000000000004
+        ],
+        [
+          -25.4,
+          37.800000000000004
+        ],
+        [
+          -25.4,
+          37.6
+        ]
+      ],
+      "encounterCount": 4851,
+      "yearlyEncounters": {
+        "2009": 407,
+        "2010": 432,
+        "2011": 463,
+        "2012": 503,
+        "2013": 318,
+        "2014": 227,
+        "2015": 326,
+        "2016": 380,
+        "2017": 588,
+        "2018": 525,
+        "2019": 495,
+        "2020": 187
+      },
+      "monthlyEncounters": [
+        33,
+        54,
+        94,
+        322,
+        508,
+        920,
+        1204,
+        935,
+        486,
+        221,
+        53,
+        21
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137108": 705,
+        "urn:lsid:marinespecies.org:taxname:137094": 1111,
+        "urn:lsid:marinespecies.org:taxname:137091": 257,
+        "urn:lsid:marinespecies.org:taxname:137098": 373,
+        "urn:lsid:marinespecies.org:taxname:137111": 480,
+        "urn:lsid:marinespecies.org:taxname:137090": 51,
+        "urn:lsid:marinespecies.org:taxname:137205": 139,
+        "urn:lsid:marinespecies.org:taxname:137119": 1103,
+        "urn:lsid:marinespecies.org:taxname:137096": 229,
+        "urn:lsid:marinespecies.org:taxname:137121": 17,
+        "urn:lsid:marinespecies.org:taxname:137107": 219,
+        "urn:lsid:marinespecies.org:taxname:137127": 3,
+        "urn:lsid:marinespecies.org:taxname:137088": 62,
+        "urn:lsid:marinespecies.org:taxname:343899": 11,
+        "urn:lsid:marinespecies.org:taxname:137092": 22,
+        "urn:lsid:marinespecies.org:taxname:137089": 18,
+        "urn:lsid:marinespecies.org:taxname:137104": 15,
+        "urn:lsid:marinespecies.org:taxname:137122": 16,
+        "urn:lsid:marinespecies.org:taxname:137087": 10,
+        "urn:lsid:marinespecies.org:taxname:137102": 5,
+        "urn:lsid:marinespecies.org:taxname:137126": 2,
+        "urn:lsid:marinespecies.org:taxname:137097": 1,
+        "urn:lsid:marinespecies.org:taxname:137206": 2
+      },
+      "earlyRate": 0.8398856325947105,
+      "lateRate": 0.44210712391727064,
+      "declinePct": -47.3610326501905,
+      "trendSlope": -0.051254899234873634,
+      "yearsWithEncounters": 12,
+      "confidenceScore": 1,
+      "isReliable": true,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 1111,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 1103,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137108",
+          "count": 705,
+          "scientificName": "Stenella frontalis",
+          "commonName": "Atlantic spotted dolphin"
+        }
+      ]
+    },
+    {
+      "id": "3:15",
+      "row": 3,
+      "col": 15,
+      "lat0": 37.800000000000004,
+      "lon0": -26,
+      "centerLat": 37.900000000000006,
+      "centerLon": -25.9,
+      "polygon": [
+        [
+          -26,
+          37.800000000000004
+        ],
+        [
+          -25.8,
+          37.800000000000004
+        ],
+        [
+          -25.8,
+          38.00000000000001
+        ],
+        [
+          -26,
+          38.00000000000001
+        ],
+        [
+          -26,
+          37.800000000000004
+        ]
+      ],
+      "encounterCount": 365,
+      "yearlyEncounters": {
+        "2009": 9,
+        "2010": 23,
+        "2011": 1,
+        "2012": 3,
+        "2013": 2,
+        "2015": 24,
+        "2016": 26,
+        "2017": 17,
+        "2018": 114,
+        "2019": 146
+      },
+      "monthlyEncounters": [
+        6,
+        3,
+        21,
+        76,
+        35,
+        26,
+        29,
+        89,
+        47,
+        30,
+        3,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137094": 67,
+        "urn:lsid:marinespecies.org:taxname:137111": 59,
+        "urn:lsid:marinespecies.org:taxname:137108": 30,
+        "urn:lsid:marinespecies.org:taxname:137119": 115,
+        "urn:lsid:marinespecies.org:taxname:137107": 18,
+        "urn:lsid:marinespecies.org:taxname:137205": 21,
+        "urn:lsid:marinespecies.org:taxname:137104": 5,
+        "urn:lsid:marinespecies.org:taxname:137091": 15,
+        "urn:lsid:marinespecies.org:taxname:137092": 4,
+        "urn:lsid:marinespecies.org:taxname:137096": 5,
+        "urn:lsid:marinespecies.org:taxname:137098": 18,
+        "urn:lsid:marinespecies.org:taxname:137088": 5,
+        "urn:lsid:marinespecies.org:taxname:137121": 1,
+        "urn:lsid:marinespecies.org:taxname:137206": 1,
+        "urn:lsid:marinespecies.org:taxname:137090": 1
+      },
+      "earlyRate": 0.013581129378127233,
+      "lateRate": 0.05780449001237405,
+      "declinePct": 325.62358698584893,
+      "trendSlope": 0.004793826733859452,
+      "yearsWithEncounters": 10,
+      "confidenceScore": 1,
+      "isReliable": true,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 115,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 67,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137111",
+          "count": 59,
+          "scientificName": "Tursiops truncatus",
+          "commonName": "Common bottlenose dolphin"
+        }
+      ]
+    },
+    {
+      "id": "2:15",
+      "row": 2,
+      "col": 15,
+      "lat0": 37.6,
+      "lon0": -26,
+      "centerLat": 37.7,
+      "centerLon": -25.9,
+      "polygon": [
+        [
+          -26,
+          37.6
+        ],
+        [
+          -25.8,
+          37.6
+        ],
+        [
+          -25.8,
+          37.800000000000004
+        ],
+        [
+          -26,
+          37.800000000000004
+        ],
+        [
+          -26,
+          37.6
+        ]
+      ],
+      "encounterCount": 879,
+      "yearlyEncounters": {
+        "2009": 62,
+        "2010": 78,
+        "2011": 24,
+        "2012": 40,
+        "2013": 51,
+        "2014": 6,
+        "2015": 39,
+        "2016": 121,
+        "2017": 151,
+        "2018": 131,
+        "2019": 169,
+        "2020": 7
+      },
+      "monthlyEncounters": [
+        8,
+        14,
+        48,
+        75,
+        117,
+        106,
+        124,
+        152,
+        118,
+        84,
+        24,
+        9
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137094": 165,
+        "urn:lsid:marinespecies.org:taxname:137111": 151,
+        "urn:lsid:marinespecies.org:taxname:137091": 86,
+        "urn:lsid:marinespecies.org:taxname:137119": 168,
+        "urn:lsid:marinespecies.org:taxname:137108": 116,
+        "urn:lsid:marinespecies.org:taxname:137088": 57,
+        "urn:lsid:marinespecies.org:taxname:137098": 10,
+        "urn:lsid:marinespecies.org:taxname:137107": 24,
+        "urn:lsid:marinespecies.org:taxname:137104": 4,
+        "urn:lsid:marinespecies.org:taxname:137090": 32,
+        "urn:lsid:marinespecies.org:taxname:137096": 11,
+        "urn:lsid:marinespecies.org:taxname:137205": 35,
+        "urn:lsid:marinespecies.org:taxname:137102": 3,
+        "urn:lsid:marinespecies.org:taxname:137089": 4,
+        "urn:lsid:marinespecies.org:taxname:137092": 13
+      },
+      "earlyRate": 0.09328091493924232,
+      "lateRate": 0.10924518295916563,
+      "declinePct": 17.11418464358063,
+      "trendSlope": -0.0022109125728173766,
+      "yearsWithEncounters": 12,
+      "confidenceScore": 1,
+      "isReliable": true,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 168,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 165,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137111",
+          "count": 151,
+          "scientificName": "Tursiops truncatus",
+          "commonName": "Common bottlenose dolphin"
+        }
+      ]
+    },
+    {
+      "id": "1:18",
+      "row": 1,
+      "col": 18,
+      "lat0": 37.400000000000006,
+      "lon0": -25.4,
+      "centerLat": 37.50000000000001,
+      "centerLon": -25.299999999999997,
+      "polygon": [
+        [
+          -25.4,
+          37.400000000000006
+        ],
+        [
+          -25.2,
+          37.400000000000006
+        ],
+        [
+          -25.2,
+          37.60000000000001
+        ],
+        [
+          -25.4,
+          37.60000000000001
+        ],
+        [
+          -25.4,
+          37.400000000000006
+        ]
+      ],
+      "encounterCount": 613,
+      "yearlyEncounters": {
+        "2009": 44,
+        "2010": 67,
+        "2011": 63,
+        "2012": 46,
+        "2013": 21,
+        "2014": 19,
+        "2015": 58,
+        "2016": 20,
+        "2017": 111,
+        "2018": 67,
+        "2019": 78,
+        "2020": 19
+      },
+      "monthlyEncounters": [
+        4,
+        10,
+        21,
+        61,
+        70,
+        61,
+        93,
+        145,
+        92,
+        43,
+        11,
+        2
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137119": 228,
+        "urn:lsid:marinespecies.org:taxname:137111": 22,
+        "urn:lsid:marinespecies.org:taxname:137094": 56,
+        "urn:lsid:marinespecies.org:taxname:137096": 32,
+        "urn:lsid:marinespecies.org:taxname:137107": 33,
+        "urn:lsid:marinespecies.org:taxname:137098": 20,
+        "urn:lsid:marinespecies.org:taxname:137108": 65,
+        "urn:lsid:marinespecies.org:taxname:343899": 5,
+        "urn:lsid:marinespecies.org:taxname:137092": 5,
+        "urn:lsid:marinespecies.org:taxname:137088": 31,
+        "urn:lsid:marinespecies.org:taxname:137091": 57,
+        "urn:lsid:marinespecies.org:taxname:137209": 1,
+        "urn:lsid:marinespecies.org:taxname:137205": 13,
+        "urn:lsid:marinespecies.org:taxname:137121": 4,
+        "urn:lsid:marinespecies.org:taxname:137090": 30,
+        "urn:lsid:marinespecies.org:taxname:137087": 1,
+        "urn:lsid:marinespecies.org:taxname:137104": 2,
+        "urn:lsid:marinespecies.org:taxname:137127": 1,
+        "urn:lsid:marinespecies.org:taxname:137122": 1,
+        "urn:lsid:marinespecies.org:taxname:137102": 3,
+        "urn:lsid:marinespecies.org:taxname:137089": 3
+      },
+      "earlyRate": 0.09292351679771266,
+      "lateRate": 0.062400565670850276,
+      "declinePct": -32.84739125113882,
+      "trendSlope": -0.005522571271781503,
+      "yearsWithEncounters": 12,
+      "confidenceScore": 1,
+      "isReliable": true,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 228,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137108",
+          "count": 65,
+          "scientificName": "Stenella frontalis",
+          "commonName": "Atlantic spotted dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137091",
+          "count": 57,
+          "scientificName": "Balaenoptera physalus",
+          "commonName": "Fin whale"
+        }
+      ]
+    },
+    {
+      "id": "1:16",
+      "row": 1,
+      "col": 16,
+      "lat0": 37.400000000000006,
+      "lon0": -25.8,
+      "centerLat": 37.50000000000001,
+      "centerLon": -25.7,
+      "polygon": [
+        [
+          -25.8,
+          37.400000000000006
+        ],
+        [
+          -25.6,
+          37.400000000000006
+        ],
+        [
+          -25.6,
+          37.60000000000001
+        ],
+        [
+          -25.8,
+          37.60000000000001
+        ],
+        [
+          -25.8,
+          37.400000000000006
+        ]
+      ],
+      "encounterCount": 578,
+      "yearlyEncounters": {
+        "2009": 21,
+        "2010": 62,
+        "2011": 16,
+        "2012": 30,
+        "2013": 6,
+        "2014": 14,
+        "2015": 19,
+        "2016": 68,
+        "2017": 119,
+        "2018": 50,
+        "2019": 165,
+        "2020": 8
+      },
+      "monthlyEncounters": [
+        0,
+        3,
+        2,
+        44,
+        74,
+        61,
+        114,
+        109,
+        85,
+        62,
+        20,
+        4
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137094": 25,
+        "urn:lsid:marinespecies.org:taxname:137091": 45,
+        "urn:lsid:marinespecies.org:taxname:137108": 65,
+        "urn:lsid:marinespecies.org:taxname:137119": 285,
+        "urn:lsid:marinespecies.org:taxname:137111": 48,
+        "urn:lsid:marinespecies.org:taxname:137096": 11,
+        "urn:lsid:marinespecies.org:taxname:137107": 11,
+        "urn:lsid:marinespecies.org:taxname:137104": 2,
+        "urn:lsid:marinespecies.org:taxname:137090": 32,
+        "urn:lsid:marinespecies.org:taxname:137087": 1,
+        "urn:lsid:marinespecies.org:taxname:137088": 11,
+        "urn:lsid:marinespecies.org:taxname:137205": 22,
+        "urn:lsid:marinespecies.org:taxname:137098": 12,
+        "urn:lsid:marinespecies.org:taxname:137122": 1,
+        "urn:lsid:marinespecies.org:taxname:137089": 6,
+        "urn:lsid:marinespecies.org:taxname:137121": 1
+      },
+      "earlyRate": 0.05325232308791994,
+      "lateRate": 0.0758352483648577,
+      "declinePct": 42.407399278437474,
+      "trendSlope": 0.0017382135584932366,
+      "yearsWithEncounters": 12,
+      "confidenceScore": 1,
+      "isReliable": true,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 285,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137108",
+          "count": 65,
+          "scientificName": "Stenella frontalis",
+          "commonName": "Atlantic spotted dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137111",
+          "count": 48,
+          "scientificName": "Tursiops truncatus",
+          "commonName": "Common bottlenose dolphin"
+        }
+      ]
+    },
+    {
+      "id": "2:19",
+      "row": 2,
+      "col": 19,
+      "lat0": 37.6,
+      "lon0": -25.2,
+      "centerLat": 37.7,
+      "centerLon": -25.099999999999998,
+      "polygon": [
+        [
+          -25.2,
+          37.6
+        ],
+        [
+          -25,
+          37.6
+        ],
+        [
+          -25,
+          37.800000000000004
+        ],
+        [
+          -25.2,
+          37.800000000000004
+        ],
+        [
+          -25.2,
+          37.6
+        ]
+      ],
+      "encounterCount": 147,
+      "yearlyEncounters": {
+        "2009": 5,
+        "2010": 15,
+        "2011": 9,
+        "2012": 5,
+        "2013": 1,
+        "2014": 6,
+        "2015": 12,
+        "2016": 4,
+        "2017": 11,
+        "2018": 40,
+        "2019": 31,
+        "2020": 8
+      },
+      "monthlyEncounters": [
+        3,
+        2,
+        4,
+        12,
+        15,
+        16,
+        26,
+        55,
+        9,
+        5,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137088": 7,
+        "urn:lsid:marinespecies.org:taxname:137107": 8,
+        "urn:lsid:marinespecies.org:taxname:137119": 50,
+        "urn:lsid:marinespecies.org:taxname:137108": 17,
+        "urn:lsid:marinespecies.org:taxname:137090": 5,
+        "urn:lsid:marinespecies.org:taxname:137094": 21,
+        "urn:lsid:marinespecies.org:taxname:137096": 9,
+        "urn:lsid:marinespecies.org:taxname:137111": 7,
+        "urn:lsid:marinespecies.org:taxname:137098": 3,
+        "urn:lsid:marinespecies.org:taxname:137205": 8,
+        "urn:lsid:marinespecies.org:taxname:137091": 10,
+        "urn:lsid:marinespecies.org:taxname:137092": 1,
+        "urn:lsid:marinespecies.org:taxname:137121": 1
+      },
+      "earlyRate": 0.014653323802716226,
+      "lateRate": 0.018737846915326144,
+      "declinePct": 27.87437968068914,
+      "trendSlope": 0.0009520406760762293,
+      "yearsWithEncounters": 12,
+      "confidenceScore": 1,
+      "isReliable": true,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 50,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 21,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137108",
+          "count": 17,
+          "scientificName": "Stenella frontalis",
+          "commonName": "Atlantic spotted dolphin"
+        }
+      ]
+    },
+    {
+      "id": "1:17",
+      "row": 1,
+      "col": 17,
+      "lat0": 37.400000000000006,
+      "lon0": -25.6,
+      "centerLat": 37.50000000000001,
+      "centerLon": -25.5,
+      "polygon": [
+        [
+          -25.6,
+          37.400000000000006
+        ],
+        [
+          -25.400000000000002,
+          37.400000000000006
+        ],
+        [
+          -25.400000000000002,
+          37.60000000000001
+        ],
+        [
+          -25.6,
+          37.60000000000001
+        ],
+        [
+          -25.6,
+          37.400000000000006
+        ]
+      ],
+      "encounterCount": 1132,
+      "yearlyEncounters": {
+        "2009": 63,
+        "2010": 228,
+        "2011": 76,
+        "2012": 127,
+        "2013": 24,
+        "2014": 30,
+        "2015": 72,
+        "2016": 88,
+        "2017": 141,
+        "2018": 103,
+        "2019": 153,
+        "2020": 27
+      },
+      "monthlyEncounters": [
+        5,
+        7,
+        48,
+        50,
+        139,
+        165,
+        268,
+        202,
+        172,
+        52,
+        16,
+        8
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137119": 459,
+        "urn:lsid:marinespecies.org:taxname:137111": 68,
+        "urn:lsid:marinespecies.org:taxname:137098": 40,
+        "urn:lsid:marinespecies.org:taxname:137091": 103,
+        "urn:lsid:marinespecies.org:taxname:137107": 50,
+        "urn:lsid:marinespecies.org:taxname:137108": 132,
+        "urn:lsid:marinespecies.org:taxname:137096": 51,
+        "urn:lsid:marinespecies.org:taxname:137094": 89,
+        "urn:lsid:marinespecies.org:taxname:137088": 42,
+        "urn:lsid:marinespecies.org:taxname:137090": 51,
+        "urn:lsid:marinespecies.org:taxname:137205": 21,
+        "urn:lsid:marinespecies.org:taxname:137087": 3,
+        "urn:lsid:marinespecies.org:taxname:137102": 5,
+        "urn:lsid:marinespecies.org:taxname:343899": 3,
+        "urn:lsid:marinespecies.org:taxname:137127": 2,
+        "urn:lsid:marinespecies.org:taxname:137092": 6,
+        "urn:lsid:marinespecies.org:taxname:137089": 5,
+        "urn:lsid:marinespecies.org:taxname:137104": 2
+      },
+      "earlyRate": 0.1958541815582559,
+      "lateRate": 0.10323493017500442,
+      "declinePct": -47.289902439842635,
+      "trendSlope": -0.014434858670641607,
+      "yearsWithEncounters": 12,
+      "confidenceScore": 1,
+      "isReliable": true,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 459,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137108",
+          "count": 132,
+          "scientificName": "Stenella frontalis",
+          "commonName": "Atlantic spotted dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137091",
+          "count": 103,
+          "scientificName": "Balaenoptera physalus",
+          "commonName": "Fin whale"
+        }
+      ]
+    },
+    {
+      "id": "1:15",
+      "row": 1,
+      "col": 15,
+      "lat0": 37.400000000000006,
+      "lon0": -26,
+      "centerLat": 37.50000000000001,
+      "centerLon": -25.9,
+      "polygon": [
+        [
+          -26,
+          37.400000000000006
+        ],
+        [
+          -25.8,
+          37.400000000000006
+        ],
+        [
+          -25.8,
+          37.60000000000001
+        ],
+        [
+          -26,
+          37.60000000000001
+        ],
+        [
+          -26,
+          37.400000000000006
+        ]
+      ],
+      "encounterCount": 27,
+      "yearlyEncounters": {
+        "2009": 3,
+        "2010": 2,
+        "2011": 2,
+        "2012": 2,
+        "2016": 1,
+        "2017": 12,
+        "2018": 1,
+        "2019": 4
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        1,
+        1,
+        6,
+        7,
+        6,
+        1,
+        4,
+        1,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137119": 3,
+        "urn:lsid:marinespecies.org:taxname:137091": 6,
+        "urn:lsid:marinespecies.org:taxname:137090": 4,
+        "urn:lsid:marinespecies.org:taxname:137111": 4,
+        "urn:lsid:marinespecies.org:taxname:137094": 1,
+        "urn:lsid:marinespecies.org:taxname:137107": 2,
+        "urn:lsid:marinespecies.org:taxname:137089": 3,
+        "urn:lsid:marinespecies.org:taxname:137108": 2,
+        "urn:lsid:marinespecies.org:taxname:137104": 1,
+        "urn:lsid:marinespecies.org:taxname:137088": 1
+      },
+      "earlyRate": 0.0032165832737669764,
+      "lateRate": 0.003181898532791232,
+      "declinePct": -1.0783100583348093,
+      "trendSlope": -0.00027418865268934883,
+      "yearsWithEncounters": 8,
+      "confidenceScore": 0.3375,
+      "isReliable": true,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137091",
+          "count": 6,
+          "scientificName": "Balaenoptera physalus",
+          "commonName": "Fin whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137090",
+          "count": 4,
+          "scientificName": "Balaenoptera musculus",
+          "commonName": "Blue whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137111",
+          "count": 4,
+          "scientificName": "Tursiops truncatus",
+          "commonName": "Common bottlenose dolphin"
+        }
+      ]
+    },
+    {
+      "id": "1:19",
+      "row": 1,
+      "col": 19,
+      "lat0": 37.400000000000006,
+      "lon0": -25.2,
+      "centerLat": 37.50000000000001,
+      "centerLon": -25.099999999999998,
+      "polygon": [
+        [
+          -25.2,
+          37.400000000000006
+        ],
+        [
+          -25,
+          37.400000000000006
+        ],
+        [
+          -25,
+          37.60000000000001
+        ],
+        [
+          -25.2,
+          37.60000000000001
+        ],
+        [
+          -25.2,
+          37.400000000000006
+        ]
+      ],
+      "encounterCount": 34,
+      "yearlyEncounters": {
+        "2009": 1,
+        "2010": 3,
+        "2011": 3,
+        "2012": 3,
+        "2013": 3,
+        "2014": 1,
+        "2015": 1,
+        "2017": 5,
+        "2018": 4,
+        "2019": 6,
+        "2020": 4
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        1,
+        1,
+        1,
+        6,
+        3,
+        10,
+        8,
+        4,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137119": 16,
+        "urn:lsid:marinespecies.org:taxname:137111": 2,
+        "urn:lsid:marinespecies.org:taxname:137094": 2,
+        "urn:lsid:marinespecies.org:taxname:137091": 5,
+        "urn:lsid:marinespecies.org:taxname:137205": 1,
+        "urn:lsid:marinespecies.org:taxname:137088": 4,
+        "urn:lsid:marinespecies.org:taxname:137108": 4
+      },
+      "earlyRate": 0.005003573981415297,
+      "lateRate": 0.00353544281421248,
+      "declinePct": -29.341650041667723,
+      "trendSlope": 0.00025238218722376264,
+      "yearsWithEncounters": 11,
+      "confidenceScore": 0.425,
+      "isReliable": true,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 16,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137091",
+          "count": 5,
+          "scientificName": "Balaenoptera physalus",
+          "commonName": "Fin whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137088",
+          "count": 4,
+          "scientificName": "Balaenoptera borealis",
+          "commonName": "Sei whale"
+        }
+      ]
+    },
+    {
+      "id": "4:15",
+      "row": 4,
+      "col": 15,
+      "lat0": 38,
+      "lon0": -26,
+      "centerLat": 38.1,
+      "centerLon": -25.9,
+      "polygon": [
+        [
+          -26,
+          38
+        ],
+        [
+          -25.8,
+          38
+        ],
+        [
+          -25.8,
+          38.2
+        ],
+        [
+          -26,
+          38.2
+        ],
+        [
+          -26,
+          38
+        ]
+      ],
+      "encounterCount": 21,
+      "yearlyEncounters": {
+        "2009": 2,
+        "2015": 1,
+        "2018": 10,
+        "2019": 8
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        3,
+        12,
+        3,
+        0,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137119": 17,
+        "urn:lsid:marinespecies.org:taxname:137098": 1,
+        "urn:lsid:marinespecies.org:taxname:137094": 1,
+        "urn:lsid:marinespecies.org:taxname:137091": 1,
+        "urn:lsid:marinespecies.org:taxname:137108": 1
+      },
+      "earlyRate": 0.0007147962830593281,
+      "lateRate": 0.003358670673501856,
+      "declinePct": 369.8780272229097,
+      "trendSlope": 0.00023993704008138793,
+      "yearsWithEncounters": 4,
+      "confidenceScore": 0.2625,
+      "isReliable": false,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 17,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137098",
+          "count": 1,
+          "scientificName": "Grampus griseus",
+          "commonName": "Risso's dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 1,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        }
+      ]
+    },
+    {
+      "id": "2:14",
+      "row": 2,
+      "col": 14,
+      "lat0": 37.6,
+      "lon0": -26.2,
+      "centerLat": 37.7,
+      "centerLon": -26.099999999999998,
+      "polygon": [
+        [
+          -26.2,
+          37.6
+        ],
+        [
+          -26,
+          37.6
+        ],
+        [
+          -26,
+          37.800000000000004
+        ],
+        [
+          -26.2,
+          37.800000000000004
+        ],
+        [
+          -26.2,
+          37.6
+        ]
+      ],
+      "encounterCount": 29,
+      "yearlyEncounters": {
+        "2009": 2,
+        "2010": 2,
+        "2012": 3,
+        "2013": 1,
+        "2015": 3,
+        "2016": 4,
+        "2017": 3,
+        "2018": 11
+      },
+      "monthlyEncounters": [
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        8,
+        8,
+        4,
+        0,
+        5,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137091": 6,
+        "urn:lsid:marinespecies.org:taxname:137108": 1,
+        "urn:lsid:marinespecies.org:taxname:137119": 13,
+        "urn:lsid:marinespecies.org:taxname:137111": 3,
+        "urn:lsid:marinespecies.org:taxname:137094": 3,
+        "urn:lsid:marinespecies.org:taxname:137205": 1,
+        "urn:lsid:marinespecies.org:taxname:137107": 1,
+        "urn:lsid:marinespecies.org:taxname:137098": 1
+      },
+      "earlyRate": 0.0028591851322373124,
+      "lateRate": 0.0037122149549231043,
+      "declinePct": 29.834718048435565,
+      "trendSlope": -0.00011312011536998315,
+      "yearsWithEncounters": 8,
+      "confidenceScore": 0.3625,
+      "isReliable": true,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 13,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137091",
+          "count": 6,
+          "scientificName": "Balaenoptera physalus",
+          "commonName": "Fin whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137111",
+          "count": 3,
+          "scientificName": "Tursiops truncatus",
+          "commonName": "Common bottlenose dolphin"
+        }
+      ]
+    },
+    {
+      "id": "3:14",
+      "row": 3,
+      "col": 14,
+      "lat0": 37.800000000000004,
+      "lon0": -26.2,
+      "centerLat": 37.900000000000006,
+      "centerLon": -26.099999999999998,
+      "polygon": [
+        [
+          -26.2,
+          37.800000000000004
+        ],
+        [
+          -26,
+          37.800000000000004
+        ],
+        [
+          -26,
+          38.00000000000001
+        ],
+        [
+          -26.2,
+          38.00000000000001
+        ],
+        [
+          -26.2,
+          37.800000000000004
+        ]
+      ],
+      "encounterCount": 59,
+      "yearlyEncounters": {
+        "2010": 3,
+        "2011": 1,
+        "2012": 2,
+        "2015": 6,
+        "2016": 8,
+        "2017": 5,
+        "2018": 14,
+        "2019": 20
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        2,
+        1,
+        8,
+        10,
+        14,
+        9,
+        6,
+        5,
+        4,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137119": 41,
+        "urn:lsid:marinespecies.org:taxname:137096": 3,
+        "urn:lsid:marinespecies.org:taxname:137122": 1,
+        "urn:lsid:marinespecies.org:taxname:137091": 5,
+        "urn:lsid:marinespecies.org:taxname:137205": 1,
+        "urn:lsid:marinespecies.org:taxname:137090": 2,
+        "urn:lsid:marinespecies.org:taxname:137108": 1,
+        "urn:lsid:marinespecies.org:taxname:137111": 1,
+        "urn:lsid:marinespecies.org:taxname:137107": 2,
+        "urn:lsid:marinespecies.org:taxname:137094": 2
+      },
+      "earlyRate": 0.002144388849177984,
+      "lateRate": 0.009368923457663072,
+      "declinePct": 336.90413057568793,
+      "trendSlope": 0.000757828512626746,
+      "yearsWithEncounters": 8,
+      "confidenceScore": 0.7375,
+      "isReliable": true,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 41,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137091",
+          "count": 5,
+          "scientificName": "Balaenoptera physalus",
+          "commonName": "Fin whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137096",
+          "count": 3,
+          "scientificName": "Globicephala macrorhynchus",
+          "commonName": "Short-finned pilot whale"
+        }
+      ]
+    },
+    {
+      "id": "5:2",
+      "row": 5,
+      "col": 2,
+      "lat0": 38.2,
+      "lon0": -28.6,
+      "centerLat": 38.300000000000004,
+      "centerLon": -28.5,
+      "polygon": [
+        [
+          -28.6,
+          38.2
+        ],
+        [
+          -28.400000000000002,
+          38.2
+        ],
+        [
+          -28.400000000000002,
+          38.400000000000006
+        ],
+        [
+          -28.6,
+          38.400000000000006
+        ],
+        [
+          -28.6,
+          38.2
+        ]
+      ],
+      "encounterCount": 1288,
+      "yearlyEncounters": {
+        "2011": 90,
+        "2012": 92,
+        "2013": 245,
+        "2014": 140,
+        "2015": 171,
+        "2016": 90,
+        "2017": 185,
+        "2018": 196,
+        "2019": 77,
+        "2020": 2
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        26,
+        135,
+        258,
+        345,
+        252,
+        187,
+        82,
+        3,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137094": 167,
+        "urn:lsid:marinespecies.org:taxname:137205": 62,
+        "urn:lsid:marinespecies.org:taxname:137119": 529,
+        "urn:lsid:marinespecies.org:taxname:137088": 26,
+        "urn:lsid:marinespecies.org:taxname:137091": 104,
+        "urn:lsid:marinespecies.org:taxname:137107": 33,
+        "urn:lsid:marinespecies.org:taxname:137090": 96,
+        "urn:lsid:marinespecies.org:taxname:137092": 16,
+        "urn:lsid:marinespecies.org:taxname:137111": 42,
+        "urn:lsid:marinespecies.org:taxname:137098": 56,
+        "urn:lsid:marinespecies.org:taxname:137096": 32,
+        "urn:lsid:marinespecies.org:taxname:137108": 93,
+        "urn:lsid:marinespecies.org:taxname:137087": 2,
+        "urn:lsid:marinespecies.org:taxname:137209": 2,
+        "urn:lsid:marinespecies.org:taxname:137104": 12,
+        "urn:lsid:marinespecies.org:taxname:137121": 7,
+        "urn:lsid:marinespecies.org:taxname:137089": 4,
+        "urn:lsid:marinespecies.org:taxname:343899": 2,
+        "urn:lsid:marinespecies.org:taxname:137127": 2,
+        "urn:lsid:marinespecies.org:taxname:137102": 1
+      },
+      "earlyRate": 0.2026447462473195,
+      "lateRate": 0.1274527134523599,
+      "declinePct": -37.105345284003,
+      "trendSlope": -0.0046132550526324255,
+      "yearsWithEncounters": 10,
+      "confidenceScore": 1,
+      "isReliable": true,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 529,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 167,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137091",
+          "count": 104,
+          "scientificName": "Balaenoptera physalus",
+          "commonName": "Fin whale"
+        }
+      ]
+    },
+    {
+      "id": "7:2",
+      "row": 7,
+      "col": 2,
+      "lat0": 38.6,
+      "lon0": -28.6,
+      "centerLat": 38.7,
+      "centerLon": -28.5,
+      "polygon": [
+        [
+          -28.6,
+          38.6
+        ],
+        [
+          -28.400000000000002,
+          38.6
+        ],
+        [
+          -28.400000000000002,
+          38.800000000000004
+        ],
+        [
+          -28.6,
+          38.800000000000004
+        ],
+        [
+          -28.6,
+          38.6
+        ]
+      ],
+      "encounterCount": 1089,
+      "yearlyEncounters": {
+        "2011": 26,
+        "2012": 40,
+        "2013": 58,
+        "2014": 83,
+        "2015": 116,
+        "2016": 168,
+        "2017": 243,
+        "2018": 219,
+        "2019": 136
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        32,
+        39,
+        120,
+        150,
+        333,
+        234,
+        140,
+        41,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137119": 509,
+        "urn:lsid:marinespecies.org:taxname:137094": 191,
+        "urn:lsid:marinespecies.org:taxname:137205": 49,
+        "urn:lsid:marinespecies.org:taxname:137111": 70,
+        "urn:lsid:marinespecies.org:taxname:137096": 7,
+        "urn:lsid:marinespecies.org:taxname:137091": 74,
+        "urn:lsid:marinespecies.org:taxname:137090": 11,
+        "urn:lsid:marinespecies.org:taxname:137098": 38,
+        "urn:lsid:marinespecies.org:taxname:137108": 83,
+        "urn:lsid:marinespecies.org:taxname:137107": 26,
+        "urn:lsid:marinespecies.org:taxname:137088": 4,
+        "urn:lsid:marinespecies.org:taxname:137127": 2,
+        "urn:lsid:marinespecies.org:taxname:137104": 5,
+        "urn:lsid:marinespecies.org:taxname:137092": 9,
+        "urn:lsid:marinespecies.org:taxname:343899": 1,
+        "urn:lsid:marinespecies.org:taxname:137089": 7,
+        "urn:lsid:marinespecies.org:taxname:137121": 3
+      },
+      "earlyRate": 0.07398141529664046,
+      "lateRate": 0.15591302810677038,
+      "declinePct": 110.74620900615628,
+      "trendSlope": 0.008884787711996982,
+      "yearsWithEncounters": 9,
+      "confidenceScore": 1,
+      "isReliable": true,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 509,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 191,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137108",
+          "count": 83,
+          "scientificName": "Stenella frontalis",
+          "commonName": "Atlantic spotted dolphin"
+        }
+      ]
+    },
+    {
+      "id": "6:2",
+      "row": 6,
+      "col": 2,
+      "lat0": 38.400000000000006,
+      "lon0": -28.6,
+      "centerLat": 38.50000000000001,
+      "centerLon": -28.5,
+      "polygon": [
+        [
+          -28.6,
+          38.400000000000006
+        ],
+        [
+          -28.400000000000002,
+          38.400000000000006
+        ],
+        [
+          -28.400000000000002,
+          38.60000000000001
+        ],
+        [
+          -28.6,
+          38.60000000000001
+        ],
+        [
+          -28.6,
+          38.400000000000006
+        ]
+      ],
+      "encounterCount": 1247,
+      "yearlyEncounters": {
+        "2011": 72,
+        "2012": 68,
+        "2013": 206,
+        "2014": 180,
+        "2015": 199,
+        "2016": 147,
+        "2017": 202,
+        "2018": 134,
+        "2019": 39
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        22,
+        113,
+        219,
+        286,
+        294,
+        212,
+        90,
+        11,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137094": 398,
+        "urn:lsid:marinespecies.org:taxname:137119": 229,
+        "urn:lsid:marinespecies.org:taxname:137098": 107,
+        "urn:lsid:marinespecies.org:taxname:137111": 136,
+        "urn:lsid:marinespecies.org:taxname:137088": 15,
+        "urn:lsid:marinespecies.org:taxname:137107": 20,
+        "urn:lsid:marinespecies.org:taxname:137091": 72,
+        "urn:lsid:marinespecies.org:taxname:137209": 2,
+        "urn:lsid:marinespecies.org:taxname:137205": 103,
+        "urn:lsid:marinespecies.org:taxname:137108": 87,
+        "urn:lsid:marinespecies.org:taxname:137090": 24,
+        "urn:lsid:marinespecies.org:taxname:137126": 1,
+        "urn:lsid:marinespecies.org:taxname:137121": 3,
+        "urn:lsid:marinespecies.org:taxname:137096": 4,
+        "urn:lsid:marinespecies.org:taxname:137104": 16,
+        "urn:lsid:marinespecies.org:taxname:137089": 4,
+        "urn:lsid:marinespecies.org:taxname:137087": 2,
+        "urn:lsid:marinespecies.org:taxname:137092": 21,
+        "urn:lsid:marinespecies.org:taxname:343899": 1,
+        "urn:lsid:marinespecies.org:taxname:137127": 2
+      },
+      "earlyRate": 0.1879914224446033,
+      "lateRate": 0.1274527134523599,
+      "declinePct": -32.20291022058879,
+      "trendSlope": -0.003817603839248935,
+      "yearsWithEncounters": 9,
+      "confidenceScore": 1,
+      "isReliable": true,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 398,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 229,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137111",
+          "count": 136,
+          "scientificName": "Tursiops truncatus",
+          "commonName": "Common bottlenose dolphin"
+        }
+      ]
+    },
+    {
+      "id": "7:1",
+      "row": 7,
+      "col": 1,
+      "lat0": 38.6,
+      "lon0": -28.8,
+      "centerLat": 38.7,
+      "centerLon": -28.7,
+      "polygon": [
+        [
+          -28.8,
+          38.6
+        ],
+        [
+          -28.6,
+          38.6
+        ],
+        [
+          -28.6,
+          38.800000000000004
+        ],
+        [
+          -28.8,
+          38.800000000000004
+        ],
+        [
+          -28.8,
+          38.6
+        ]
+      ],
+      "encounterCount": 1181,
+      "yearlyEncounters": {
+        "2011": 18,
+        "2012": 75,
+        "2013": 82,
+        "2014": 107,
+        "2015": 139,
+        "2016": 159,
+        "2017": 194,
+        "2018": 310,
+        "2019": 97
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        21,
+        66,
+        137,
+        149,
+        364,
+        248,
+        166,
+        30,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137119": 545,
+        "urn:lsid:marinespecies.org:taxname:137094": 222,
+        "urn:lsid:marinespecies.org:taxname:137205": 31,
+        "urn:lsid:marinespecies.org:taxname:137107": 15,
+        "urn:lsid:marinespecies.org:taxname:137098": 44,
+        "urn:lsid:marinespecies.org:taxname:137111": 115,
+        "urn:lsid:marinespecies.org:taxname:137108": 108,
+        "urn:lsid:marinespecies.org:taxname:137121": 7,
+        "urn:lsid:marinespecies.org:taxname:137088": 10,
+        "urn:lsid:marinespecies.org:taxname:137090": 7,
+        "urn:lsid:marinespecies.org:taxname:137091": 42,
+        "urn:lsid:marinespecies.org:taxname:137096": 1,
+        "urn:lsid:marinespecies.org:taxname:137104": 11,
+        "urn:lsid:marinespecies.org:taxname:137092": 6,
+        "urn:lsid:marinespecies.org:taxname:137087": 2,
+        "urn:lsid:marinespecies.org:taxname:137127": 4,
+        "urn:lsid:marinespecies.org:taxname:137089": 9,
+        "urn:lsid:marinespecies.org:taxname:343899": 2
+      },
+      "earlyRate": 0.10078627591136526,
+      "lateRate": 0.158918154498851,
+      "declinePct": 57.678367477937975,
+      "trendSlope": 0.0074077552820184505,
+      "yearsWithEncounters": 9,
+      "confidenceScore": 1,
+      "isReliable": true,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 545,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 222,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137111",
+          "count": 115,
+          "scientificName": "Tursiops truncatus",
+          "commonName": "Common bottlenose dolphin"
+        }
+      ]
+    },
+    {
+      "id": "5:3",
+      "row": 5,
+      "col": 3,
+      "lat0": 38.2,
+      "lon0": -28.4,
+      "centerLat": 38.300000000000004,
+      "centerLon": -28.299999999999997,
+      "polygon": [
+        [
+          -28.4,
+          38.2
+        ],
+        [
+          -28.2,
+          38.2
+        ],
+        [
+          -28.2,
+          38.400000000000006
+        ],
+        [
+          -28.4,
+          38.400000000000006
+        ],
+        [
+          -28.4,
+          38.2
+        ]
+      ],
+      "encounterCount": 1843,
+      "yearlyEncounters": {
+        "2011": 50,
+        "2012": 58,
+        "2013": 140,
+        "2014": 80,
+        "2015": 122,
+        "2016": 70,
+        "2017": 550,
+        "2018": 501,
+        "2019": 167,
+        "2020": 105
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        7,
+        196,
+        295,
+        508,
+        410,
+        245,
+        115,
+        67,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137119": 580,
+        "urn:lsid:marinespecies.org:taxname:137088": 54,
+        "urn:lsid:marinespecies.org:taxname:137091": 135,
+        "urn:lsid:marinespecies.org:taxname:137094": 264,
+        "urn:lsid:marinespecies.org:taxname:137090": 80,
+        "urn:lsid:marinespecies.org:taxname:137092": 23,
+        "urn:lsid:marinespecies.org:taxname:137107": 78,
+        "urn:lsid:marinespecies.org:taxname:137096": 57,
+        "urn:lsid:marinespecies.org:taxname:137205": 50,
+        "urn:lsid:marinespecies.org:taxname:137098": 226,
+        "urn:lsid:marinespecies.org:taxname:137108": 161,
+        "urn:lsid:marinespecies.org:taxname:137121": 22,
+        "urn:lsid:marinespecies.org:taxname:137111": 82,
+        "urn:lsid:marinespecies.org:taxname:137209": 2,
+        "urn:lsid:marinespecies.org:taxname:137104": 9,
+        "urn:lsid:marinespecies.org:taxname:343899": 4,
+        "urn:lsid:marinespecies.org:taxname:137102": 2,
+        "urn:lsid:marinespecies.org:taxname:137127": 8,
+        "urn:lsid:marinespecies.org:taxname:137089": 4,
+        "urn:lsid:marinespecies.org:taxname:137126": 1,
+        "urn:lsid:marinespecies.org:taxname:137113": 1
+      },
+      "earlyRate": 0.11722659042172981,
+      "lateRate": 0.26780979317659537,
+      "declinePct": 128.45481747198593,
+      "trendSlope": 0.02812182977355736,
+      "yearsWithEncounters": 10,
+      "confidenceScore": 1,
+      "isReliable": true,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 580,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 264,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137098",
+          "count": 226,
+          "scientificName": "Grampus griseus",
+          "commonName": "Risso's dolphin"
+        }
+      ]
+    },
+    {
+      "id": "6:3",
+      "row": 6,
+      "col": 3,
+      "lat0": 38.400000000000006,
+      "lon0": -28.4,
+      "centerLat": 38.50000000000001,
+      "centerLon": -28.299999999999997,
+      "polygon": [
+        [
+          -28.4,
+          38.400000000000006
+        ],
+        [
+          -28.2,
+          38.400000000000006
+        ],
+        [
+          -28.2,
+          38.60000000000001
+        ],
+        [
+          -28.4,
+          38.60000000000001
+        ],
+        [
+          -28.4,
+          38.400000000000006
+        ]
+      ],
+      "encounterCount": 136,
+      "yearlyEncounters": {
+        "2011": 6,
+        "2012": 8,
+        "2013": 16,
+        "2014": 11,
+        "2015": 28,
+        "2016": 29,
+        "2017": 13,
+        "2018": 19,
+        "2019": 6
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        0,
+        10,
+        11,
+        29,
+        44,
+        25,
+        6,
+        11,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137098": 18,
+        "urn:lsid:marinespecies.org:taxname:137119": 64,
+        "urn:lsid:marinespecies.org:taxname:137094": 18,
+        "urn:lsid:marinespecies.org:taxname:137107": 2,
+        "urn:lsid:marinespecies.org:taxname:137111": 10,
+        "urn:lsid:marinespecies.org:taxname:137205": 11,
+        "urn:lsid:marinespecies.org:taxname:137092": 3,
+        "urn:lsid:marinespecies.org:taxname:137108": 6,
+        "urn:lsid:marinespecies.org:taxname:137209": 1,
+        "urn:lsid:marinespecies.org:taxname:137090": 1,
+        "urn:lsid:marinespecies.org:taxname:137089": 1,
+        "urn:lsid:marinespecies.org:taxname:137121": 1
+      },
+      "earlyRate": 0.014653323802716226,
+      "lateRate": 0.01679335336750928,
+      "declinePct": 14.6043968836365,
+      "trendSlope": 0.00010205959631044959,
+      "yearsWithEncounters": 9,
+      "confidenceScore": 1,
+      "isReliable": true,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 64,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137098",
+          "count": 18,
+          "scientificName": "Grampus griseus",
+          "commonName": "Risso's dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 18,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        }
+      ]
+    },
+    {
+      "id": "6:1",
+      "row": 6,
+      "col": 1,
+      "lat0": 38.400000000000006,
+      "lon0": -28.8,
+      "centerLat": 38.50000000000001,
+      "centerLon": -28.7,
+      "polygon": [
+        [
+          -28.8,
+          38.400000000000006
+        ],
+        [
+          -28.6,
+          38.400000000000006
+        ],
+        [
+          -28.6,
+          38.60000000000001
+        ],
+        [
+          -28.8,
+          38.60000000000001
+        ],
+        [
+          -28.8,
+          38.400000000000006
+        ]
+      ],
+      "encounterCount": 1360,
+      "yearlyEncounters": {
+        "2011": 22,
+        "2012": 34,
+        "2013": 93,
+        "2014": 164,
+        "2015": 196,
+        "2016": 181,
+        "2017": 341,
+        "2018": 268,
+        "2019": 61
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        16,
+        172,
+        314,
+        306,
+        302,
+        143,
+        96,
+        11,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137094": 275,
+        "urn:lsid:marinespecies.org:taxname:137088": 21,
+        "urn:lsid:marinespecies.org:taxname:137119": 416,
+        "urn:lsid:marinespecies.org:taxname:137091": 157,
+        "urn:lsid:marinespecies.org:taxname:137107": 36,
+        "urn:lsid:marinespecies.org:taxname:137111": 103,
+        "urn:lsid:marinespecies.org:taxname:137090": 79,
+        "urn:lsid:marinespecies.org:taxname:137205": 95,
+        "urn:lsid:marinespecies.org:taxname:343899": 1,
+        "urn:lsid:marinespecies.org:taxname:137108": 84,
+        "urn:lsid:marinespecies.org:taxname:137089": 6,
+        "urn:lsid:marinespecies.org:taxname:137209": 1,
+        "urn:lsid:marinespecies.org:taxname:137098": 50,
+        "urn:lsid:marinespecies.org:taxname:137092": 22,
+        "urn:lsid:marinespecies.org:taxname:137096": 2,
+        "urn:lsid:marinespecies.org:taxname:137121": 4,
+        "urn:lsid:marinespecies.org:taxname:137104": 5,
+        "urn:lsid:marinespecies.org:taxname:137102": 2,
+        "urn:lsid:marinespecies.org:taxname:137127": 1
+      },
+      "earlyRate": 0.11186561829878484,
+      "lateRate": 0.18508043132402333,
+      "declinePct": 65.44889675546878,
+      "trendSlope": 0.008237528321829826,
+      "yearsWithEncounters": 9,
+      "confidenceScore": 1,
+      "isReliable": true,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 416,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 275,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137091",
+          "count": 157,
+          "scientificName": "Balaenoptera physalus",
+          "commonName": "Fin whale"
+        }
+      ]
+    },
+    {
+      "id": "6:0",
+      "row": 6,
+      "col": 0,
+      "lat0": 38.400000000000006,
+      "lon0": -29,
+      "centerLat": 38.50000000000001,
+      "centerLon": -28.9,
+      "polygon": [
+        [
+          -29,
+          38.400000000000006
+        ],
+        [
+          -28.8,
+          38.400000000000006
+        ],
+        [
+          -28.8,
+          38.60000000000001
+        ],
+        [
+          -29,
+          38.60000000000001
+        ],
+        [
+          -29,
+          38.400000000000006
+        ]
+      ],
+      "encounterCount": 221,
+      "yearlyEncounters": {
+        "2011": 9,
+        "2012": 1,
+        "2013": 33,
+        "2014": 8,
+        "2015": 7,
+        "2016": 34,
+        "2017": 62,
+        "2018": 62,
+        "2019": 5
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        1,
+        19,
+        36,
+        73,
+        60,
+        9,
+        22,
+        1,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137119": 121,
+        "urn:lsid:marinespecies.org:taxname:137094": 22,
+        "urn:lsid:marinespecies.org:taxname:137121": 1,
+        "urn:lsid:marinespecies.org:taxname:137091": 24,
+        "urn:lsid:marinespecies.org:taxname:137090": 6,
+        "urn:lsid:marinespecies.org:taxname:137107": 1,
+        "urn:lsid:marinespecies.org:taxname:137108": 11,
+        "urn:lsid:marinespecies.org:taxname:137111": 12,
+        "urn:lsid:marinespecies.org:taxname:137089": 1,
+        "urn:lsid:marinespecies.org:taxname:137088": 3,
+        "urn:lsid:marinespecies.org:taxname:137205": 11,
+        "urn:lsid:marinespecies.org:taxname:137127": 1,
+        "urn:lsid:marinespecies.org:taxname:137098": 7
+      },
+      "earlyRate": 0.018227305218012867,
+      "lateRate": 0.030051263920806082,
+      "declinePct": 64.86948323610865,
+      "trendSlope": 0.0011322656129676137,
+      "yearsWithEncounters": 9,
+      "confidenceScore": 1,
+      "isReliable": true,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 121,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137091",
+          "count": 24,
+          "scientificName": "Balaenoptera physalus",
+          "commonName": "Fin whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 22,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        }
+      ]
+    },
+    {
+      "id": "5:1",
+      "row": 5,
+      "col": 1,
+      "lat0": 38.2,
+      "lon0": -28.8,
+      "centerLat": 38.300000000000004,
+      "centerLon": -28.7,
+      "polygon": [
+        [
+          -28.8,
+          38.2
+        ],
+        [
+          -28.6,
+          38.2
+        ],
+        [
+          -28.6,
+          38.400000000000006
+        ],
+        [
+          -28.8,
+          38.400000000000006
+        ],
+        [
+          -28.8,
+          38.2
+        ]
+      ],
+      "encounterCount": 145,
+      "yearlyEncounters": {
+        "2011": 1,
+        "2012": 8,
+        "2013": 19,
+        "2014": 13,
+        "2015": 16,
+        "2016": 21,
+        "2017": 39,
+        "2018": 26,
+        "2019": 2
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        3,
+        40,
+        46,
+        28,
+        6,
+        19,
+        2,
+        1,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137091": 37,
+        "urn:lsid:marinespecies.org:taxname:137090": 33,
+        "urn:lsid:marinespecies.org:taxname:137094": 13,
+        "urn:lsid:marinespecies.org:taxname:137119": 23,
+        "urn:lsid:marinespecies.org:taxname:137098": 1,
+        "urn:lsid:marinespecies.org:taxname:137205": 8,
+        "urn:lsid:marinespecies.org:taxname:137092": 2,
+        "urn:lsid:marinespecies.org:taxname:137088": 8,
+        "urn:lsid:marinespecies.org:taxname:137087": 1,
+        "urn:lsid:marinespecies.org:taxname:137111": 6,
+        "urn:lsid:marinespecies.org:taxname:137107": 7,
+        "urn:lsid:marinespecies.org:taxname:343899": 1,
+        "urn:lsid:marinespecies.org:taxname:137108": 3,
+        "urn:lsid:marinespecies.org:taxname:137209": 1,
+        "urn:lsid:marinespecies.org:taxname:137127": 1
+      },
+      "earlyRate": 0.014653323802716226,
+      "lateRate": 0.018384302633904896,
+      "declinePct": 25.46165553577048,
+      "trendSlope": 0.00048173957204499857,
+      "yearsWithEncounters": 9,
+      "confidenceScore": 1,
+      "isReliable": true,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137091",
+          "count": 37,
+          "scientificName": "Balaenoptera physalus",
+          "commonName": "Fin whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137090",
+          "count": 33,
+          "scientificName": "Balaenoptera musculus",
+          "commonName": "Blue whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 23,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        }
+      ]
+    },
+    {
+      "id": "4:4",
+      "row": 4,
+      "col": 4,
+      "lat0": 38,
+      "lon0": -28.2,
+      "centerLat": 38.1,
+      "centerLon": -28.099999999999998,
+      "polygon": [
+        [
+          -28.2,
+          38
+        ],
+        [
+          -28,
+          38
+        ],
+        [
+          -28,
+          38.2
+        ],
+        [
+          -28.2,
+          38.2
+        ],
+        [
+          -28.2,
+          38
+        ]
+      ],
+      "encounterCount": 262,
+      "yearlyEncounters": {
+        "2011": 1,
+        "2017": 96,
+        "2018": 19,
+        "2020": 146
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        7,
+        104,
+        114,
+        35,
+        1,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137119": 67,
+        "urn:lsid:marinespecies.org:taxname:137098": 19,
+        "urn:lsid:marinespecies.org:taxname:137107": 14,
+        "urn:lsid:marinespecies.org:taxname:137091": 5,
+        "urn:lsid:marinespecies.org:taxname:137094": 15,
+        "urn:lsid:marinespecies.org:taxname:137090": 2,
+        "urn:lsid:marinespecies.org:taxname:137096": 27,
+        "urn:lsid:marinespecies.org:taxname:137111": 14,
+        "urn:lsid:marinespecies.org:taxname:137104": 7,
+        "urn:lsid:marinespecies.org:taxname:137108": 53,
+        "urn:lsid:marinespecies.org:taxname:137088": 28,
+        "urn:lsid:marinespecies.org:taxname:343899": 5,
+        "urn:lsid:marinespecies.org:taxname:137089": 4,
+        "urn:lsid:marinespecies.org:taxname:137127": 1,
+        "urn:lsid:marinespecies.org:taxname:137121": 1
+      },
+      "earlyRate": 0.00035739814152966406,
+      "lateRate": 0.046137528725472866,
+      "declinePct": 12809.280537387307,
+      "trendSlope": 0.02107220312484382,
+      "yearsWithEncounters": 4,
+      "confidenceScore": 1,
+      "isReliable": true,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 67,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137108",
+          "count": 53,
+          "scientificName": "Stenella frontalis",
+          "commonName": "Atlantic spotted dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137088",
+          "count": 28,
+          "scientificName": "Balaenoptera borealis",
+          "commonName": "Sei whale"
+        }
+      ]
+    },
+    {
+      "id": "4:2",
+      "row": 4,
+      "col": 2,
+      "lat0": 38,
+      "lon0": -28.6,
+      "centerLat": 38.1,
+      "centerLon": -28.5,
+      "polygon": [
+        [
+          -28.6,
+          38
+        ],
+        [
+          -28.400000000000002,
+          38
+        ],
+        [
+          -28.400000000000002,
+          38.2
+        ],
+        [
+          -28.6,
+          38.2
+        ],
+        [
+          -28.6,
+          38
+        ]
+      ],
+      "encounterCount": 5,
+      "yearlyEncounters": {
+        "2011": 2,
+        "2014": 1,
+        "2016": 2
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        3,
+        0,
+        0,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137119": 5
+      },
+      "earlyRate": 0.001072194424588992,
+      "lateRate": 0.00035354428142124803,
+      "declinePct": -67.02610335277826,
+      "trendSlope": -0.00009770351985633812,
+      "yearsWithEncounters": 3,
+      "confidenceScore": 0.046875,
+      "isReliable": false,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 5,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        }
+      ]
+    },
+    {
+      "id": "7:3",
+      "row": 7,
+      "col": 3,
+      "lat0": 38.6,
+      "lon0": -28.4,
+      "centerLat": 38.7,
+      "centerLon": -28.299999999999997,
+      "polygon": [
+        [
+          -28.4,
+          38.6
+        ],
+        [
+          -28.2,
+          38.6
+        ],
+        [
+          -28.2,
+          38.800000000000004
+        ],
+        [
+          -28.4,
+          38.800000000000004
+        ],
+        [
+          -28.4,
+          38.6
+        ]
+      ],
+      "encounterCount": 82,
+      "yearlyEncounters": {
+        "2011": 5,
+        "2012": 1,
+        "2013": 5,
+        "2015": 4,
+        "2016": 16,
+        "2017": 28,
+        "2018": 16,
+        "2019": 7
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        2,
+        2,
+        11,
+        15,
+        25,
+        15,
+        8,
+        4,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137094": 3,
+        "urn:lsid:marinespecies.org:taxname:137119": 47,
+        "urn:lsid:marinespecies.org:taxname:137111": 4,
+        "urn:lsid:marinespecies.org:taxname:137090": 5,
+        "urn:lsid:marinespecies.org:taxname:137091": 6,
+        "urn:lsid:marinespecies.org:taxname:137205": 4,
+        "urn:lsid:marinespecies.org:taxname:137107": 2,
+        "urn:lsid:marinespecies.org:taxname:137108": 6,
+        "urn:lsid:marinespecies.org:taxname:137089": 3,
+        "urn:lsid:marinespecies.org:taxname:137088": 2
+      },
+      "earlyRate": 0.003931379556826304,
+      "lateRate": 0.012550821990454304,
+      "declinePct": 219.24727208446492,
+      "trendSlope": 0.000633853814263821,
+      "yearsWithEncounters": 8,
+      "confidenceScore": 1,
+      "isReliable": true,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 47,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137091",
+          "count": 6,
+          "scientificName": "Balaenoptera physalus",
+          "commonName": "Fin whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137108",
+          "count": 6,
+          "scientificName": "Stenella frontalis",
+          "commonName": "Atlantic spotted dolphin"
+        }
+      ]
+    },
+    {
+      "id": "1:14",
+      "row": 1,
+      "col": 14,
+      "lat0": 37.400000000000006,
+      "lon0": -26.2,
+      "centerLat": 37.50000000000001,
+      "centerLon": -26.099999999999998,
+      "polygon": [
+        [
+          -26.2,
+          37.400000000000006
+        ],
+        [
+          -26,
+          37.400000000000006
+        ],
+        [
+          -26,
+          37.60000000000001
+        ],
+        [
+          -26.2,
+          37.60000000000001
+        ],
+        [
+          -26.2,
+          37.400000000000006
+        ]
+      ],
+      "encounterCount": 1,
+      "yearlyEncounters": {
+        "2011": 1
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137119": 1
+      },
+      "earlyRate": 0.00035739814152966406,
+      "lateRate": 0,
+      "declinePct": -100,
+      "trendSlope": -0.000056008065161386815,
+      "yearsWithEncounters": 1,
+      "confidenceScore": 0.003125,
+      "isReliable": false,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 1,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        }
+      ]
+    },
+    {
+      "id": "5:4",
+      "row": 5,
+      "col": 4,
+      "lat0": 38.2,
+      "lon0": -28.2,
+      "centerLat": 38.300000000000004,
+      "centerLon": -28.099999999999998,
+      "polygon": [
+        [
+          -28.2,
+          38.2
+        ],
+        [
+          -28,
+          38.2
+        ],
+        [
+          -28,
+          38.400000000000006
+        ],
+        [
+          -28.2,
+          38.400000000000006
+        ],
+        [
+          -28.2,
+          38.2
+        ]
+      ],
+      "encounterCount": 1174,
+      "yearlyEncounters": {
+        "2012": 3,
+        "2013": 2,
+        "2015": 10,
+        "2016": 4,
+        "2017": 519,
+        "2018": 255,
+        "2019": 90,
+        "2020": 291
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        0,
+        71,
+        105,
+        150,
+        365,
+        310,
+        134,
+        39,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137119": 288,
+        "urn:lsid:marinespecies.org:taxname:137090": 28,
+        "urn:lsid:marinespecies.org:taxname:137108": 173,
+        "urn:lsid:marinespecies.org:taxname:137205": 9,
+        "urn:lsid:marinespecies.org:taxname:137111": 79,
+        "urn:lsid:marinespecies.org:taxname:137094": 125,
+        "urn:lsid:marinespecies.org:taxname:137209": 1,
+        "urn:lsid:marinespecies.org:taxname:137092": 12,
+        "urn:lsid:marinespecies.org:taxname:137098": 215,
+        "urn:lsid:marinespecies.org:taxname:137091": 57,
+        "urn:lsid:marinespecies.org:taxname:137121": 36,
+        "urn:lsid:marinespecies.org:taxname:137107": 58,
+        "urn:lsid:marinespecies.org:taxname:137102": 1,
+        "urn:lsid:marinespecies.org:taxname:137096": 38,
+        "urn:lsid:marinespecies.org:taxname:137087": 1,
+        "urn:lsid:marinespecies.org:taxname:137104": 6,
+        "urn:lsid:marinespecies.org:taxname:343899": 8,
+        "urn:lsid:marinespecies.org:taxname:137113": 1,
+        "urn:lsid:marinespecies.org:taxname:137089": 6,
+        "urn:lsid:marinespecies.org:taxname:137127": 4,
+        "urn:lsid:marinespecies.org:taxname:137088": 27,
+        "urn:lsid:marinespecies.org:taxname:137122": 1
+      },
+      "earlyRate": 0.0017869907076483202,
+      "lateRate": 0.20664663249071946,
+      "declinePct": 11463.945554180662,
+      "trendSlope": 0.052955703623281634,
+      "yearsWithEncounters": 8,
+      "confidenceScore": 1,
+      "isReliable": true,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 288,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137098",
+          "count": 215,
+          "scientificName": "Grampus griseus",
+          "commonName": "Risso's dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137108",
+          "count": 173,
+          "scientificName": "Stenella frontalis",
+          "commonName": "Atlantic spotted dolphin"
+        }
+      ]
+    },
+    {
+      "id": "7:0",
+      "row": 7,
+      "col": 0,
+      "lat0": 38.6,
+      "lon0": -29,
+      "centerLat": 38.7,
+      "centerLon": -28.9,
+      "polygon": [
+        [
+          -29,
+          38.6
+        ],
+        [
+          -28.8,
+          38.6
+        ],
+        [
+          -28.8,
+          38.800000000000004
+        ],
+        [
+          -29,
+          38.800000000000004
+        ],
+        [
+          -29,
+          38.6
+        ]
+      ],
+      "encounterCount": 86,
+      "yearlyEncounters": {
+        "2012": 5,
+        "2013": 6,
+        "2014": 12,
+        "2015": 6,
+        "2016": 14,
+        "2017": 13,
+        "2018": 30
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        0,
+        2,
+        0,
+        12,
+        26,
+        27,
+        19,
+        0,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137119": 60,
+        "urn:lsid:marinespecies.org:taxname:137107": 1,
+        "urn:lsid:marinespecies.org:taxname:137094": 6,
+        "urn:lsid:marinespecies.org:taxname:137108": 8,
+        "urn:lsid:marinespecies.org:taxname:137205": 4,
+        "urn:lsid:marinespecies.org:taxname:137111": 2,
+        "urn:lsid:marinespecies.org:taxname:137091": 2,
+        "urn:lsid:marinespecies.org:taxname:137088": 1,
+        "urn:lsid:marinespecies.org:taxname:137089": 1,
+        "urn:lsid:marinespecies.org:taxname:137121": 1
+      },
+      "earlyRate": 0.008220157255182273,
+      "lateRate": 0.011136644864769313,
+      "declinePct": 35.4797057896719,
+      "trendSlope": 0.0005163970646862358,
+      "yearsWithEncounters": 7,
+      "confidenceScore": 1,
+      "isReliable": true,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 60,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137108",
+          "count": 8,
+          "scientificName": "Stenella frontalis",
+          "commonName": "Atlantic spotted dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 6,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        }
+      ]
+    },
+    {
+      "id": "8:1",
+      "row": 8,
+      "col": 1,
+      "lat0": 38.800000000000004,
+      "lon0": -28.8,
+      "centerLat": 38.900000000000006,
+      "centerLon": -28.7,
+      "polygon": [
+        [
+          -28.8,
+          38.800000000000004
+        ],
+        [
+          -28.6,
+          38.800000000000004
+        ],
+        [
+          -28.6,
+          39.00000000000001
+        ],
+        [
+          -28.8,
+          39.00000000000001
+        ],
+        [
+          -28.8,
+          38.800000000000004
+        ]
+      ],
+      "encounterCount": 10,
+      "yearlyEncounters": {
+        "2013": 2,
+        "2015": 4,
+        "2018": 4
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        3,
+        0,
+        4,
+        0,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137119": 8,
+        "urn:lsid:marinespecies.org:taxname:137108": 2
+      },
+      "earlyRate": 0.0007147962830593281,
+      "lateRate": 0.0014141771256849921,
+      "declinePct": 97.8433798833304,
+      "trendSlope": 0.00004782476811146913,
+      "yearsWithEncounters": 3,
+      "confidenceScore": 0.09375,
+      "isReliable": false,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 8,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137108",
+          "count": 2,
+          "scientificName": "Stenella frontalis",
+          "commonName": "Atlantic spotted dolphin"
+        }
+      ]
+    },
+    {
+      "id": "8:2",
+      "row": 8,
+      "col": 2,
+      "lat0": 38.800000000000004,
+      "lon0": -28.6,
+      "centerLat": 38.900000000000006,
+      "centerLon": -28.5,
+      "polygon": [
+        [
+          -28.6,
+          38.800000000000004
+        ],
+        [
+          -28.400000000000002,
+          38.800000000000004
+        ],
+        [
+          -28.400000000000002,
+          39.00000000000001
+        ],
+        [
+          -28.6,
+          39.00000000000001
+        ],
+        [
+          -28.6,
+          38.800000000000004
+        ]
+      ],
+      "encounterCount": 6,
+      "yearlyEncounters": {
+        "2013": 4,
+        "2016": 1,
+        "2018": 1
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        4,
+        0,
+        0,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137119": 4,
+        "urn:lsid:marinespecies.org:taxname:137108": 1,
+        "urn:lsid:marinespecies.org:taxname:137094": 1
+      },
+      "earlyRate": 0.0014295925661186562,
+      "lateRate": 0.00035354428142124803,
+      "declinePct": -75.2695775145837,
+      "trendSlope": -0.0000654397906278954,
+      "yearsWithEncounters": 3,
+      "confidenceScore": 0.056249999999999994,
+      "isReliable": false,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 4,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137108",
+          "count": 1,
+          "scientificName": "Stenella frontalis",
+          "commonName": "Atlantic spotted dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 1,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        }
+      ]
+    },
+    {
+      "id": "4:3",
+      "row": 4,
+      "col": 3,
+      "lat0": 38,
+      "lon0": -28.4,
+      "centerLat": 38.1,
+      "centerLon": -28.299999999999997,
+      "polygon": [
+        [
+          -28.4,
+          38
+        ],
+        [
+          -28.2,
+          38
+        ],
+        [
+          -28.2,
+          38.2
+        ],
+        [
+          -28.4,
+          38.2
+        ],
+        [
+          -28.4,
+          38
+        ]
+      ],
+      "encounterCount": 53,
+      "yearlyEncounters": {
+        "2014": 1,
+        "2016": 4,
+        "2017": 11,
+        "2018": 7,
+        "2019": 3,
+        "2020": 27
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        5,
+        36,
+        7,
+        4,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137119": 19,
+        "urn:lsid:marinespecies.org:taxname:137108": 8,
+        "urn:lsid:marinespecies.org:taxname:137088": 13,
+        "urn:lsid:marinespecies.org:taxname:137098": 3,
+        "urn:lsid:marinespecies.org:taxname:137091": 1,
+        "urn:lsid:marinespecies.org:taxname:137121": 1,
+        "urn:lsid:marinespecies.org:taxname:137094": 1,
+        "urn:lsid:marinespecies.org:taxname:137107": 1,
+        "urn:lsid:marinespecies.org:taxname:137096": 3,
+        "urn:lsid:marinespecies.org:taxname:137111": 2,
+        "urn:lsid:marinespecies.org:taxname:137205": 1
+      },
+      "earlyRate": 0.00035739814152966406,
+      "lateRate": 0.009192151316952448,
+      "declinePct": 2471.9639384832944,
+      "trendSlope": 0.004015231972664503,
+      "yearsWithEncounters": 6,
+      "confidenceScore": 0.6625,
+      "isReliable": true,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 19,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137088",
+          "count": 13,
+          "scientificName": "Balaenoptera borealis",
+          "commonName": "Sei whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137108",
+          "count": 8,
+          "scientificName": "Stenella frontalis",
+          "commonName": "Atlantic spotted dolphin"
+        }
+      ]
+    },
+    {
+      "id": "7:8",
+      "row": 7,
+      "col": 8,
+      "lat0": 38.6,
+      "lon0": -27.4,
+      "centerLat": 38.7,
+      "centerLon": -27.299999999999997,
+      "polygon": [
+        [
+          -27.4,
+          38.6
+        ],
+        [
+          -27.2,
+          38.6
+        ],
+        [
+          -27.2,
+          38.800000000000004
+        ],
+        [
+          -27.4,
+          38.800000000000004
+        ],
+        [
+          -27.4,
+          38.6
+        ]
+      ],
+      "encounterCount": 553,
+      "yearlyEncounters": {
+        "2015": 153,
+        "2016": 122,
+        "2017": 138,
+        "2018": 90,
+        "2019": 50
+      },
+      "monthlyEncounters": [
+        7,
+        8,
+        15,
+        19,
+        22,
+        82,
+        155,
+        159,
+        46,
+        24,
+        7,
+        9
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137091": 25,
+        "urn:lsid:marinespecies.org:taxname:137094": 176,
+        "urn:lsid:marinespecies.org:taxname:137111": 68,
+        "urn:lsid:marinespecies.org:taxname:137119": 57,
+        "urn:lsid:marinespecies.org:taxname:137090": 5,
+        "urn:lsid:marinespecies.org:taxname:137098": 105,
+        "urn:lsid:marinespecies.org:taxname:137108": 48,
+        "urn:lsid:marinespecies.org:taxname:137205": 9,
+        "urn:lsid:marinespecies.org:taxname:137107": 18,
+        "urn:lsid:marinespecies.org:taxname:137104": 11,
+        "urn:lsid:marinespecies.org:taxname:137121": 13,
+        "urn:lsid:marinespecies.org:taxname:343899": 3,
+        "urn:lsid:marinespecies.org:taxname:137127": 2,
+        "urn:lsid:marinespecies.org:taxname:137096": 3,
+        "urn:lsid:marinespecies.org:taxname:137092": 3,
+        "urn:lsid:marinespecies.org:taxname:137087": 1,
+        "urn:lsid:marinespecies.org:taxname:137088": 5,
+        "urn:lsid:marinespecies.org:taxname:137089": 1
+      },
+      "earlyRate": 0,
+      "lateRate": 0.09775499381297507,
+      "declinePct": null,
+      "trendSlope": 0.007075018388866628,
+      "yearsWithEncounters": 5,
+      "confidenceScore": 1,
+      "isReliable": true,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 176,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137098",
+          "count": 105,
+          "scientificName": "Grampus griseus",
+          "commonName": "Risso's dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137111",
+          "count": 68,
+          "scientificName": "Tursiops truncatus",
+          "commonName": "Common bottlenose dolphin"
+        }
+      ]
+    },
+    {
+      "id": "7:7",
+      "row": 7,
+      "col": 7,
+      "lat0": 38.6,
+      "lon0": -27.6,
+      "centerLat": 38.7,
+      "centerLon": -27.5,
+      "polygon": [
+        [
+          -27.6,
+          38.6
+        ],
+        [
+          -27.400000000000002,
+          38.6
+        ],
+        [
+          -27.400000000000002,
+          38.800000000000004
+        ],
+        [
+          -27.6,
+          38.800000000000004
+        ],
+        [
+          -27.6,
+          38.6
+        ]
+      ],
+      "encounterCount": 48,
+      "yearlyEncounters": {
+        "2015": 5,
+        "2016": 5,
+        "2017": 23,
+        "2018": 11,
+        "2019": 4
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        2,
+        0,
+        3,
+        8,
+        20,
+        10,
+        3,
+        1,
+        0,
+        1
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137091": 11,
+        "urn:lsid:marinespecies.org:taxname:137119": 13,
+        "urn:lsid:marinespecies.org:taxname:137094": 3,
+        "urn:lsid:marinespecies.org:taxname:137107": 4,
+        "urn:lsid:marinespecies.org:taxname:137121": 1,
+        "urn:lsid:marinespecies.org:taxname:137111": 3,
+        "urn:lsid:marinespecies.org:taxname:137098": 2,
+        "urn:lsid:marinespecies.org:taxname:343899": 2,
+        "urn:lsid:marinespecies.org:taxname:137088": 1,
+        "urn:lsid:marinespecies.org:taxname:137127": 1,
+        "urn:lsid:marinespecies.org:taxname:137108": 2,
+        "urn:lsid:marinespecies.org:taxname:137089": 1,
+        "urn:lsid:marinespecies.org:taxname:137090": 2,
+        "urn:lsid:marinespecies.org:taxname:137096": 2
+      },
+      "earlyRate": 0,
+      "lateRate": 0.008485062754109953,
+      "declinePct": null,
+      "trendSlope": 0.000697522224627055,
+      "yearsWithEncounters": 5,
+      "confidenceScore": 0.6,
+      "isReliable": true,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 13,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137091",
+          "count": 11,
+          "scientificName": "Balaenoptera physalus",
+          "commonName": "Fin whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137107",
+          "count": 4,
+          "scientificName": "Stenella coeruleoalba",
+          "commonName": "Striped dolphin"
+        }
+      ]
+    },
+    {
+      "id": "6:8",
+      "row": 6,
+      "col": 8,
+      "lat0": 38.400000000000006,
+      "lon0": -27.4,
+      "centerLat": 38.50000000000001,
+      "centerLon": -27.299999999999997,
+      "polygon": [
+        [
+          -27.4,
+          38.400000000000006
+        ],
+        [
+          -27.2,
+          38.400000000000006
+        ],
+        [
+          -27.2,
+          38.60000000000001
+        ],
+        [
+          -27.4,
+          38.60000000000001
+        ],
+        [
+          -27.4,
+          38.400000000000006
+        ]
+      ],
+      "encounterCount": 381,
+      "yearlyEncounters": {
+        "2015": 75,
+        "2016": 78,
+        "2017": 99,
+        "2018": 78,
+        "2019": 51
+      },
+      "monthlyEncounters": [
+        4,
+        6,
+        5,
+        36,
+        9,
+        56,
+        75,
+        136,
+        31,
+        20,
+        2,
+        1
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137092": 5,
+        "urn:lsid:marinespecies.org:taxname:137091": 50,
+        "urn:lsid:marinespecies.org:taxname:137205": 11,
+        "urn:lsid:marinespecies.org:taxname:137098": 37,
+        "urn:lsid:marinespecies.org:taxname:137107": 26,
+        "urn:lsid:marinespecies.org:taxname:137094": 58,
+        "urn:lsid:marinespecies.org:taxname:137119": 62,
+        "urn:lsid:marinespecies.org:taxname:137111": 28,
+        "urn:lsid:marinespecies.org:taxname:137108": 50,
+        "urn:lsid:marinespecies.org:taxname:137121": 16,
+        "urn:lsid:marinespecies.org:taxname:137096": 6,
+        "urn:lsid:marinespecies.org:taxname:137127": 3,
+        "urn:lsid:marinespecies.org:taxname:137090": 8,
+        "urn:lsid:marinespecies.org:taxname:343899": 1,
+        "urn:lsid:marinespecies.org:taxname:137104": 2,
+        "urn:lsid:marinespecies.org:taxname:137088": 12,
+        "urn:lsid:marinespecies.org:taxname:137089": 2,
+        "urn:lsid:marinespecies.org:taxname:137087": 2,
+        "urn:lsid:marinespecies.org:taxname:137097": 2
+      },
+      "earlyRate": 0,
+      "lateRate": 0.06735018561074775,
+      "declinePct": null,
+      "trendSlope": 0.005498062336509614,
+      "yearsWithEncounters": 5,
+      "confidenceScore": 1,
+      "isReliable": true,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 62,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 58,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137091",
+          "count": 50,
+          "scientificName": "Balaenoptera physalus",
+          "commonName": "Fin whale"
+        }
+      ]
+    },
+    {
+      "id": "6:9",
+      "row": 6,
+      "col": 9,
+      "lat0": 38.400000000000006,
+      "lon0": -27.2,
+      "centerLat": 38.50000000000001,
+      "centerLon": -27.099999999999998,
+      "polygon": [
+        [
+          -27.2,
+          38.400000000000006
+        ],
+        [
+          -27,
+          38.400000000000006
+        ],
+        [
+          -27,
+          38.60000000000001
+        ],
+        [
+          -27.2,
+          38.60000000000001
+        ],
+        [
+          -27.2,
+          38.400000000000006
+        ]
+      ],
+      "encounterCount": 101,
+      "yearlyEncounters": {
+        "2015": 16,
+        "2016": 23,
+        "2017": 35,
+        "2018": 18,
+        "2019": 9
+      },
+      "monthlyEncounters": [
+        1,
+        2,
+        4,
+        2,
+        1,
+        11,
+        14,
+        32,
+        25,
+        4,
+        4,
+        1
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137091": 5,
+        "urn:lsid:marinespecies.org:taxname:137094": 20,
+        "urn:lsid:marinespecies.org:taxname:137119": 21,
+        "urn:lsid:marinespecies.org:taxname:137108": 11,
+        "urn:lsid:marinespecies.org:taxname:137107": 3,
+        "urn:lsid:marinespecies.org:taxname:137111": 18,
+        "urn:lsid:marinespecies.org:taxname:137098": 9,
+        "urn:lsid:marinespecies.org:taxname:137092": 1,
+        "urn:lsid:marinespecies.org:taxname:137205": 4,
+        "urn:lsid:marinespecies.org:taxname:137104": 1,
+        "urn:lsid:marinespecies.org:taxname:137089": 4,
+        "urn:lsid:marinespecies.org:taxname:137088": 4
+      },
+      "earlyRate": 0,
+      "lateRate": 0.017853986211773025,
+      "declinePct": null,
+      "trendSlope": 0.0013901598796099064,
+      "yearsWithEncounters": 5,
+      "confidenceScore": 1,
+      "isReliable": true,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 21,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 20,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137111",
+          "count": 18,
+          "scientificName": "Tursiops truncatus",
+          "commonName": "Common bottlenose dolphin"
+        }
+      ]
+    },
+    {
+      "id": "7:9",
+      "row": 7,
+      "col": 9,
+      "lat0": 38.6,
+      "lon0": -27.2,
+      "centerLat": 38.7,
+      "centerLon": -27.099999999999998,
+      "polygon": [
+        [
+          -27.2,
+          38.6
+        ],
+        [
+          -27,
+          38.6
+        ],
+        [
+          -27,
+          38.800000000000004
+        ],
+        [
+          -27.2,
+          38.800000000000004
+        ],
+        [
+          -27.2,
+          38.6
+        ]
+      ],
+      "encounterCount": 80,
+      "yearlyEncounters": {
+        "2015": 19,
+        "2016": 45,
+        "2017": 6,
+        "2018": 6,
+        "2019": 4
+      },
+      "monthlyEncounters": [
+        0,
+        2,
+        1,
+        0,
+        2,
+        5,
+        15,
+        28,
+        20,
+        4,
+        3,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137094": 49,
+        "urn:lsid:marinespecies.org:taxname:137111": 20,
+        "urn:lsid:marinespecies.org:taxname:137098": 6,
+        "urn:lsid:marinespecies.org:taxname:137108": 1,
+        "urn:lsid:marinespecies.org:taxname:137091": 3,
+        "urn:lsid:marinespecies.org:taxname:137104": 1
+      },
+      "earlyRate": 0,
+      "lateRate": 0.01414177125684992,
+      "declinePct": null,
+      "trendSlope": 0.0009195241639230249,
+      "yearsWithEncounters": 5,
+      "confidenceScore": 1,
+      "isReliable": true,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 49,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137111",
+          "count": 20,
+          "scientificName": "Tursiops truncatus",
+          "commonName": "Common bottlenose dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137098",
+          "count": 6,
+          "scientificName": "Grampus griseus",
+          "commonName": "Risso's dolphin"
+        }
+      ]
+    },
+    {
+      "id": "5:0",
+      "row": 5,
+      "col": 0,
+      "lat0": 38.2,
+      "lon0": -29,
+      "centerLat": 38.300000000000004,
+      "centerLon": -28.9,
+      "polygon": [
+        [
+          -29,
+          38.2
+        ],
+        [
+          -28.8,
+          38.2
+        ],
+        [
+          -28.8,
+          38.400000000000006
+        ],
+        [
+          -29,
+          38.400000000000006
+        ],
+        [
+          -29,
+          38.2
+        ]
+      ],
+      "encounterCount": 8,
+      "yearlyEncounters": {
+        "2015": 2,
+        "2016": 3,
+        "2017": 3
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        0,
+        0,
+        3,
+        0,
+        3,
+        2,
+        0,
+        0,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137094": 3,
+        "urn:lsid:marinespecies.org:taxname:137119": 3,
+        "urn:lsid:marinespecies.org:taxname:137090": 1,
+        "urn:lsid:marinespecies.org:taxname:137205": 1
+      },
+      "earlyRate": 0,
+      "lateRate": 0.0014141771256849921,
+      "declinePct": null,
+      "trendSlope": 0.00008191857478340364,
+      "yearsWithEncounters": 3,
+      "confidenceScore": 0.07500000000000001,
+      "isReliable": false,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 3,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 3,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137090",
+          "count": 1,
+          "scientificName": "Balaenoptera musculus",
+          "commonName": "Blue whale"
+        }
+      ]
+    },
+    {
+      "id": "6:7",
+      "row": 6,
+      "col": 7,
+      "lat0": 38.400000000000006,
+      "lon0": -27.6,
+      "centerLat": 38.50000000000001,
+      "centerLon": -27.5,
+      "polygon": [
+        [
+          -27.6,
+          38.400000000000006
+        ],
+        [
+          -27.400000000000002,
+          38.400000000000006
+        ],
+        [
+          -27.400000000000002,
+          38.60000000000001
+        ],
+        [
+          -27.6,
+          38.60000000000001
+        ],
+        [
+          -27.6,
+          38.400000000000006
+        ]
+      ],
+      "encounterCount": 10,
+      "yearlyEncounters": {
+        "2015": 1,
+        "2016": 4,
+        "2017": 5
+      },
+      "monthlyEncounters": [
+        0,
+        1,
+        2,
+        0,
+        0,
+        3,
+        2,
+        2,
+        0,
+        0,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137091": 2,
+        "urn:lsid:marinespecies.org:taxname:137090": 2,
+        "urn:lsid:marinespecies.org:taxname:137119": 3,
+        "urn:lsid:marinespecies.org:taxname:137111": 2,
+        "urn:lsid:marinespecies.org:taxname:137094": 1
+      },
+      "earlyRate": 0,
+      "lateRate": 0.00176772140710624,
+      "declinePct": null,
+      "trendSlope": 0.00011354544449420011,
+      "yearsWithEncounters": 3,
+      "confidenceScore": 0.09375,
+      "isReliable": false,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 3,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137091",
+          "count": 2,
+          "scientificName": "Balaenoptera physalus",
+          "commonName": "Fin whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137090",
+          "count": 2,
+          "scientificName": "Balaenoptera musculus",
+          "commonName": "Blue whale"
+        }
+      ]
+    },
+    {
+      "id": "6:4",
+      "row": 6,
+      "col": 4,
+      "lat0": 38.400000000000006,
+      "lon0": -28.2,
+      "centerLat": 38.50000000000001,
+      "centerLon": -28.099999999999998,
+      "polygon": [
+        [
+          -28.2,
+          38.400000000000006
+        ],
+        [
+          -28,
+          38.400000000000006
+        ],
+        [
+          -28,
+          38.60000000000001
+        ],
+        [
+          -28.2,
+          38.60000000000001
+        ],
+        [
+          -28.2,
+          38.400000000000006
+        ]
+      ],
+      "encounterCount": 14,
+      "yearlyEncounters": {
+        "2015": 3,
+        "2016": 3,
+        "2017": 1,
+        "2018": 6,
+        "2019": 1
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        2,
+        10,
+        0,
+        0,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137119": 12,
+        "urn:lsid:marinespecies.org:taxname:137108": 1,
+        "urn:lsid:marinespecies.org:taxname:137098": 1
+      },
+      "earlyRate": 0,
+      "lateRate": 0.002474809969948736,
+      "declinePct": null,
+      "trendSlope": 0.00020564916110338012,
+      "yearsWithEncounters": 5,
+      "confidenceScore": 0.175,
+      "isReliable": false,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 12,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137108",
+          "count": 1,
+          "scientificName": "Stenella frontalis",
+          "commonName": "Atlantic spotted dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137098",
+          "count": 1,
+          "scientificName": "Grampus griseus",
+          "commonName": "Risso's dolphin"
+        }
+      ]
+    },
+    {
+      "id": "0:18",
+      "row": 0,
+      "col": 18,
+      "lat0": 37.2,
+      "lon0": -25.4,
+      "centerLat": 37.300000000000004,
+      "centerLon": -25.299999999999997,
+      "polygon": [
+        [
+          -25.4,
+          37.2
+        ],
+        [
+          -25.2,
+          37.2
+        ],
+        [
+          -25.2,
+          37.400000000000006
+        ],
+        [
+          -25.4,
+          37.400000000000006
+        ],
+        [
+          -25.4,
+          37.2
+        ]
+      ],
+      "encounterCount": 19,
+      "yearlyEncounters": {
+        "2015": 1,
+        "2017": 6,
+        "2019": 12
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        9,
+        5,
+        3,
+        0,
+        2,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137108": 3,
+        "urn:lsid:marinespecies.org:taxname:137094": 3,
+        "urn:lsid:marinespecies.org:taxname:137119": 7,
+        "urn:lsid:marinespecies.org:taxname:137088": 1,
+        "urn:lsid:marinespecies.org:taxname:137091": 1,
+        "urn:lsid:marinespecies.org:taxname:137107": 1,
+        "urn:lsid:marinespecies.org:taxname:137098": 2,
+        "urn:lsid:marinespecies.org:taxname:137111": 1
+      },
+      "earlyRate": 0,
+      "lateRate": 0.003358670673501856,
+      "declinePct": null,
+      "trendSlope": 0.0004345180858533319,
+      "yearsWithEncounters": 3,
+      "confidenceScore": 0.17812499999999998,
+      "isReliable": false,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 7,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137108",
+          "count": 3,
+          "scientificName": "Stenella frontalis",
+          "commonName": "Atlantic spotted dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 3,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        }
+      ]
+    },
+    {
+      "id": "3:17",
+      "row": 3,
+      "col": 17,
+      "lat0": 37.800000000000004,
+      "lon0": -25.6,
+      "centerLat": 37.900000000000006,
+      "centerLon": -25.5,
+      "polygon": [
+        [
+          -25.6,
+          37.800000000000004
+        ],
+        [
+          -25.400000000000002,
+          37.800000000000004
+        ],
+        [
+          -25.400000000000002,
+          38.00000000000001
+        ],
+        [
+          -25.6,
+          38.00000000000001
+        ],
+        [
+          -25.6,
+          37.800000000000004
+        ]
+      ],
+      "encounterCount": 15,
+      "yearlyEncounters": {
+        "2015": 1,
+        "2016": 1,
+        "2018": 11,
+        "2019": 2
+      },
+      "monthlyEncounters": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        12,
+        1,
+        0,
+        1,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137094": 2,
+        "urn:lsid:marinespecies.org:taxname:137205": 2,
+        "urn:lsid:marinespecies.org:taxname:137119": 10,
+        "urn:lsid:marinespecies.org:taxname:137111": 1
+      },
+      "earlyRate": 0,
+      "lateRate": 0.00265158211065936,
+      "declinePct": null,
+      "trendSlope": 0.0002850516962159433,
+      "yearsWithEncounters": 4,
+      "confidenceScore": 0.1875,
+      "isReliable": false,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 10,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 2,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137205",
+          "count": 2,
+          "scientificName": "Caretta caretta",
+          "commonName": "Loggerhead sea turtle"
+        }
+      ]
+    },
+    {
+      "id": "3:16",
+      "row": 3,
+      "col": 16,
+      "lat0": 37.800000000000004,
+      "lon0": -25.8,
+      "centerLat": 37.900000000000006,
+      "centerLon": -25.7,
+      "polygon": [
+        [
+          -25.8,
+          37.800000000000004
+        ],
+        [
+          -25.6,
+          37.800000000000004
+        ],
+        [
+          -25.6,
+          38.00000000000001
+        ],
+        [
+          -25.8,
+          38.00000000000001
+        ],
+        [
+          -25.8,
+          37.800000000000004
+        ]
+      ],
+      "encounterCount": 272,
+      "yearlyEncounters": {
+        "2015": 9,
+        "2016": 4,
+        "2018": 225,
+        "2019": 34
+      },
+      "monthlyEncounters": [
+        0,
+        2,
+        2,
+        12,
+        2,
+        32,
+        69,
+        103,
+        37,
+        4,
+        8,
+        1
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137094": 15,
+        "urn:lsid:marinespecies.org:taxname:137119": 178,
+        "urn:lsid:marinespecies.org:taxname:137111": 23,
+        "urn:lsid:marinespecies.org:taxname:137108": 20,
+        "urn:lsid:marinespecies.org:taxname:137107": 9,
+        "urn:lsid:marinespecies.org:taxname:137121": 4,
+        "urn:lsid:marinespecies.org:taxname:137205": 8,
+        "urn:lsid:marinespecies.org:taxname:137096": 5,
+        "urn:lsid:marinespecies.org:taxname:137098": 7,
+        "urn:lsid:marinespecies.org:taxname:137206": 1,
+        "urn:lsid:marinespecies.org:taxname:137091": 1,
+        "urn:lsid:marinespecies.org:taxname:137088": 1
+      },
+      "earlyRate": 0,
+      "lateRate": 0.048082022273289726,
+      "declinePct": null,
+      "trendSlope": 0.0053805319585287425,
+      "yearsWithEncounters": 4,
+      "confidenceScore": 1,
+      "isReliable": true,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 178,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137111",
+          "count": 23,
+          "scientificName": "Tursiops truncatus",
+          "commonName": "Common bottlenose dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137108",
+          "count": 20,
+          "scientificName": "Stenella frontalis",
+          "commonName": "Atlantic spotted dolphin"
+        }
+      ]
+    },
+    {
+      "id": "4:16",
+      "row": 4,
+      "col": 16,
+      "lat0": 38,
+      "lon0": -25.8,
+      "centerLat": 38.1,
+      "centerLon": -25.7,
+      "polygon": [
+        [
+          -25.8,
+          38
+        ],
+        [
+          -25.6,
+          38
+        ],
+        [
+          -25.6,
+          38.2
+        ],
+        [
+          -25.8,
+          38.2
+        ],
+        [
+          -25.8,
+          38
+        ]
+      ],
+      "encounterCount": 34,
+      "yearlyEncounters": {
+        "2016": 1,
+        "2018": 33
+      },
+      "monthlyEncounters": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        10,
+        7,
+        15,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137107": 1,
+        "urn:lsid:marinespecies.org:taxname:137119": 22,
+        "urn:lsid:marinespecies.org:taxname:137098": 2,
+        "urn:lsid:marinespecies.org:taxname:137096": 2,
+        "urn:lsid:marinespecies.org:taxname:137111": 3,
+        "urn:lsid:marinespecies.org:taxname:137108": 2,
+        "urn:lsid:marinespecies.org:taxname:137094": 2
+      },
+      "earlyRate": 0,
+      "lateRate": 0.006010252784161216,
+      "declinePct": null,
+      "trendSlope": 0.0006400812596562039,
+      "yearsWithEncounters": 2,
+      "confidenceScore": 0.2125,
+      "isReliable": false,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 22,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137111",
+          "count": 3,
+          "scientificName": "Tursiops truncatus",
+          "commonName": "Common bottlenose dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137098",
+          "count": 2,
+          "scientificName": "Grampus griseus",
+          "commonName": "Risso's dolphin"
+        }
+      ]
+    },
+    {
+      "id": "4:1",
+      "row": 4,
+      "col": 1,
+      "lat0": 38,
+      "lon0": -28.8,
+      "centerLat": 38.1,
+      "centerLon": -28.7,
+      "polygon": [
+        [
+          -28.8,
+          38
+        ],
+        [
+          -28.6,
+          38
+        ],
+        [
+          -28.6,
+          38.2
+        ],
+        [
+          -28.8,
+          38.2
+        ],
+        [
+          -28.8,
+          38
+        ]
+      ],
+      "encounterCount": 1,
+      "yearlyEncounters": {
+        "2016": 1
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137119": 1
+      },
+      "earlyRate": 0,
+      "lateRate": 0.00017677214071062401,
+      "declinePct": null,
+      "trendSlope": 0.00001152693460385764,
+      "yearsWithEncounters": 1,
+      "confidenceScore": 0.003125,
+      "isReliable": false,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 1,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        }
+      ]
+    },
+    {
+      "id": "5:5",
+      "row": 5,
+      "col": 5,
+      "lat0": 38.2,
+      "lon0": -28,
+      "centerLat": 38.300000000000004,
+      "centerLon": -27.9,
+      "polygon": [
+        [
+          -28,
+          38.2
+        ],
+        [
+          -27.8,
+          38.2
+        ],
+        [
+          -27.8,
+          38.400000000000006
+        ],
+        [
+          -28,
+          38.400000000000006
+        ],
+        [
+          -28,
+          38.2
+        ]
+      ],
+      "encounterCount": 12,
+      "yearlyEncounters": {
+        "2017": 1,
+        "2018": 5,
+        "2019": 6
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        4,
+        7,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137094": 1,
+        "urn:lsid:marinespecies.org:taxname:137107": 1,
+        "urn:lsid:marinespecies.org:taxname:137119": 8,
+        "urn:lsid:marinespecies.org:taxname:137088": 1,
+        "urn:lsid:marinespecies.org:taxname:137098": 1
+      },
+      "earlyRate": 0,
+      "lateRate": 0.0021212656885274883,
+      "declinePct": null,
+      "trendSlope": 0.00028502838233921513,
+      "yearsWithEncounters": 3,
+      "confidenceScore": 0.11249999999999999,
+      "isReliable": false,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 8,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 1,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137107",
+          "count": 1,
+          "scientificName": "Stenella coeruleoalba",
+          "commonName": "Striped dolphin"
+        }
+      ]
+    },
+    {
+      "id": "0:17",
+      "row": 0,
+      "col": 17,
+      "lat0": 37.2,
+      "lon0": -25.6,
+      "centerLat": 37.300000000000004,
+      "centerLon": -25.5,
+      "polygon": [
+        [
+          -25.6,
+          37.2
+        ],
+        [
+          -25.400000000000002,
+          37.2
+        ],
+        [
+          -25.400000000000002,
+          37.400000000000006
+        ],
+        [
+          -25.6,
+          37.400000000000006
+        ],
+        [
+          -25.6,
+          37.2
+        ]
+      ],
+      "encounterCount": 5,
+      "yearlyEncounters": {
+        "2017": 1,
+        "2019": 4
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        3,
+        1,
+        0,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137089": 1,
+        "urn:lsid:marinespecies.org:taxname:137090": 1,
+        "urn:lsid:marinespecies.org:taxname:137119": 2,
+        "urn:lsid:marinespecies.org:taxname:137108": 1
+      },
+      "earlyRate": 0,
+      "lateRate": 0.00088386070355312,
+      "declinePct": null,
+      "trendSlope": 0.00013069704479969077,
+      "yearsWithEncounters": 2,
+      "confidenceScore": 0.03125,
+      "isReliable": false,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 2,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137089",
+          "count": 1,
+          "scientificName": "Balaenoptera edeni",
+          "commonName": "Balaenoptera edeni"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137090",
+          "count": 1,
+          "scientificName": "Balaenoptera musculus",
+          "commonName": "Blue whale"
+        }
+      ]
+    },
+    {
+      "id": "0:16",
+      "row": 0,
+      "col": 16,
+      "lat0": 37.2,
+      "lon0": -25.8,
+      "centerLat": 37.300000000000004,
+      "centerLon": -25.7,
+      "polygon": [
+        [
+          -25.8,
+          37.2
+        ],
+        [
+          -25.6,
+          37.2
+        ],
+        [
+          -25.6,
+          37.400000000000006
+        ],
+        [
+          -25.8,
+          37.400000000000006
+        ],
+        [
+          -25.8,
+          37.2
+        ]
+      ],
+      "encounterCount": 2,
+      "yearlyEncounters": {
+        "2017": 1,
+        "2020": 1
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137094": 1,
+        "urn:lsid:marinespecies.org:taxname:137119": 1
+      },
+      "earlyRate": 0,
+      "lateRate": 0.00035354428142124803,
+      "declinePct": null,
+      "trendSlope": 0.00014651770644652469,
+      "yearsWithEncounters": 2,
+      "confidenceScore": 0.0125,
+      "isReliable": false,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 1,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 1,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        }
+      ]
+    },
+    {
+      "id": "5:9",
+      "row": 5,
+      "col": 9,
+      "lat0": 38.2,
+      "lon0": -27.2,
+      "centerLat": 38.300000000000004,
+      "centerLon": -27.099999999999998,
+      "polygon": [
+        [
+          -27.2,
+          38.2
+        ],
+        [
+          -27,
+          38.2
+        ],
+        [
+          -27,
+          38.400000000000006
+        ],
+        [
+          -27.2,
+          38.400000000000006
+        ],
+        [
+          -27.2,
+          38.2
+        ]
+      ],
+      "encounterCount": 1,
+      "yearlyEncounters": {
+        "2018": 1
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137094": 1
+      },
+      "earlyRate": 0,
+      "lateRate": 0.00017677214071062401,
+      "declinePct": null,
+      "trendSlope": 0.000019047100759165018,
+      "yearsWithEncounters": 1,
+      "confidenceScore": 0.003125,
+      "isReliable": false,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 1,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        }
+      ]
+    },
+    {
+      "id": "7:4",
+      "row": 7,
+      "col": 4,
+      "lat0": 38.6,
+      "lon0": -28.2,
+      "centerLat": 38.7,
+      "centerLon": -28.099999999999998,
+      "polygon": [
+        [
+          -28.2,
+          38.6
+        ],
+        [
+          -28,
+          38.6
+        ],
+        [
+          -28,
+          38.800000000000004
+        ],
+        [
+          -28.2,
+          38.800000000000004
+        ],
+        [
+          -28.2,
+          38.6
+        ]
+      ],
+      "encounterCount": 1,
+      "yearlyEncounters": {
+        "2018": 1
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137094": 1
+      },
+      "earlyRate": 0,
+      "lateRate": 0.00017677214071062401,
+      "declinePct": null,
+      "trendSlope": 0.000019047100759165018,
+      "yearsWithEncounters": 1,
+      "confidenceScore": 0.003125,
+      "isReliable": false,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 1,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        }
+      ]
+    },
+    {
+      "id": "8:0",
+      "row": 8,
+      "col": 0,
+      "lat0": 38.800000000000004,
+      "lon0": -29,
+      "centerLat": 38.900000000000006,
+      "centerLon": -28.9,
+      "polygon": [
+        [
+          -29,
+          38.800000000000004
+        ],
+        [
+          -28.8,
+          38.800000000000004
+        ],
+        [
+          -28.8,
+          39.00000000000001
+        ],
+        [
+          -29,
+          39.00000000000001
+        ],
+        [
+          -29,
+          38.800000000000004
+        ]
+      ],
+      "encounterCount": 5,
+      "yearlyEncounters": {
+        "2018": 5
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137119": 5
+      },
+      "earlyRate": 0,
+      "lateRate": 0.00088386070355312,
+      "declinePct": null,
+      "trendSlope": 0.00009523550379581888,
+      "yearsWithEncounters": 1,
+      "confidenceScore": 0.015625,
+      "isReliable": false,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 5,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        }
+      ]
+    },
+    {
+      "id": "4:17",
+      "row": 4,
+      "col": 17,
+      "lat0": 38,
+      "lon0": -25.6,
+      "centerLat": 38.1,
+      "centerLon": -25.5,
+      "polygon": [
+        [
+          -25.6,
+          38
+        ],
+        [
+          -25.400000000000002,
+          38
+        ],
+        [
+          -25.400000000000002,
+          38.2
+        ],
+        [
+          -25.6,
+          38.2
+        ],
+        [
+          -25.6,
+          38
+        ]
+      ],
+      "encounterCount": 2,
+      "yearlyEncounters": {
+        "2018": 2
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137108": 1,
+        "urn:lsid:marinespecies.org:taxname:137119": 1
+      },
+      "earlyRate": 0,
+      "lateRate": 0.00035354428142124803,
+      "declinePct": null,
+      "trendSlope": 0.000038094201518330036,
+      "yearsWithEncounters": 1,
+      "confidenceScore": 0.00625,
+      "isReliable": false,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137108",
+          "count": 1,
+          "scientificName": "Stenella frontalis",
+          "commonName": "Atlantic spotted dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 1,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        }
+      ]
+    },
+    {
+      "id": "6:6",
+      "row": 6,
+      "col": 6,
+      "lat0": 38.400000000000006,
+      "lon0": -27.8,
+      "centerLat": 38.50000000000001,
+      "centerLon": -27.7,
+      "polygon": [
+        [
+          -27.8,
+          38.400000000000006
+        ],
+        [
+          -27.6,
+          38.400000000000006
+        ],
+        [
+          -27.6,
+          38.60000000000001
+        ],
+        [
+          -27.8,
+          38.60000000000001
+        ],
+        [
+          -27.8,
+          38.400000000000006
+        ]
+      ],
+      "encounterCount": 3,
+      "yearlyEncounters": {
+        "2019": 3
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137107": 1,
+        "urn:lsid:marinespecies.org:taxname:137094": 1,
+        "urn:lsid:marinespecies.org:taxname:137205": 1
+      },
+      "earlyRate": 0,
+      "lateRate": 0.0005303164221318721,
+      "declinePct": null,
+      "trendSlope": 0.0000886437506155789,
+      "yearsWithEncounters": 1,
+      "confidenceScore": 0.009375,
+      "isReliable": false,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137107",
+          "count": 1,
+          "scientificName": "Stenella coeruleoalba",
+          "commonName": "Striped dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137094",
+          "count": 1,
+          "scientificName": "Delphinus delphis",
+          "commonName": "Common dolphin"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137205",
+          "count": 1,
+          "scientificName": "Caretta caretta",
+          "commonName": "Loggerhead sea turtle"
+        }
+      ]
+    },
+    {
+      "id": "6:5",
+      "row": 6,
+      "col": 5,
+      "lat0": 38.400000000000006,
+      "lon0": -28,
+      "centerLat": 38.50000000000001,
+      "centerLon": -27.9,
+      "polygon": [
+        [
+          -28,
+          38.400000000000006
+        ],
+        [
+          -27.8,
+          38.400000000000006
+        ],
+        [
+          -27.8,
+          38.60000000000001
+        ],
+        [
+          -28,
+          38.60000000000001
+        ],
+        [
+          -28,
+          38.400000000000006
+        ]
+      ],
+      "encounterCount": 1,
+      "yearlyEncounters": {
+        "2019": 1
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137098": 1
+      },
+      "earlyRate": 0,
+      "lateRate": 0.00017677214071062401,
+      "declinePct": null,
+      "trendSlope": 0.000029547916871861014,
+      "yearsWithEncounters": 1,
+      "confidenceScore": 0.003125,
+      "isReliable": false,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137098",
+          "count": 1,
+          "scientificName": "Grampus griseus",
+          "commonName": "Risso's dolphin"
+        }
+      ]
+    },
+    {
+      "id": "5:7",
+      "row": 5,
+      "col": 7,
+      "lat0": 38.2,
+      "lon0": -27.6,
+      "centerLat": 38.300000000000004,
+      "centerLon": -27.5,
+      "polygon": [
+        [
+          -27.6,
+          38.2
+        ],
+        [
+          -27.400000000000002,
+          38.2
+        ],
+        [
+          -27.400000000000002,
+          38.400000000000006
+        ],
+        [
+          -27.6,
+          38.400000000000006
+        ],
+        [
+          -27.6,
+          38.2
+        ]
+      ],
+      "encounterCount": 6,
+      "yearlyEncounters": {
+        "2020": 6
+      },
+      "monthlyEncounters": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        6,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "speciesCounts": {
+        "urn:lsid:marinespecies.org:taxname:137119": 4,
+        "urn:lsid:marinespecies.org:taxname:137121": 1,
+        "urn:lsid:marinespecies.org:taxname:137108": 1
+      },
+      "earlyRate": 0,
+      "lateRate": 0.0010606328442637441,
+      "declinePct": null,
+      "trendSlope": 0.0008040739748056512,
+      "yearsWithEncounters": 1,
+      "confidenceScore": 0.01875,
+      "isReliable": false,
+      "topSpecies": [
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137119",
+          "count": 4,
+          "scientificName": "Physeter macrocephalus",
+          "commonName": "Sperm whale"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137121",
+          "count": 1,
+          "scientificName": "Mesoplodon bidens",
+          "commonName": "Mesoplodon bidens"
+        },
+        {
+          "speciesId": "urn:lsid:marinespecies.org:taxname:137108",
+          "count": 1,
+          "scientificName": "Stenella frontalis",
+          "commonName": "Atlantic spotted dolphin"
+        }
+      ]
+    }
+  ]
+}

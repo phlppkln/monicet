@@ -1,0 +1,195 @@
+{
+	"type": "FeatureCollection",
+	"features": [
+		{
+			"type": "Feature",
+			"properties": {
+				"name": "Azores Region",
+				"kind": "envelope"
+			},
+			"geometry": {
+				"type": "Polygon",
+				"coordinates": [
+					[
+						[-31.6, 36.7],
+						[-24.5, 36.7],
+						[-24.5, 39.9],
+						[-31.6, 39.9],
+						[-31.6, 36.7]
+					]
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"properties": {
+				"name": "Corvo",
+				"kind": "island"
+			},
+			"geometry": {
+				"type": "Polygon",
+				"coordinates": [
+					[
+						[-31.145, 39.655],
+						[-31.09, 39.655],
+						[-31.09, 39.72],
+						[-31.145, 39.72],
+						[-31.145, 39.655]
+					]
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"properties": {
+				"name": "Flores",
+				"kind": "island"
+			},
+			"geometry": {
+				"type": "Polygon",
+				"coordinates": [
+					[
+						[-31.32, 39.35],
+						[-31.05, 39.35],
+						[-31.05, 39.56],
+						[-31.32, 39.56],
+						[-31.32, 39.35]
+					]
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"properties": {
+				"name": "Faial",
+				"kind": "island"
+			},
+			"geometry": {
+				"type": "Polygon",
+				"coordinates": [
+					[
+						[-28.83, 38.5],
+						[-28.57, 38.5],
+						[-28.57, 38.68],
+						[-28.83, 38.68],
+						[-28.83, 38.5]
+					]
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"properties": {
+				"name": "Pico",
+				"kind": "island"
+			},
+			"geometry": {
+				"type": "Polygon",
+				"coordinates": [
+					[
+						[-28.62, 38.34],
+						[-28.2, 38.34],
+						[-28.2, 38.56],
+						[-28.62, 38.56],
+						[-28.62, 38.34]
+					]
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"properties": {
+				"name": "Sao Jorge",
+				"kind": "island"
+			},
+			"geometry": {
+				"type": "Polygon",
+				"coordinates": [
+					[
+						[-28.3, 38.56],
+						[-27.72, 38.56],
+						[-27.72, 38.76],
+						[-28.3, 38.76],
+						[-28.3, 38.56]
+					]
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"properties": {
+				"name": "Graciosa",
+				"kind": "island"
+			},
+			"geometry": {
+				"type": "Polygon",
+				"coordinates": [
+					[
+						[-28.09, 39.0],
+						[-27.92, 39.0],
+						[-27.92, 39.1],
+						[-28.09, 39.1],
+						[-28.09, 39.0]
+					]
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"properties": {
+				"name": "Terceira",
+				"kind": "island"
+			},
+			"geometry": {
+				"type": "Polygon",
+				"coordinates": [
+					[
+						[-27.42, 38.62],
+						[-27.08, 38.62],
+						[-27.08, 38.82],
+						[-27.42, 38.82],
+						[-27.42, 38.62]
+					]
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"properties": {
+				"name": "Sao Miguel",
+				"kind": "island"
+			},
+			"geometry": {
+				"type": "Polygon",
+				"coordinates": [
+					[
+						[-25.9, 37.66],
+						[-25.06, 37.66],
+						[-25.06, 37.95],
+						[-25.9, 37.95],
+						[-25.9, 37.66]
+					]
+				]
+			}
+		},
+		{
+			"type": "Feature",
+			"properties": {
+				"name": "Santa Maria",
+				"kind": "island"
+			},
+			"geometry": {
+				"type": "Polygon",
+				"coordinates": [
+					[
+						[-25.25, 36.87],
+						[-24.93, 36.87],
+						[-24.93, 37.1],
+						[-25.25, 37.1],
+						[-25.25, 36.87]
+					]
+				]
+			}
+		}
+	]
+}
