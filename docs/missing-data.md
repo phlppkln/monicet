@@ -239,6 +239,11 @@ decision note in `docs/`.
 
 ---
 
+Planned feature that turns this guide into an interactive comparison:
+[`ideas/imputation-lab.md`](ideas/imputation-lab.md).
+
+---
+
 ## Further reading
 
 - Little & Rubin, _Statistical Analysis with Missing Data_ (3rd ed., 2019) —

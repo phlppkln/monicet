@@ -13,6 +13,14 @@ Numbers quoted below come from `docs/data-profile.md` (`pnpm data:profile`).
 
 ---
 
+## 0. Feature ideas
+
+- **Imputation Lab** — choose a gap-filling method and watch the whole page
+  rebuild from the filled data, to compare methods' strengths and
+  weaknesses. Full note: [`docs/ideas/imputation-lab.md`](docs/ideas/imputation-lab.md).
+
+---
+
 ## 1. Data & methodology
 
 ### D-1 The "decline" metric mostly measures changes in who was recording [verified]

@@ -66,7 +66,7 @@ scripts/
   lib/dwca.ts                  TSV reader with header validation
 public/data/                   committed, app-loaded data (JSON + basemap GeoJSON)
 data/raw/                      raw archive (gitignored)
-docs/                          dataset notes, data dictionary, learning material
+docs/                          dataset notes, data dictionary, learning material, ideas/
 ISSUES.md                      known problems and ideas — the backlog
 ```
 
