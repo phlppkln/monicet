@@ -1,7 +1,7 @@
 {
   "meta": {
     "source": "MONICET Darwin Core Archive",
-    "generatedAt": "2026-10-15T19:54:19.281Z",
+    "generatedAt": "2026-10-15T20:37:45.110Z",
     "binSizeDegrees": 0.2,
     "totalSampleEvents": 29400,
     "totalCruiseEvents": 8455,
@@ -9,7 +9,7 @@
     "totalUniqueSpeciesEncounters": 30050,
     "excludedNonSpeciesRows": 361,
     "rowsWithoutMatchingEvent": 0,
-    "cruisesWithoutPositionsAtSea": 80,
+    "cruisesWithoutPositionsAtSea": 76,
     "years": [
       2009,
       2010,
@@ -7519,10 +7519,10 @@
           37.6
         ]
       ],
-      "cruises": 581,
-      "share": 0.0687,
+      "cruises": 582,
+      "share": 0.0688,
       "cruisesByIsland": {
-        "São Miguel": 580,
+        "São Miguel": 581,
         "Terceira": 0,
         "Faial/Pico": 1
       }
@@ -7555,12 +7555,12 @@
           37.6
         ]
       ],
-      "cruises": 2209,
-      "share": 0.2613,
+      "cruises": 2171,
+      "share": 0.2568,
       "cruisesByIsland": {
-        "São Miguel": 2188,
+        "São Miguel": 2169,
         "Terceira": 0,
-        "Faial/Pico": 21
+        "Faial/Pico": 2
       }
     },
     {
@@ -7591,10 +7591,10 @@
           37.6
         ]
       ],
-      "cruises": 2907,
-      "share": 0.3438,
+      "cruises": 2909,
+      "share": 0.3441,
       "cruisesByIsland": {
-        "São Miguel": 2907,
+        "São Miguel": 2909,
         "Terceira": 0,
         "Faial/Pico": 0
       }
@@ -8203,12 +8203,12 @@
           38.2
         ]
       ],
-      "cruises": 623,
-      "share": 0.0737,
+      "cruises": 625,
+      "share": 0.0739,
       "cruisesByIsland": {
         "São Miguel": 1,
         "Terceira": 0,
-        "Faial/Pico": 622
+        "Faial/Pico": 624
       }
     },
     {
@@ -8671,10 +8671,10 @@
           38.400000000000006
         ]
       ],
-      "cruises": 235,
-      "share": 0.0278,
+      "cruises": 236,
+      "share": 0.0279,
       "cruisesByIsland": {
-        "São Miguel": 0,
+        "São Miguel": 1,
         "Terceira": 235,
         "Faial/Pico": 0
       }

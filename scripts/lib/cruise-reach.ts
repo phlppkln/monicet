@@ -1,14 +1,14 @@
 // "Where do boats go?" — which grid cells each cruise reached.
 //
-// The archive has no boat tracks. A cruise's footprintWKT is a MULTIPOINT of
-// harbour → the positions logged at its sightings → harbour. So the only
-// positions at sea are where the boat stopped for animals: a cruise that
-// searched an area and found nothing leaves no trace there. This measures
-// where boats *recorded* being, which is biased toward where animals were
-// found (ISSUES.md D-10).
+// The archive has no boat tracks. The only positions at sea are those logged
+// at sightings (each sighting's footprintWKT: a POINT, or an arrival →
+// departure LINESTRING). A cruise that searched an area and found nothing
+// leaves no trace there. This measures where boats *recorded* being, which
+// is biased toward where animals were found (ISSUES.md D-10).
 //
-// Harbour points are dropped (see positionsAtSea); otherwise every cruise
-// would count in its harbour cell and drown out everything else.
+// The cruise's own footprintWKT (harbour → sightings → harbour) is not used:
+// its arrival point is wrong for most cruises, some cruises end on a
+// sighting, and some have a harbour in the middle (ISSUES.md D-19).
 
 export type LonLat = [number, number];
 
@@ -27,19 +27,6 @@ export function parseWktPoints(wkt: string): LonLat[] {
 				Number.isFinite(xy[0]) &&
 				Number.isFinite(xy[1])
 		) as LonLat[];
-}
-
-/**
- * Positions of a cruise away from the harbour: the footprint without its
- * first point (departure harbour) and last point (arrival harbour).
- *
- * Why by position and not by matching the harbour coordinates: the arrival
- * point is wrong for 5,261 of 8,455 cruises. It is Ponta Delgada even for
- * boats from Horta or Angra (ISSUES.md D-19), so a coordinate match would let
- * those through as "positions at sea" off São Miguel.
- */
-export function positionsAtSea(footprint: LonLat[]): LonLat[] {
-	return footprint.slice(1, -1);
 }
 
 /** Distinct cell ids a cruise reached; a cell counts once per cruise. */

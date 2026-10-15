@@ -22,7 +22,6 @@ import type {
 import {
 	cellsReached,
 	parseWktPoints,
-	positionsAtSea,
 	type LonLat,
 } from "./lib/cruise-reach.ts";
 import {
@@ -230,14 +229,21 @@ export function buildData(
 				island: islandGroupOf(harbour[0]),
 				year,
 			});
-			cruisePositions.set(
-				row.eventID,
-				positionsAtSea(parseWktPoints(row.footprintWKT ?? ""))
-			);
+			if (!cruisePositions.has(row.eventID)) {
+				cruisePositions.set(row.eventID, []);
+			}
 			continue;
 		}
 
 		if (row.type !== "sample") continue;
+
+		// Positions at sea come from the cruise's own sightings (POINT or
+		// arrival → departure LINESTRING), not from the cruise footprint,
+		// whose harbour points are unreliable (ISSUES.md D-19).
+		const cruiseId = row.parentEventID;
+		const positions = cruisePositions.get(cruiseId) ?? [];
+		positions.push(...parseWktPoints(row.footprintWKT ?? ""));
+		cruisePositions.set(cruiseId, positions);
 
 		const lat = Number.parseFloat(row.decimalLatitude);
 		const lon = Number.parseFloat(row.decimalLongitude);

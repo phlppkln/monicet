@@ -166,9 +166,12 @@ A cruise's `footprintWKT` is departure harbour → sighting positions →
 arrival harbour. The departure always matches the cruise's harbour, but the
 arrival is `-25.66444 37.73472` (Ponta Delgada) for 5,261 of 8,455 cruises,
 including all 2,027 Faial/Pico and 411 Terceira cruises, which cannot have
-ended 100–300 km away. It looks like a data-entry default. The build drops
-first and last points (`scripts/lib/cruise-reach.ts`), so `cruiseCells` is
-not affected; anything else reading footprints must do the same.
+ended 100–300 km away. It looks like a data-entry default. The structure
+isn't even consistent: 82 cruises end on a sighting position instead of a
+harbour, and 66 have a harbour point in the middle. The build therefore
+ignores cruise footprints and takes positions from the cruise's sighting
+events (`scripts/build-data.ts`, `scripts/lib/cruise-reach.ts`); anything
+else needing positions should do the same.
 
 ---
 
