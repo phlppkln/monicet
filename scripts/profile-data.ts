@@ -7,19 +7,11 @@
 import { writeFileSync } from "node:fs";
 import path from "node:path";
 
+import { MONTH_LABELS as MONTHS } from "../src/lib/format.ts";
+import { ISLAND_GROUPS as ISLANDS, islandGroupOf } from "./lib/certainty.ts";
 import { PROJECT_ROOT, readTable, type Row } from "./lib/dwca.ts";
 
 const OUT = path.join(PROJECT_ROOT, "docs/data-profile.md");
-const MONTHS = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(" ");
-
-// Cruise rows carry the home-harbour position, so longitude separates the
-// island groups cleanly (Faial and Pico harbours are too close to split).
-function islandGroup(lon: number) {
-	if (lon > -26.5) return "São Miguel";
-	if (lon > -27.6) return "Terceira";
-	return "Faial/Pico";
-}
-const ISLANDS = ["São Miguel", "Terceira", "Faial/Pico"];
 
 const count = <K>(map: Map<K, number>, key: K, by = 1) =>
 	map.set(key, (map.get(key) ?? 0) + by);
@@ -49,7 +41,8 @@ function main() {
 	const islandOfCruise = new Map<string, string>();
 	for (const c of cruises) {
 		count(cruiseYM, `${year(c)}-${month(c)}`);
-		const island = islandGroup(Number(c.decimalLongitude));
+		// Same rule as the app data (scripts/lib/certainty.ts).
+		const island = islandGroupOf(Number(c.decimalLongitude));
 		islandOfCruise.set(c.eventID, island);
 		count(cruiseIsland, `${year(c)}|${island}`);
 	}

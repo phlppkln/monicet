@@ -24,6 +24,7 @@ import {
 	parseWktPoints,
 	type LonLat,
 } from "./lib/cruise-reach.ts";
+import { MONTH_LABELS } from "../src/lib/format.ts";
 import {
 	computeSpeciesCertainty,
 	islandGroupOf,
@@ -35,21 +36,6 @@ import { MAP_DATA_PATH, readTable, tablePath, type Row } from "./lib/dwca.ts";
 const BIN_SIZE_DEGREES = 0.2;
 const RELIABLE_MIN_ENCOUNTERS = 24;
 const RELIABLE_MIN_YEARS = 3;
-
-const MONTH_LABELS = [
-	"Jan",
-	"Feb",
-	"Mar",
-	"Apr",
-	"May",
-	"Jun",
-	"Jul",
-	"Aug",
-	"Sep",
-	"Oct",
-	"Nov",
-	"Dec",
-];
 
 // The archive has no vernacular names; these cover the species seen.
 // Anything missing falls back to the scientific name.
