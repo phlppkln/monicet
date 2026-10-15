@@ -99,3 +99,15 @@ test("topCruiseCells sorts by cruises and limits", () => {
 		["b", "c"]
 	);
 });
+
+test("cellDominance gives tied species the same label", () => {
+	const c = cell({
+		speciesCounts: { a: 3, b: 3, c: 2, d: 2, e: 1 },
+		topSpecies: top(["a", "b", "c"]),
+	});
+	assert.equal(cellDominance(c, "a"), "dominant");
+	assert.equal(cellDominance(c, "b"), "dominant");
+	assert.equal(cellDominance(c, "c"), "notable");
+	assert.equal(cellDominance(c, "d"), "notable");
+	assert.equal(cellDominance(c, "e"), "occasional");
+});
