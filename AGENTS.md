@@ -35,14 +35,19 @@ In practice:
   `ISSUES.md`.
 - Ask before making product decisions; don't guess.
 
-### Naming: "direction" means two things
+### Naming: directions and views
 
 The two sub-projects are called **directions**. Inside Three Ways of
-Looking, the page copy also labels its three visualisations "Direction 1 /
-3 / 4" (D1, D3, D4). That copy predates the split and is kept as it is
-(`ISSUES.md` C-8). In code and docs, call those three the
-**visualisations** (D1, D3, D4) and reserve **direction** for the
-sub-projects.
+Looking, the three visualisations are the **views**, shown in this order:
+
+| View         | Component                                                           | Question                     | Old name                       |
+| ------------ | ------------------------------------------------------------------- | ---------------------------- | ------------------------------ |
+| The Observer | `FieldJournal.vue`                                                  | "What did I see?"            | D4, "The Field Journal"        |
+| The External | `shared-ui/CellMapExplorer.vue` (species, seasonality, boats modes) | still open                   | D1, "Honest Instability"       |
+| The Animal   | `SpeciesAsCharacter.vue`                                            | "Where will I meet my kind?" | D3, "The Species as Character" |
+
+Older notes (`ISSUES.md`, `docs/`) still say D1, D3 and D4; use the table
+to translate.
 
 Stack: **Vue 3 (`<script setup>`) + TypeScript + Vite**, **D3 v7** (full
 package), **Sass**. Routing is a ~30-line hash router (`src/router.ts`); there
@@ -81,23 +86,25 @@ src/
   views/                       one view per page; views hold page copy
     LandingView.vue            title, intro, one button per direction
     ThreeWaysOfLookingView.vue intro, comparison cards, the three visualisations, footer
-    FillingTheGapsView.vue     title + subtitle (direction not built yet)
+    FillingTheGapsView.vue     title, subtitle, the decline map (dataset to fill)
   components/
     directions/
       three-ways-of-looking/   components used only by this direction
-        HonestInstability.vue  D1 — encounter-rate change, reliability as opacity
-        SpeciesAsCharacter.vue D3 — one species: distribution / dominance, sparkline
-        FieldJournal.vue       D4 — active years per cell, click → logbook panel
-        DirectionSection.vue   tag + heading + framing text around one visualisation
+        FieldJournal.vue       The Observer — active years per cell, click → logbook panel
+        SpeciesAsCharacter.vue The Animal — one species: distribution / dominance, sparkline
+        ViewSection.vue        heading + framing text around one view
       filling-the-gaps/        components used only by this direction (empty)
     shared-ui/                 components used by more than one view
+      CellMapExplorer.vue      grid-cell map with modes (prop), basemaps, layer toggle:
+                               The External (species / seasonality / boats) and
+                               Filling the Gaps (decline: the dataset to fill)
       ModeSwitch.vue           pill-button option group (v-model)
       BackLink.vue             "← MONICET" link to the landing page
   data/
     useMonicetData.ts          fetch + module-level cache (one request per page load)
     selectors.ts               pure derivations over the dataset (+ selectors.test.ts)
   lib/                         framework-free helpers
-    map.ts                     shared D3 basemap: projection, graticule, islands, zoom, cell paths
+    map.ts                     shared D3 basemap: projection, graticule, islands, tiles, zoom, cell paths
     legend.ts, tooltip.ts      gradient legend, hover tooltip
     format.ts, chartTokens.ts  number/label formatting, chart colors
   types/monicet.ts             JSON schema types — shared with scripts/
@@ -173,6 +180,7 @@ on something:
   app JSON and how it is computed.
 - [`docs/data-profile.md`](docs/data-profile.md) — generated coverage and gap
   tables.
+- [`docs/basemaps.md`](docs/basemaps.md) — tile basemaps (satellite, terrain, …) under the D3 maps: how, sources, licences.
 - [`docs/missing-data.md`](docs/missing-data.md) — learning guide on
   gap-filling, with exercises mapped to files in this repo.
 

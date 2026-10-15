@@ -4,7 +4,7 @@ import type { MonicetGridCell } from "../types/monicet.ts";
 
 /** "37.70N, 25.70W" — or with degree signs: "37.70°N, 25.70°W". */
 export function formatCellLabel(
-	cell: MonicetGridCell,
+	cell: Pick<MonicetGridCell, "centerLat" | "centerLon">,
 	{ degrees = false, separator = ", " } = {}
 ) {
 	const deg = degrees ? "°" : "";

@@ -2,6 +2,7 @@
 	<div class="monicet-explorer">
 		<div class="toolbar">
 			<ModeSwitch
+				v-if="modeOptions.length > 1"
 				v-model="mode"
 				:options="modeOptions"
 				label="Insight modes"
@@ -39,6 +40,29 @@
 					<span>Show only reliable cells</span>
 				</label>
 			</div>
+
+			<div class="controls-row">
+				<ModeSwitch
+					v-model="basemapId"
+					:options="basemapOptions"
+					label="Basemap"
+					variant="compact"
+				/>
+				<label class="checkbox">
+					<input type="checkbox" v-model="showDataLayer" />
+					<span>Show data layer</span>
+				</label>
+				<label class="checkbox" v-if="showDataLayer">
+					<span>Layer opacity</span>
+					<input
+						type="range"
+						min="0.2"
+						max="1"
+						step="0.05"
+						v-model.number="dataLayerOpacity"
+					/>
+				</label>
+			</div>
 		</div>
 
 		<div v-if="loading" class="status">Preparing MONICET map...</div>
@@ -47,7 +71,18 @@
 		<div v-else class="layout">
 			<div class="map-shell">
 				<div ref="mapContainer" class="map-container"></div>
-				<div class="legend-shell">
+				<div v-if="attribution.length" class="attribution">
+					<template
+						v-for="(credit, i) in attribution"
+						:key="credit.href"
+					>
+						<span v-if="i > 0"> · </span>
+						<a :href="credit.href" target="_blank" rel="noopener">{{
+							credit.text
+						}}</a>
+					</template>
+				</div>
+				<div v-show="showDataLayer" class="legend-shell">
 					<div class="legend-title">{{ copy.legendTitle }}</div>
 					<div ref="legendContainer" class="legend-container"></div>
 				</div>
@@ -101,6 +136,35 @@
 					</ul>
 				</div>
 
+				<div v-else-if="mode === 'boats'" class="insight-block">
+					<div class="metric-row">
+						<span>Cruises in the archive</span>
+						<strong>{{
+							mapData?.meta.totalCruiseEvents.toLocaleString()
+						}}</strong>
+					</div>
+					<div class="metric-row">
+						<span>Cells reached</span>
+						<strong>{{
+							mapData?.cruiseCells?.length ?? "n/a"
+						}}</strong>
+					</div>
+					<div class="metric-row">
+						<span>Cruises with no position at sea</span>
+						<strong>{{
+							mapData?.meta.cruisesWithoutPositionsAtSea ?? "n/a"
+						}}</strong>
+					</div>
+
+					<h4>Most visited</h4>
+					<ul class="insight-list">
+						<li v-for="cell in busiestCruiseCells" :key="cell.id">
+							<div>{{ cell.label }}</div>
+							<strong>{{ cell.cruises }}</strong>
+						</li>
+					</ul>
+				</div>
+
 				<div v-else class="insight-block">
 					<div class="metric-row">
 						<span>Best month overall</span>
@@ -127,7 +191,11 @@
 				</div>
 
 				<div class="caveat">
-					{{ mapData?.meta.caveats[0] }}
+					{{
+						mode === "boats"
+							? "Positions are only logged at sightings. A boat that searched an area and found nothing leaves no trace there, so this is where boats stopped for animals, not every place they looked."
+							: mapData?.meta.caveats[0]
+					}}
 				</div>
 			</aside>
 		</div>
@@ -135,9 +203,12 @@
 </template>
 
 <script setup lang="ts">
-// Direction 1 — "Honest Instability". Three insight modes on one map:
-// encounter-rate change (with reliability shown as opacity), a species
-// distribution, and a month's encounter distribution.
+// Grid-cell map with switchable insight modes, basemaps and a toggleable
+// data layer. Formerly D1, "Honest Instability". Each page picks its modes:
+// - The External: species, seasonality, boats ("where do boats go?")
+// - Filling the Gaps: decline (encounter-rate change, reliability as
+//   opacity), the dataset to interpolate
+// Fork it into the direction's folder once a page needs more than modes.
 import * as d3 from "d3";
 import {
 	computed,
@@ -156,6 +227,7 @@ import {
 	indexCells,
 	speciesHotspots,
 	speciesOptions,
+	topCruiseCells,
 	topDecliningCells,
 } from "@/data/selectors";
 import { useMonicetData } from "@/data/useMonicetData";
@@ -173,27 +245,57 @@ import {
 	toPercent,
 } from "@/lib/format";
 import { renderGradientLegend } from "@/lib/legend";
-import { drawBaseMap, SAND_THEME } from "@/lib/map";
+import { BASEMAPS, drawBaseMap, type BasemapId } from "@/lib/map";
 import { hideTooltip, showTooltip } from "@/lib/tooltip";
-import type { MonicetGridCell, MonicetInsightMode } from "@/types/monicet";
+import type {
+	MonicetCruiseCell,
+	MonicetGridCell,
+	MonicetInsightMode,
+} from "@/types/monicet";
 
-const { mapData, basemap, error, load } = useMonicetData();
+const { mapData, basemap, mapLines, error, load, loadMapLines } =
+	useMonicetData();
 const loading = ref(true);
 
-const mode = ref<MonicetInsightMode>("decline");
+const props = defineProps<{
+	/** Modes this instance offers, in order; the first is the default. */
+	modes: MonicetInsightMode[];
+}>();
+
+const mode = ref<MonicetInsightMode>(props.modes[0]);
 const selectedSpeciesId = ref("");
 const selectedMonth = ref(6);
 const reliableOnly = ref(true);
+
+// Basemap pilot: tiles under the D3 cells, switchable, with the cells as a
+// toggleable layer. No zoom yet (docs/basemaps.md).
+const basemapId = ref<BasemapId>("basic");
+const showDataLayer = ref(true);
+// Whole-layer opacity, so the basemap shows through. Per-cell opacity still
+// encodes reliability on top of this.
+const dataLayerOpacity = ref(0.65);
+const basemapOptions = (Object.keys(BASEMAPS) as BasemapId[]).map((id) => ({
+	value: id,
+	label: BASEMAPS[id].label,
+}));
+const attribution = computed(
+	() => BASEMAPS[basemapId.value].tiles?.attribution ?? []
+);
 
 const mapContainer = ref<HTMLElement | null>(null);
 const legendContainer = ref<HTMLElement | null>(null);
 const tooltipRef = ref<HTMLElement | null>(null);
 
-const modeOptions: { value: MonicetInsightMode; label: string }[] = [
-	{ value: "decline", label: "Where Sightings Decline" },
-	{ value: "species", label: "Species By Location" },
-	{ value: "seasonality", label: "Best Time Of Year" },
-];
+const MODE_LABELS: Record<MonicetInsightMode, string> = {
+	decline: "Where Sightings Decline",
+	species: "Species By Location",
+	seasonality: "Best Time Of Year",
+	boats: "Where Do Boats Go?",
+};
+const modeOptions = props.modes.map((value) => ({
+	value,
+	label: MODE_LABELS[value],
+}));
 
 const monthOptions = MONTH_NAMES.map((label, i) => ({ value: i + 1, label }));
 
@@ -218,6 +320,12 @@ const MODE_COPY: Record<
 		panelIntro:
 			"Select a month to explore where encounters concentrate and which species dominate sightings during that period.",
 		legendTitle: "Encounters in selected month",
+	},
+	boats: {
+		panelTitle: "Where Do Boats Go?",
+		panelIntro:
+			"Cells are colored by how many cruises logged a position there. A cruise counts once per cell, however many sightings it had in it. The scale is logarithmic: the busiest cell has thousands of cruises, most have a few dozen.",
+		legendTitle: "Cruises that reached the cell (log scale)",
 	},
 };
 
@@ -268,6 +376,14 @@ const hotspots = computed(() => {
 	});
 });
 
+const busiestCruiseCells = computed(() =>
+	topCruiseCells(mapData.value?.cruiseCells ?? []).map((cell) => ({
+		id: cell.id,
+		label: formatCellLabel(cell),
+		cruises: `${cell.cruises.toLocaleString()} (${toPercent(cell.share)})`,
+	}))
+);
+
 const bestMonthLabel = computed(() => {
 	const best = mapData.value?.meta.bestMonthOverall;
 	if (!best) return "n/a";
@@ -306,6 +422,24 @@ function onCellHover(
 		<div class="tip-line">${valueLabel}</div>
 		<div class="tip-line">Total encounters: ${cell.encounterCount.toLocaleString()}</div>
 		<div class="tip-line">Top species: ${topSpecies || "n/a"}</div>
+	`
+	);
+}
+
+function onCruiseCellHover(event: MouseEvent, cell: MonicetCruiseCell) {
+	if (!tooltipRef.value || !mapContainer.value) return;
+	const islands = Object.entries(cell.cruisesByIsland)
+		.filter(([, n]) => n > 0)
+		.map(([island, n]) => `${island}: ${n.toLocaleString()}`)
+		.join(" | ");
+	showTooltip(
+		tooltipRef.value,
+		mapContainer.value,
+		event,
+		`
+		<div class="tip-title">${formatCellLabel(cell)}</div>
+		<div class="tip-line">${cell.cruises.toLocaleString()} cruises (${toPercent(cell.share)} of all)</div>
+		<div class="tip-line">From: ${islands}</div>
 	`
 	);
 }
@@ -387,18 +521,101 @@ function declineEncoding(visibleCells: MonicetGridCell[]): Encoding {
 
 // ─── Render ──────────────────────────────────────────────────────────────────
 
+let dataLayer: d3.Selection<SVGGElement, unknown, null, undefined> | null =
+	null;
+
+function applyDataLayerVisibility() {
+	dataLayer
+		?.attr("display", showDataLayer.value ? null : "none")
+		.attr("opacity", dataLayerOpacity.value);
+}
+
+// Soft edges for the 0.2° cells: a Gaussian blur over the rendered layer.
+// This is purely visual: values are not interpolated, and colour only
+// bleeds a few pixels past each cell, so no cell gains data it doesn't have.
+// (Real spatial smoothing — kernel density, kriging — would estimate values
+// between cells; that is a gap-filling question for Filling the Gaps.)
+// The blur radius is a quarter of a cell's on-screen width, so the look
+// stays the same at any map size.
+function addSoftEdgeFilter(
+	svg: d3.Selection<SVGSVGElement, unknown, null, undefined>,
+	cellWidthPx: number
+) {
+	svg.append("defs")
+		.append("filter")
+		.attr("id", "soft-cells")
+		.attr("x", "-10%")
+		.attr("y", "-10%")
+		.attr("width", "120%")
+		.attr("height", "120%")
+		.append("feGaussianBlur")
+		.attr("stdDeviation", Math.max(1, cellWidthPx / 4));
+	return "url(#soft-cells)";
+}
+
+/**
+ * "Where do boats go?": cruises per cell on a log scale. Linear would show
+ * the three harbour-side cells off São Miguel (2,000–2,900 cruises each)
+ * and leave every other cell near-white; log keeps the 1–50 range readable.
+ */
+function drawCruiseCells(
+	layer: d3.Selection<SVGGElement, unknown, null, undefined>,
+	cellPath: (cell: Pick<MonicetCruiseCell, "polygon">) => string
+) {
+	const cruiseCells = mapData.value?.cruiseCells ?? [];
+	const max = Math.max(2, d3.max(cruiseCells, (c) => c.cruises) ?? 2);
+	const scale = d3
+		.scaleSequentialLog(d3.interpolateRgb(...CHART_SEQUENTIAL_TEAL))
+		.domain([1, max]);
+
+	if (legendContainer.value) {
+		renderGradientLegend(
+			legendContainer.value,
+			"legend-boats",
+			(t) => scale(Math.pow(max, t)),
+			{
+				left: "1",
+				center: `${Math.round(Math.sqrt(max))}`,
+				right: max.toLocaleString(),
+			}
+		);
+	}
+
+	layer
+		.selectAll("path")
+		.data(cruiseCells)
+		.join("path")
+		.attr("d", cellPath)
+		.attr("fill", (cell) => scale(cell.cruises))
+		.on("mousemove", (event: MouseEvent, cell) =>
+			onCruiseCellHover(event, cell)
+		)
+		.on("mouseleave", () => hideTooltip(tooltipRef.value));
+}
+
 function renderMap() {
 	if (!mapContainer.value || !mapData.value || !basemap.value) return;
 
 	hideTooltip(tooltipRef.value);
-	const { mapGroup, cellPath, drawIslandLabels } = drawBaseMap(
-		mapContainer.value,
-		basemap.value,
-		{ theme: SAND_THEME, fallbackWidth: 960, minHeight: 420, aspect: 0.62 }
-	);
+	const { theme, tiles } = BASEMAPS[basemapId.value];
+	const {
+		svg,
+		mapGroup,
+		cellPath,
+		cellWidthPx,
+		raiseLines,
+		drawIslandLabels,
+	} = drawBaseMap(mapContainer.value, basemap.value, {
+		theme,
+		tiles,
+		lines: mapLines.value,
+		fallbackWidth: 960,
+		minHeight: 420,
+		aspect: 0.62,
+	});
 
 	// With "reliable only" on, unreliable cells are hidden entirely. With it
-	// off, they are drawn faint and dashed so the uncertainty stays visible.
+	// off, they are drawn faint so the uncertainty stays visible.
 	const showUncertainty = mode.value === "decline" && !reliableOnly.value;
 	const visibleCells = mapData.value.gridCells.filter(
 		(cell) =>
@@ -422,22 +639,35 @@ function renderMap() {
 							cell.monthlyEncounters[selectedMonth.value - 1] ?? 0
 					);
 
-	mapGroup
+	dataLayer = mapGroup
 		.append("g")
+		.attr("filter", addSoftEdgeFilter(svg, cellWidthPx));
+	applyDataLayerVisibility();
+
+	if (mode.value === "boats") {
+		drawCruiseCells(dataLayer, cellPath);
+		raiseLines();
+		drawIslandLabels();
+		return;
+	}
+
+	dataLayer
 		.selectAll("path")
 		.data(visibleCells)
 		.join("path")
 		.attr("d", cellPath)
 		.attr("fill", (cell) => encoding.color(encoding.value(cell)))
-		.attr("stroke", (cell) => (isFaint(cell) ? "#bbb" : "#ffffff"))
-		.attr("stroke-width", 0.8)
-		.attr("stroke-dasharray", (cell) => (isFaint(cell) ? "3,2" : null))
-		.attr("opacity", (cell) => (isFaint(cell) ? 0.28 : 0.92))
+		// No borders: under the blur they would only add a grey haze.
+		// Unreliable cells stay recognisable by being much fainter.
+		.attr("opacity", (cell) => (isFaint(cell) ? 0.3 : 1))
 		.on("mousemove", (event: MouseEvent, cell) =>
 			onCellHover(event, cell, encoding.value(cell))
 		)
 		.on("mouseleave", () => hideTooltip(tooltipRef.value));
 
+	// Wireframe: coastlines on top of the cells, so the map
+	// stays readable through the data.
+	raiseLines();
 	drawIslandLabels();
 }
 
@@ -461,9 +691,24 @@ onBeforeUnmount(() => {
 	window.removeEventListener("resize", renderMap);
 });
 
-watch([mode, selectedSpeciesId, selectedMonth, reliableOnly], () => {
+watch([mode, selectedSpeciesId, selectedMonth, reliableOnly, basemapId], () => {
 	if (loading.value) return;
 	renderMap();
+});
+
+// Coastlines are fetched on first use; redraw once they arrive.
+watch(basemapId, async (id) => {
+	if (id !== "wireframe" || mapLines.value) return;
+	await loadMapLines();
+	if (!loading.value) renderMap();
+});
+
+watch(dataLayerOpacity, applyDataLayerVisibility);
+
+// Toggling the data layer only hides it: no redraw, so tiles don't reload.
+watch(showDataLayer, () => {
+	hideTooltip(tooltipRef.value);
+	applyDataLayerVisibility();
 });
 </script>
 
@@ -560,6 +805,19 @@ watch([mode, selectedSpeciesId, selectedMonth, reliableOnly], () => {
 
 .map-container {
 	min-height: 420px;
+}
+
+.attribution {
+	padding: 0.2rem 0.6rem;
+	font-size: 0.66rem;
+	line-height: 1.3;
+	text-align: right;
+	color: $text-secondary;
+	background: rgba($surface, 0.92);
+
+	a {
+		color: inherit;
+	}
 }
 
 .legend-shell {

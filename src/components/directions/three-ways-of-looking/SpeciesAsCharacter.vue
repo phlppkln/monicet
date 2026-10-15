@@ -135,7 +135,7 @@
 </template>
 
 <script setup lang="ts">
-// Direction 3 — "The Species as Character". One species reorganises the
+// The Animal (formerly D3, "The Species as Character"). One species reorganises the
 // map: raw encounter distribution or habitat role (dominance), plus a
 // yearly sparkline and monthly bars in the side panel.
 import * as d3 from "d3";

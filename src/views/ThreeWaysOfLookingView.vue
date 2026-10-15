@@ -15,12 +15,16 @@
 		<div class="compare-grid">
 			<div
 				v-for="card in compareCards"
-				:key="card.tag"
+				:key="card.title"
 				class="compare-card"
 			>
-				<div class="compare-tag">{{ card.tag }}</div>
 				<div class="compare-title">{{ card.title }}</div>
-				<div class="compare-question">{{ card.question }}</div>
+				<div v-if="card.question" class="compare-question">
+					{{ card.question }}
+				</div>
+				<div v-else class="compare-question open">
+					Question still open
+				</div>
 				<div class="compare-entry">Entry: {{ card.entry }}</div>
 				<div class="compare-var">
 					Visual variable: {{ card.variable }}
@@ -28,18 +32,29 @@
 			</div>
 		</div>
 
-		<DirectionSection tag="Direction 1" title="Honest Instability">
+		<ViewSection title="The Observer">
 			<template #reflection>
-				The map as a reliability audit. Encounter-rate trends are
-				colored by magnitude — but when you uncheck
-				<em>Emphasise reliable cells</em>, cells with too few surveys to
-				be trusted appear at low opacity with a dashed border. The
-				uncertainty is in the picture, not buried in a caveat.
+				The observer as the subject. The default map shows not what was
+				found, but where people went — cells shaded by how many of the
+				twelve years had any recorded survey activity. Click a cell to
+				open its field record: coordinates, active years, species list,
+				and a year-by-year count.
 			</template>
-			<HonestInstability />
-		</DirectionSection>
+			<FieldJournal />
+		</ViewSection>
 
-		<DirectionSection tag="Direction 3" title="The Species as Character">
+		<ViewSection title="The External">
+			<template #reflection>
+				The map from outside. Where are the animals encountered, when in
+				the year, and where do the boats actually go? Switch to
+				<em>Where Do Boats Go?</em> to see the effort behind every other
+				map: the cells that cruises reached, which is also where
+				sightings can happen at all.
+			</template>
+			<CellMapExplorer :modes="['species', 'seasonality', 'boats']" />
+		</ViewSection>
+
+		<ViewSection title="The Animal">
 			<template #reflection>
 				The animal as the entry point — not the map. Selecting a species
 				reorganises the map around that one creature: where it
@@ -49,57 +64,49 @@
 				count.
 			</template>
 			<SpeciesAsCharacter />
-		</DirectionSection>
-
-		<DirectionSection tag="Direction 4" title="The Field Journal">
-			<template #reflection>
-				The observer as the subject. The default map shows not what was
-				found, but where people went — cells shaded by how many of the
-				twelve years had any recorded survey activity. Click a cell to
-				open its field record: coordinates, active years, species list,
-				and a year-by-year count.
-			</template>
-			<FieldJournal />
-		</DirectionSection>
+		</ViewSection>
 
 		<footer class="data-footer">
 			<strong>Data:</strong> MONICET Darwin Core Archive (2009–2020).
-			Decline rates are encounter-rate trends, not direct population
-			estimates. Rates in D1 are normalized by cruise counts per year.
+			Counts are encounters and cruises per grid cell, not population
+			estimates.
 		</footer>
 	</div>
 </template>
 
 <script setup lang="ts">
 // Direction "Three Ways of Looking": one archive, three questions, three
-// visualisations (labelled "Direction 1/3/4" in the page copy).
-import DirectionSection from "@/components/directions/three-ways-of-looking/DirectionSection.vue";
+// visualisations — the observer, the external, the animal.
 import FieldJournal from "@/components/directions/three-ways-of-looking/FieldJournal.vue";
-import HonestInstability from "@/components/directions/three-ways-of-looking/HonestInstability.vue";
 import SpeciesAsCharacter from "@/components/directions/three-ways-of-looking/SpeciesAsCharacter.vue";
+import ViewSection from "@/components/directions/three-ways-of-looking/ViewSection.vue";
 import BackLink from "@/components/shared-ui/BackLink.vue";
+import CellMapExplorer from "@/components/shared-ui/CellMapExplorer.vue";
 
-const compareCards = [
+// question: null renders as "Question still open".
+const compareCards: {
+	title: string;
+	question: string | null;
+	entry: string;
+	variable: string;
+}[] = [
 	{
-		tag: "D1",
-		title: "Honest Instability",
-		question: "Where is the data trustworthy?",
-		entry: "the map",
-		variable: "confidence opacity",
-	},
-	{
-		tag: "D3",
-		title: "The Species as Character",
-		question: "Who are the animals?",
-		entry: "a species",
-		variable: "territory + time",
-	},
-	{
-		tag: "D4",
-		title: "The Field Journal",
-		question: "Where did people look?",
+		title: "The Observer",
+		question: "What did I see?",
 		entry: "a location",
 		variable: "survey effort",
+	},
+	{
+		title: "The External",
+		question: null,
+		entry: "the map",
+		variable: "encounters and cruises per cell",
+	},
+	{
+		title: "The Animal",
+		question: "Where will I meet my kind?",
+		entry: "a species",
+		variable: "territory + time",
 	},
 ];
 </script>
@@ -146,15 +153,6 @@ h1 {
 	gap: 0.3rem;
 }
 
-.compare-tag {
-	font-size: 0.7rem;
-	font-weight: 700;
-	letter-spacing: 0.06em;
-	text-transform: uppercase;
-	color: $primary;
-	margin-bottom: 0.1rem;
-}
-
 .compare-title {
 	font-size: 0.95rem;
 	font-weight: 700;
@@ -165,6 +163,10 @@ h1 {
 	font-size: 0.85rem;
 	color: $text-secondary;
 	font-style: italic;
+
+	&.open {
+		opacity: 0.6;
+	}
 }
 
 .compare-entry,

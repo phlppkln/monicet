@@ -6,11 +6,17 @@
 // them without a bundler.
 
 import type {
+	MonicetCruiseCell,
 	MonicetGridCell,
 	MonicetMapData,
 	MonicetMonthlySummary,
 	MonicetSpeciesSummary,
 } from "../types/monicet.ts";
+
+/** Cells reached by the most cruises, most first. */
+export function topCruiseCells(cells: MonicetCruiseCell[], limit = 5) {
+	return [...cells].sort((a, b) => b.cruises - a.cruises).slice(0, limit);
+}
 
 export type DominanceCategory =
 	"absent" | "occasional" | "notable" | "dominant";

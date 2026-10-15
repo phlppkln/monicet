@@ -80,10 +80,56 @@ build.
 The extent of the sighting positions, plus the grid origin
 (`minLatGrid`, `minLonGrid`).
 
+## `cruiseCells`
+
+"Where do boats go?" One entry per 0.2° cell (same grid as `gridCells`)
+that at least one cruise logged a position in. Built by
+`scripts/lib/cruise-reach.ts`; used by The External, mode "Where Do Boats
+Go?".
+
+| Field                                    | Meaning                                                          |
+| ---------------------------------------- | ---------------------------------------------------------------- |
+| `id`, `row`, `col`, `center…`, `polygon` | as in `gridCells`                                                |
+| `cruises`                                | distinct cruises with ≥ 1 position in the cell; once per cruise  |
+| `share`                                  | `cruises / all cruises`                                          |
+| `cruisesByIsland`                        | the same count split by the cruise's island group (home harbour) |
+
+Positions come from the cruise's `footprintWKT` without its first and last
+point (departure and arrival harbour; the arrival is often wrong, ISSUES
+D-19). What is left are positions logged **at sightings**, so this shows
+where boats stopped for animals, not where they searched. Cruises with no
+position left are counted in `meta.cruisesWithoutPositionsAtSea` (80).
+
+## `speciesCertainty`
+
+"How certain are the humans?" One entry per species, sorted by encounters.
+Built by `scripts/lib/certainty.ts`. Planned for The Animal; no view uses it
+yet. None of these numbers measures how many animals there are; they
+describe the observers.
+
+| Field                                   | Meaning                                                                                                                        |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `encounters`                            | (sighting event, species) pairs, as everywhere else                                                                            |
+| `cruisesWithSpecies`                    | cruises that saw the species at least once. Robust to one group being logged as several sightings                              |
+| `share`, `shareLow`, `shareHigh`        | `cruisesWithSpecies / all cruises`, with a 95% Wilson interval. Pools all islands, so see `byIsland` before comparing          |
+| `idCaution`                             | text if the data paper names the species as hard to identify at sea, else `null`                                               |
+| `byIsland[]`                            | one entry per island group (São Miguel, Terceira, Faial/Pico), from the cruise's home-harbour longitude                        |
+| `byIsland.cruises`                      | all cruises from that island group (the effort)                                                                                |
+| `byIsland.cruisesWithSpecies`, `share…` | as above, but only that island's cruises in numerator and denominator. This avoids the mixed-denominator problem of ISSUES D-1 |
+| `byIsland.yearsActive`, `yearsDetected` | years the island had any cruise / of those, years the species was seen                                                         |
+| `byIsland.companies`, `companiesActive` | companies that recorded the species there / companies active there at all                                                      |
+| `byIsland.topCompanyShare`              | share of the species' encounters there logged by one company; near 1 means one crew's records carry the whole picture          |
+
+Why the Wilson interval: it stays inside [0, 1] and does not collapse to
+zero width at 0 sightings, unlike p ± 1.96·SE. Alternatives are noted in the
+code.
+
 ## Which view uses what
 
-| View                    | Fields                                                                                                                                         |
-| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| D1 Honest Instability   | `declinePct`, `isReliable`, `speciesCounts`, `monthlyEncounters`, `topSpecies`, `monthlySummaries`, `meta.bestMonthOverall`, `meta.caveats[0]` |
-| D3 Species as Character | `speciesSummaries`, `speciesCounts`, `topSpecies` (dominance)                                                                                  |
-| D4 Field Journal        | `yearsWithEncounters`, `yearlyEncounters`, `speciesCounts`, `confidenceScore`, `isReliable`                                                    |
+| View                                                   | Fields                                                                                                                                                                           |
+| ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The Observer (`FieldJournal.vue`)                      | `yearsWithEncounters`, `yearlyEncounters`, `speciesCounts`, `confidenceScore`, `isReliable`                                                                                      |
+| The External (`CellMapExplorer.vue`)                   | species: `speciesCounts`, `topSpecies`; seasonality: `monthlyEncounters`, `monthlySummaries`, `meta.bestMonthOverall`; boats: `cruiseCells`, `meta.cruisesWithoutPositionsAtSea` |
+| The Animal (`SpeciesAsCharacter.vue`)                  | `speciesSummaries`, `speciesCounts`, `topSpecies` (dominance)                                                                                                                    |
+| Filling the Gaps (`CellMapExplorer.vue`, decline mode) | `declinePct`, `isReliable`, `meta.caveats[0]`                                                                                                                                    |
+| not shown yet                                          | `speciesCertainty` (planned for The Animal)                                                                                                                                      |

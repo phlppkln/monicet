@@ -135,7 +135,7 @@
 </template>
 
 <script setup lang="ts">
-// Direction 4 — "The Field Journal". The map shows how many years each
+// The Observer (formerly D4, "The Field Journal"). The map shows how many years each
 // cell was active; clicking a cell opens its logbook record.
 import * as d3 from "d3";
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from "vue";

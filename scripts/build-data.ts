@@ -11,12 +11,26 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 import type {
+	IslandGroup,
+	MonicetCruiseCell,
 	MonicetGridCell,
 	MonicetMapData,
 	MonicetMonthlySummary,
 	MonicetSpeciesLookupEntry,
 	MonicetTopSpeciesEntry,
 } from "../src/types/monicet.ts";
+import {
+	cellsReached,
+	parseWktPoints,
+	positionsAtSea,
+	type LonLat,
+} from "./lib/cruise-reach.ts";
+import {
+	computeSpeciesCertainty,
+	islandGroupOf,
+	type CruiseInput,
+	type EncounterInput,
+} from "./lib/certainty.ts";
 import { MAP_DATA_PATH, readTable, tablePath, type Row } from "./lib/dwca.ts";
 
 const BIN_SIZE_DEGREES = 0.2;
@@ -184,6 +198,8 @@ export function buildData(
 	const sampleEvents = new Map<string, SampleEvent>();
 	const cruisesByYear = new Map<number, number>();
 	const cruisesByMonth = new Map<string, number>();
+	const cruiseInputs: CruiseInput[] = [];
+	const cruisePositions = new Map<string, LonLat[]>();
 
 	let minLat = Number.POSITIVE_INFINITY;
 	let maxLat = Number.NEGATIVE_INFINITY;
@@ -204,6 +220,19 @@ export function buildData(
 			cruisesByMonth.set(
 				monthKey,
 				(cruisesByMonth.get(monthKey) ?? 0) + 1
+			);
+			const harbour: LonLat = [
+				Number.parseFloat(row.decimalLongitude),
+				Number.parseFloat(row.decimalLatitude),
+			];
+			cruiseInputs.push({
+				cruiseId: row.eventID,
+				island: islandGroupOf(harbour[0]),
+				year,
+			});
+			cruisePositions.set(
+				row.eventID,
+				positionsAtSea(parseWktPoints(row.footprintWKT ?? ""))
 			);
 			continue;
 		}
@@ -249,6 +278,8 @@ export function buildData(
 		speciesCounts: new Map<string, number>(),
 	}));
 
+	const encounterInputs: EncounterInput[] = [];
+
 	let excludedNonSpeciesRows = 0;
 	let rowsWithoutEvent = 0;
 
@@ -269,6 +300,11 @@ export function buildData(
 		const dedupeKey = `${row.eventID}::${row.scientificNameID}`;
 		if (uniqueEncounterSpecies.has(dedupeKey)) continue;
 		uniqueEncounterSpecies.add(dedupeKey);
+		encounterInputs.push({
+			speciesId: row.scientificNameID,
+			cruiseId: event.parentEventID,
+			company: row.recordedBy,
+		});
 
 		const geometry = getCellGeometry(
 			event.lat,
@@ -488,6 +524,9 @@ export function buildData(
 			totalUniqueSpeciesEncounters: uniqueEncounterSpecies.size,
 			excludedNonSpeciesRows,
 			rowsWithoutMatchingEvent: rowsWithoutEvent,
+			cruisesWithoutPositionsAtSea: [...cruisePositions.values()].filter(
+				(positions) => positions.length === 0
+			).length,
 			years,
 			dateRange: {
 				start: earliestDate ? earliestDate.toISOString() : null,
@@ -515,7 +554,78 @@ export function buildData(
 		monthlySummaries,
 		speciesSummaries,
 		gridCells,
+		cruiseCells: buildCruiseCells(
+			cruiseInputs,
+			cruisePositions,
+			minLatGrid,
+			minLonGrid
+		),
+		speciesCertainty: computeSpeciesCertainty(
+			cruiseInputs,
+			encounterInputs,
+			(id) => speciesLookup[id]?.scientificName ?? id
+		),
 	};
+}
+
+// ── Where do boats go? ───────────────────────────────────────────────────
+// Distinct cruises per grid cell, from positions logged at sea. Same grid
+// origin as gridCells so the two layers line up.
+function buildCruiseCells(
+	cruises: CruiseInput[],
+	positionsByCruise: Map<string, LonLat[]>,
+	minLatGrid: number,
+	minLonGrid: number
+): MonicetCruiseCell[] {
+	const geometryOf = (lon: number, lat: number) =>
+		getCellGeometry(lat, lon, minLatGrid, minLonGrid, BIN_SIZE_DEGREES);
+	const cells = new Map<string, MonicetCruiseCell>();
+
+	for (const cruise of cruises) {
+		const positions = positionsByCruise.get(cruise.cruiseId) ?? [];
+		const reached = cellsReached(
+			positions,
+			(lon, lat) => geometryOf(lon, lat).id
+		);
+		for (const id of reached) {
+			let cell = cells.get(id);
+			if (!cell) {
+				const [row, col] = id.split(":").map(Number);
+				const g = getCellGeometry(
+					minLatGrid + (row + 0.5) * BIN_SIZE_DEGREES,
+					minLonGrid + (col + 0.5) * BIN_SIZE_DEGREES,
+					minLatGrid,
+					minLonGrid,
+					BIN_SIZE_DEGREES
+				);
+				cell = {
+					id: g.id,
+					row: g.row,
+					col: g.col,
+					centerLat: g.centerLat,
+					centerLon: g.centerLon,
+					polygon: g.polygon,
+					cruises: 0,
+					share: 0,
+					cruisesByIsland: {
+						"São Miguel": 0,
+						Terceira: 0,
+						"Faial/Pico": 0,
+					} satisfies Record<IslandGroup, number>,
+				};
+				cells.set(id, cell);
+			}
+			cell.cruises += 1;
+			cell.cruisesByIsland[cruise.island] += 1;
+		}
+	}
+
+	return [...cells.values()]
+		.map((cell) => ({
+			...cell,
+			share: Number((cell.cruises / cruises.length).toFixed(4)),
+		}))
+		.sort((a, b) => a.row - b.row || a.col - b.col);
 }
 
 /** Compare two builds, ignoring the generatedAt timestamp. */

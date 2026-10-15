@@ -1,12 +1,13 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import type { MonicetGridCell } from "../types/monicet.ts";
+import type { MonicetCruiseCell, MonicetGridCell } from "../types/monicet.ts";
 import {
 	activeYearRange,
 	averageDecline,
 	bestMonthIndex,
 	cellDominance,
+	topCruiseCells,
 	topDecliningCells,
 } from "./selectors.ts";
 
@@ -87,4 +88,14 @@ test("activeYearRange spans first to last year with encounters", () => {
 		"2010 – 2013"
 	);
 	assert.equal(activeYearRange(cell({}), [2009]), "no active years recorded");
+});
+
+test("topCruiseCells sorts by cruises and limits", () => {
+	const make = (id: string, cruises: number) =>
+		({ id, cruises }) as MonicetCruiseCell;
+	const top = topCruiseCells([make("a", 3), make("b", 9), make("c", 5)], 2);
+	assert.deepEqual(
+		top.map((c) => c.id),
+		["b", "c"]
+	);
 });

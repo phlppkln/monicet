@@ -144,6 +144,32 @@ absent rather than "zero". The grid origin is `floor(min / 0.2) · 0.2` of
 the data, so new data could shift the whole grid. Cell coordinates also carry
 floating-point noise (e.g. `37.400000000000006`).
 
+### D-17 One company's name doesn't match where its cruises ran [verified]
+
+`Terra_do_Pico` (named after Pico) has 131 cruises whose home harbour is on
+São Miguel's north coast (−25.82, 37.89), and all 977 of its sightings are
+off São Miguel too. Island grouping by harbour longitude is therefore right,
+but anyone reading `recordedBy` as "the island" would put it on Pico.
+
+### D-18 Seven cruises carry records from two companies [verified]
+
+E.g. `cruise1201` (Picos_de_Aventura + Terra_Azul), `cruise4149`
+(Horta_Cetaceos + Seacolors). One trip should have one operator; these look
+like data-entry or merge slips. They make `companies` / `companiesActive` in
+`speciesCertainty` slightly too high (Horta_Cetaceos, AquaAçores and
+Picos_de_Aventura_-_Terceira each appear on São Miguel through a single
+such cruise).
+
+### D-19 Most cruise footprints end in Ponta Delgada, whatever the home port [verified]
+
+A cruise's `footprintWKT` is departure harbour → sighting positions →
+arrival harbour. The departure always matches the cruise's harbour, but the
+arrival is `-25.66444 37.73472` (Ponta Delgada) for 5,261 of 8,455 cruises,
+including all 2,027 Faial/Pico and 411 Terceira cruises, which cannot have
+ended 100–300 km away. It looks like a data-entry default. The build drops
+first and last points (`scripts/lib/cruise-reach.ts`), so `cruiseCells` is
+not affected; anything else reading footprints must do the same.
+
 ---
 
 ## 2. Visual encoding
@@ -191,6 +217,11 @@ max value, and has no hover.
 `public/data/azores.geojson` is hand-drawn boxes. The "envelope" edges curve
 because d3 draws them as great-circle arcs. A real coastline (e.g. Natural
 Earth 1:10m clipped to the region) would read far better.
+
+_Partly done:_ The External's wireframe basemap now draws Natural Earth
+coastlines (`public/data/azores-lines.geojson`, docs/basemaps.md). The Animal
+and The Observer maps, and the island label positions everywhere, still use
+the boxes.
 
 ---
 
@@ -259,11 +290,9 @@ stretches the full width below the map.
   % changes (see D-3). [verified]
 - **C-6** D4's "Total occurrence records" shows deduplicated species
   encounters, not raw occurrence rows. [code]
-- **C-8** The word "direction" is used twice. The two sub-projects (Three
-  Ways of Looking, Filling the Gaps) are called directions, and inside
-  Three Ways of Looking the page copy labels D1/D3/D4 "Direction 1/3/4" too.
-  The copy was kept as it was. Rename the inner label (e.g. "View",
-  "Question", "Lens") or the sub-projects. [verified]
+- ~~**C-8** The word "direction" was used twice.~~ Fixed: the three
+  visualisations are now the views The Observer / The External / The Animal,
+  with no "Direction N" labels.
 - **C-7** D1 only shows `meta.caveats[0]`; the other two caveats are never
   displayed. [code]
 
