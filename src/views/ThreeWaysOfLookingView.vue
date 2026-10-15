@@ -1,5 +1,6 @@
 <template>
 	<div class="monicet-page">
+		<BackLink />
 		<h1>MONICET: Three Ways of Looking</h1>
 
 		<p class="intro">
@@ -70,10 +71,13 @@
 </template>
 
 <script setup lang="ts">
-import FieldJournal from "@/components/directions/FieldJournal.vue";
-import HonestInstability from "@/components/directions/HonestInstability.vue";
-import SpeciesAsCharacter from "@/components/directions/SpeciesAsCharacter.vue";
-import DirectionSection from "@/components/ui/DirectionSection.vue";
+// Direction "Three Ways of Looking": one archive, three questions, three
+// visualisations (labelled "Direction 1/3/4" in the page copy).
+import DirectionSection from "@/components/directions/three-ways-of-looking/DirectionSection.vue";
+import FieldJournal from "@/components/directions/three-ways-of-looking/FieldJournal.vue";
+import HonestInstability from "@/components/directions/three-ways-of-looking/HonestInstability.vue";
+import SpeciesAsCharacter from "@/components/directions/three-ways-of-looking/SpeciesAsCharacter.vue";
+import BackLink from "@/components/shared-ui/BackLink.vue";
 
 const compareCards = [
 	{

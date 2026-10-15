@@ -148,7 +148,7 @@ import {
 	watch,
 } from "vue";
 
-import ModeSwitch from "@/components/ui/ModeSwitch.vue";
+import ModeSwitch from "@/components/shared-ui/ModeSwitch.vue";
 import {
 	bestMonthIndex,
 	cellDominance,

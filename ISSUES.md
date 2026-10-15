@@ -259,6 +259,11 @@ stretches the full width below the map.
   % changes (see D-3). [verified]
 - **C-6** D4's "Total occurrence records" shows deduplicated species
   encounters, not raw occurrence rows. [code]
+- **C-8** The word "direction" is used twice. The two sub-projects (Three
+  Ways of Looking, Filling the Gaps) are called directions, and inside
+  Three Ways of Looking the page copy labels D1/D3/D4 "Direction 1/3/4" too.
+  The copy was kept as it was. Rename the inner label (e.g. "View",
+  "Question", "Lens") or the sub-projects. [verified]
 - **C-7** D1 only shows `meta.caveats[0]`; the other two caveats are never
   displayed. [code]
 
@@ -267,7 +272,7 @@ stretches the full width below the map.
 ## 5. Accessibility
 
 - **A-1** `role="tablist"` is used without `role="tab"` / `aria-selected` on
-  the buttons (`src/components/ui/ModeSwitch.vue`).
+  the buttons (`src/components/shared-ui/ModeSwitch.vue`).
 - **A-2** Map cells are not focusable and have no text alternative.
 - **A-3** Some encodings rely on color alone (dominance, coverage); small grey
   text sits at low contrast.
@@ -290,7 +295,8 @@ stretches the full width below the map.
   `main.scss` by hand. Spacing and fonts match closely in a side-by-side
   screenshot but are not pixel-identical.
 - **K-5** The same code still lives in the portfolio
-  (`portfolio/pages/playground/monicet-map.vue` and friends). The two copies
+  (`portfolio/pages/playground/monicet-map.vue` and friends), where it is a
+  single page with no landing page. The two copies
   will drift until the portfolio links here instead.
 - **K-6** No deployment target is configured yet (Vite `base` is `/`).
 - **K-7** No lint step. Prettier and `vue-tsc` are the only static checks.

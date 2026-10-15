@@ -6,16 +6,48 @@ it. Keep tool-specific content out of this file.
 
 ## Project
 
-An interactive information-visualisation study of the **MONICET**
-whale-watching archive (Azores, 2009–2020): three D3 maps that each ask a
-different question of the same data. It is also a **learning project** about
-infovis and about handling patchy data. Prefer changes that make the
-reasoning visible (clear names, small pure functions, notes in `docs/`) over
-clever compact code.
+An information-visualisation study of the **MONICET** whale-watching archive
+(Azores, 2009–2020), split into two independent **directions**
+(sub-projects). Each has its own goal and its own view, both reached from a
+landing page:
+
+| Direction                 | Route                     | Goal                                                                                                                                                                                                                                           |
+| ------------------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Three Ways of Looking** | `#/three-ways-of-looking` | Show how the _goal_ behind a visualisation decides what it shows, and so which visualisation is interesting to which target group. One archive, three questions, three maps. Built.                                                            |
+| **Filling the Gaps**      | `#/filling-the-gaps`      | Show how different _data-filling algorithms_ change the end result: where they agree and disagree, and their strengths and weaknesses. Title and subtitle only so far; plan in [`docs/ideas/imputation-lab.md`](docs/ideas/imputation-lab.md). |
+
+Keep the two directions distinct. Shared code belongs in `shared-ui/`,
+`data/`, `lib/` and `types/`; a direction never imports from the other
+direction's component folder.
+
+### The owner's goal
+
+This is Philipp's **learning project**. He wants to work on it in depth and
+learn about **information visualisation** and **data handling**, especially
+**how missing data can be filled**, because the MONICET dataset is patchy.
+In practice:
+
+- Prefer changes that make the reasoning visible: clear names, small pure
+  functions, notes in `docs/`. Avoid clever, compact code.
+- When you choose a method (scale, encoding, fill algorithm, threshold),
+  state why and name the alternatives in a comment or in `docs/`.
+- Don't hide data problems. Surface them in the UI or record them in
+  `ISSUES.md`.
+- Ask before making product decisions; don't guess.
+
+### Naming: "direction" means two things
+
+The two sub-projects are called **directions**. Inside Three Ways of
+Looking, the page copy also labels its three visualisations "Direction 1 /
+3 / 4" (D1, D3, D4). That copy predates the split and is kept as it is
+(`ISSUES.md` C-8). In code and docs, call those three the
+**visualisations** (D1, D3, D4) and reserve **direction** for the
+sub-projects.
 
 Stack: **Vue 3 (`<script setup>`) + TypeScript + Vite**, **D3 v7** (full
-package), **Sass**. No router, UI kit, state library or CSS framework —
-don't add dependencies without asking the user first.
+package), **Sass**. Routing is a ~30-line hash router (`src/router.ts`); there
+is no vue-router, UI kit, state library or CSS framework. Don't add
+dependencies without asking the user first.
 
 ## Commands
 
@@ -43,15 +75,26 @@ The `data:*` commands need `data/raw/`, which is gitignored. Run
 
 ```
 src/
-  views/MonicetView.vue        page: intro, comparison cards, three directions, footer
+  App.vue                      renders the view for the current route
+  router.ts                    hash router: route → view
+  routes.ts                    route paths + href() (no imports, safe to use anywhere)
+  views/                       one view per page; views hold page copy
+    LandingView.vue            title, intro, one button per direction
+    ThreeWaysOfLookingView.vue intro, comparison cards, the three visualisations, footer
+    FillingTheGapsView.vue     title + subtitle (direction not built yet)
   components/
-    directions/                one component per visualisation ("direction")
-      HonestInstability.vue    D1 — encounter-rate change, reliability as opacity
-      SpeciesAsCharacter.vue   D3 — one species: distribution / dominance, sparkline
-      FieldJournal.vue         D4 — active years per cell, click → logbook panel
-    ui/                        small presentational pieces (ModeSwitch, DirectionSection)
+    directions/
+      three-ways-of-looking/   components used only by this direction
+        HonestInstability.vue  D1 — encounter-rate change, reliability as opacity
+        SpeciesAsCharacter.vue D3 — one species: distribution / dominance, sparkline
+        FieldJournal.vue       D4 — active years per cell, click → logbook panel
+        DirectionSection.vue   tag + heading + framing text around one visualisation
+      filling-the-gaps/        components used only by this direction (empty)
+    shared-ui/                 components used by more than one view
+      ModeSwitch.vue           pill-button option group (v-model)
+      BackLink.vue             "← MONICET" link to the landing page
   data/
-    useMonicetData.ts          fetch + module-level cache (one request for all directions)
+    useMonicetData.ts          fetch + module-level cache (one request per page load)
     selectors.ts               pure derivations over the dataset (+ selectors.test.ts)
   lib/                         framework-free helpers
     map.ts                     shared D3 basemap: projection, graticule, islands, zoom, cell paths
@@ -72,7 +115,12 @@ ISSUES.md                      known problems and ideas — the backlog
 
 Layer rules:
 
-- **Views** compose components and hold page copy. No data logic.
+- **Views** compose components and hold page copy. No data logic. Adding a
+  page means a view in `views/`, a path in `routes.ts` and an entry in
+  `router.ts`.
+- **Direction folders** (`components/directions/<name>/`) hold components
+  used by that direction only. Once a component is needed by a second
+  view, move it to `shared-ui/`.
 - **Components** own their D3 rendering and local UI state. They get data
   from `data/` and helpers from `lib/`.
 - **`data/selectors.ts` and `lib/format.ts` stay pure.** No Vue, no D3, no
@@ -81,7 +129,9 @@ Layer rules:
 - **Every derived number comes from `scripts/build-data.ts`.** If a
   component needs a new metric over the whole dataset, add it to the build
   and to `src/types/monicet.ts`. Don't recompute it from raw data in the
-  browser.
+  browser. The one open exception: Filling the Gaps may need to run fill
+  algorithms in the browser. That is an undecided design question
+  (`docs/ideas/imputation-lab.md`), so ask the user before building it.
 - **Scripts** may import types from `src/types/` (`import type … from
 "../src/types/monicet.ts"`) and must use only erasable TypeScript syntax
   (no `enum`, no `namespace`, no parameter properties). `tsconfig` enforces
@@ -142,6 +192,7 @@ Key facts an agent will otherwise get wrong:
 ## Verifying UI changes
 
 There are no browser tests. After a UI change run `pnpm check` and
-`pnpm build`. Then look at the page (`pnpm dev`) with each direction's modes
-exercised. If you cannot open a browser, say so explicitly instead of
+`pnpm build`. Then open the affected pages (`pnpm dev`: the landing page,
+`#/three-ways-of-looking`, `#/filling-the-gaps`) and exercise every mode of
+the visualisations you touched. If you cannot open a browser, say so explicitly instead of
 claiming the UI works.

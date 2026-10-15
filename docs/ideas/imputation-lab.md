@@ -1,6 +1,9 @@
 # Idea: Imputation Lab — compare gap-filling methods on the live page
 
-Status: **idea, not started** (noted 2026-10-15)
+Status: **idea, not started** (noted 2026-10-15). It now has a home: the
+**Filling the Gaps** direction (`#/filling-the-gaps`,
+`src/views/FillingTheGapsView.vue`, components in
+`src/components/directions/filling-the-gaps/`).
 
 ## The idea
 
@@ -9,8 +12,8 @@ Somewhere on the page:
 1. The user can **see the dataset**, including where it is incomplete.
 2. They can **select a data-filling approach**: an imputation technique,
    algorithm or model.
-3. When they select one, **the page is rebuilt with the filled data**: all
-   directions (D1, D3, D4) re-render from the filled dataset.
+3. When they select one, **the page is rebuilt with the filled data**, i.e.
+   the visualisations re-render from the filled dataset.
 
 **Goal:** see how different filling algorithms change the end result, where
 they disagree, and what each method's strengths and weaknesses are.
@@ -55,8 +58,10 @@ described there.
 - **How to show strengths and weaknesses honestly:** a hold-out test (mask
   known values, fill, measure error) shown per method, so "better" is
   measured, not asserted (`missing-data.md` §5).
-- **Where on the page:** a fourth direction, or a global control that
-  affects D1/D3/D4?
+- **Which visualisations get rebuilt?** The Filling the Gaps view is
+  separate from Three Ways of Looking. Should it reuse D1/D3/D4 (the
+  components would move to `shared-ui/`), or get its own visualisations
+  designed for comparing fills?
 - **Dependencies:** simple methods can be written by hand in TypeScript.
   Random forests and neural nets would need a library or precomputation,
   which conflicts with the minimal-dependency rule, so ask first.

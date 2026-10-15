@@ -79,7 +79,7 @@ the first attempt at this.
 
 **Exercise 3.1** — In D3's sparkline, plot `encounters / cruises` instead of
 raw counts, and draw 2020 dashed with a "COVID — 287 cruises" annotation.
-_Files:_ `src/components/directions/SpeciesAsCharacter.vue`. Cruises per
+_Files:_ `src/components/directions/three-ways-of-looking/SpeciesAsCharacter.vue`. Cruises per
 year already exist inside the build (`cruisesByYear` in
 `scripts/build-data.ts`) but are not exported yet, so add them to the JSON
 `meta` and to `src/types/monicet.ts`.
