@@ -76,6 +76,21 @@ export function speciesHotspots(
 }
 
 /** Index (0–11) of the month with the most encounters; first wins ties. */
+/**
+ * Encounters per cruise for each calendar month. Raw monthly counts mostly
+ * follow how many trips ran (July has ~15× the cruises of January); dividing
+ * by cruises asks "if I go out this month, how likely is a sighting?".
+ * Months without cruises get 0.
+ */
+export function monthlyRates(
+	monthlyEncounters: number[],
+	monthlyCruises: number[]
+): number[] {
+	return monthlyEncounters.map((count, i) =>
+		monthlyCruises[i] ? count / monthlyCruises[i] : 0
+	);
+}
+
 export function bestMonthIndex(monthly: number[]): number {
 	return monthly.indexOf(Math.max(...monthly));
 }

@@ -76,7 +76,7 @@
 						<strong>{{ spatialCoverage }}</strong>
 					</div>
 					<div class="metric-row">
-						<span>Best month</span>
+						<span>Best month (per cruise)</span>
 						<strong>{{ bestMonthLabel }}</strong>
 					</div>
 
@@ -151,6 +151,7 @@ import {
 import ModeSwitch from "@/components/shared-ui/ModeSwitch.vue";
 import {
 	bestMonthIndex,
+	monthlyRates,
 	cellDominance,
 	findSpecies,
 	speciesOptions,
@@ -225,8 +226,13 @@ const spatialCoverage = computed(() =>
 
 const bestMonthLabel = computed(() => {
 	const monthly = selectedSpecies.value?.monthlyEncounters;
-	if (!monthly) return "n/a";
-	return MONTH_LABELS[bestMonthIndex(monthly)] ?? "n/a";
+	if (!monthly || !mapData.value) return "n/a";
+	// Per cruise, like The External's "Best month overall"; raw counts would
+	// mostly show the month with the most trips.
+	const cruises = mapData.value.monthlySummaries.map((m) => m.cruises);
+	return (
+		MONTH_LABELS[bestMonthIndex(monthlyRates(monthly, cruises))] ?? "n/a"
+	);
 });
 
 // ─── Tooltip ─────────────────────────────────────────────────────────────────
