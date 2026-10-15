@@ -216,6 +216,7 @@ import {
 	onBeforeUnmount,
 	onMounted,
 	ref,
+	useId,
 	watch,
 } from "vue";
 
@@ -264,6 +265,10 @@ const props = defineProps<{
 }>();
 
 const mode = ref<MonicetInsightMode>(props.modes[0]);
+
+// SVG ids (blur filter, legend gradient) are document-wide; prefix them per
+// instance so two explorers on one page don't use each other's defs.
+const svgIdPrefix = `cme${useId()}`;
 const selectedSpeciesId = ref("");
 const selectedMonth = ref(6);
 const reliableOnly = ref(true);
@@ -469,7 +474,7 @@ function countEncoding(
 	if (legendContainer.value) {
 		renderGradientLegend(
 			legendContainer.value,
-			`legend-${mode.value}`,
+			`${svgIdPrefix}-legend-${mode.value}`,
 			(t) => scale(t * maxValue),
 			{
 				left: "0",
@@ -508,7 +513,7 @@ function declineEncoding(visibleCells: MonicetGridCell[]): Encoding {
 	if (legendContainer.value) {
 		renderGradientLegend(
 			legendContainer.value,
-			`legend-${mode.value}`,
+			`${svgIdPrefix}-legend-${mode.value}`,
 			(t) => scale(-maxAbs + t * maxAbs * 2),
 			{
 				left: `-${maxAbs.toFixed(0)}%`,
@@ -549,14 +554,14 @@ function addSoftEdgeFilter(
 ) {
 	svg.append("defs")
 		.append("filter")
-		.attr("id", "soft-cells")
+		.attr("id", `${svgIdPrefix}-soft-cells`)
 		.attr("x", "-10%")
 		.attr("y", "-10%")
 		.attr("width", "120%")
 		.attr("height", "120%")
 		.append("feGaussianBlur")
 		.attr("stdDeviation", Math.max(1, cellWidthPx / 4));
-	return "url(#soft-cells)";
+	return `url(#${svgIdPrefix}-soft-cells)`;
 }
 
 /**
@@ -577,7 +582,7 @@ function drawCruiseCells(
 	if (legendContainer.value) {
 		renderGradientLegend(
 			legendContainer.value,
-			"legend-boats",
+			`${svgIdPrefix}-legend-boats`,
 			(t) => scale(Math.pow(max, t)),
 			{
 				left: "1",
