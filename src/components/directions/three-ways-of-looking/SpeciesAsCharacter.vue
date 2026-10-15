@@ -407,13 +407,20 @@ function handleResize() {
 	renderSparkline();
 }
 
+// The component can unmount while load() is still pending (e.g. a quick
+// click on "← MONICET"); onBeforeUnmount has then already run, so nothing
+// may be set up after an await once this is true.
+let unmounted = false;
+
 onMounted(async () => {
 	await load();
+	if (unmounted) return;
 	loading.value = false;
 	if (mapData.value) {
 		selectedSpeciesId.value =
 			mapData.value.speciesSummaries[0]?.speciesId ?? "";
 		await nextTick();
+		if (unmounted) return;
 		renderMap();
 		renderSparkline();
 		window.addEventListener("resize", handleResize, { passive: true });
@@ -421,6 +428,7 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(() => {
+	unmounted = true;
 	window.removeEventListener("resize", handleResize);
 });
 
