@@ -310,6 +310,15 @@ export function drawBaseMap(
 		linesGroup.raise();
 	}
 
+	/**
+	 * A new group for data drawn after the basemap, placed just below the
+	 * coastlines (so call raiseLines() and drawIslandLabels() first): data
+	 * can then be redrawn on its own while lines and labels stay on top.
+	 */
+	function insertDataLayer() {
+		return mapGroup.insert("g", () => linesGroup.node());
+	}
+
 	function drawIslandLabels() {
 		mapGroup
 			.append("g")
@@ -372,6 +381,7 @@ export function drawBaseMap(
 		cellPath,
 		cellWidthPx,
 		raiseLines,
+		insertDataLayer,
 		drawIslandLabels,
 		enableZoom,
 	};

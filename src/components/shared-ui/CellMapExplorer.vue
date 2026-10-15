@@ -604,17 +604,26 @@ function drawCruiseCells(
 		.on("mouseleave", () => hideTooltip(tooltipRef.value));
 }
 
+// Two levels of redraw. renderMap() rebuilds the basemap (tiles, lines,
+// labels) and is needed only when the basemap or the size changes.
+// renderDataLayer() redraws cells and legend only, so mode, species, month
+// and reliability changes don't re-create every tile image.
+let base: {
+	cellPath: ReturnType<typeof drawBaseMap>["cellPath"];
+	insertDataLayer: ReturnType<typeof drawBaseMap>["insertDataLayer"];
+	softFilterUrl: string;
+} | null = null;
+
 function renderMap() {
 	if (!mapContainer.value || !mapData.value || !basemap.value) return;
 
-	hideTooltip(tooltipRef.value);
 	const { theme, tiles } = BASEMAPS[basemapId.value];
 	const {
 		svg,
-		mapGroup,
 		cellPath,
 		cellWidthPx,
 		raiseLines,
+		insertDataLayer,
 		drawIslandLabels,
 	} = drawBaseMap(mapContainer.value, basemap.value, {
 		theme,
@@ -624,6 +633,37 @@ function renderMap() {
 		minHeight: 420,
 		aspect: 0.62,
 	});
+
+	// Wireframe: coastlines on top of the cells, so the map stays readable
+	// through the data. The data layer is inserted below them.
+	raiseLines();
+	drawIslandLabels();
+
+	base = {
+		cellPath,
+		insertDataLayer,
+		softFilterUrl: addSoftEdgeFilter(svg, cellWidthPx),
+	};
+	renderDataLayer();
+}
+
+function renderDataLayer() {
+	if (!base || !mapData.value) return;
+	hideTooltip(tooltipRef.value);
+
+	// dataLayer carries visibility and layer opacity. Inside it, reliable
+	// cells are blurred; unreliable ones sit on top unblurred with a dashed
+	// outline, so their uncertainty isn't washed out by neighbours' colour.
+	dataLayer?.remove();
+	dataLayer = base.insertDataLayer();
+	applyDataLayerVisibility();
+	const softCells = dataLayer.append("g").attr("filter", base.softFilterUrl);
+	const faintCells = dataLayer.append("g");
+
+	if (mode.value === "boats") {
+		drawCruiseCells(softCells, base.cellPath);
+		return;
+	}
 
 	// With "reliable only" on, unreliable cells are hidden entirely. With it
 	// off, they are drawn faint so the uncertainty stays visible.
@@ -650,23 +690,7 @@ function renderMap() {
 							cell.monthlyEncounters[selectedMonth.value - 1] ?? 0
 					);
 
-	// dataLayer carries visibility and layer opacity. Inside it, reliable
-	// cells are blurred; unreliable ones sit on top unblurred with a dashed
-	// outline, so their uncertainty isn't washed out by neighbours' colour.
-	dataLayer = mapGroup.append("g");
-	applyDataLayerVisibility();
-	const softCells = dataLayer
-		.append("g")
-		.attr("filter", addSoftEdgeFilter(svg, cellWidthPx));
-	const faintCells = dataLayer.append("g");
-
-	if (mode.value === "boats") {
-		drawCruiseCells(softCells, cellPath);
-		raiseLines();
-		drawIslandLabels();
-		return;
-	}
-
+	const cellPath = base.cellPath;
 	const drawCells = (
 		group: d3.Selection<SVGGElement, unknown, null, undefined>,
 		cells: MonicetGridCell[]
@@ -691,11 +715,6 @@ function renderMap() {
 		.attr("stroke", CHART_TEXT_SECONDARY)
 		.attr("stroke-width", 0.8)
 		.attr("stroke-dasharray", "3,2");
-
-	// Wireframe: coastlines on top of the cells, so the map
-	// stays readable through the data.
-	raiseLines();
-	drawIslandLabels();
 }
 
 // ─── Lifecycle ───────────────────────────────────────────────────────────────
@@ -731,9 +750,12 @@ onBeforeUnmount(() => {
 	window.removeEventListener("resize", renderMap);
 });
 
-watch([mode, selectedSpeciesId, selectedMonth, reliableOnly, basemapId], () => {
-	if (loading.value) return;
-	renderMap();
+watch(basemapId, () => {
+	if (!loading.value) renderMap();
+});
+
+watch([mode, selectedSpeciesId, selectedMonth, reliableOnly], () => {
+	if (!loading.value) renderDataLayer();
 });
 
 watch(dataLayerOpacity, applyDataLayerVisibility);
