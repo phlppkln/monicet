@@ -4,6 +4,10 @@ import vue from "@vitejs/plugin-vue";
 import { defineConfig } from "vite";
 
 export default defineConfig({
+	// Relative asset URLs, so the build works under any path — e.g. the
+	// GitHub Pages project URL /monicet/. Routing is hash-based, so the
+	// page itself never leaves index.html.
+	base: "./",
 	plugins: [vue()],
 	resolve: {
 		alias: {
