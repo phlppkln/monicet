@@ -226,8 +226,35 @@ export function drawBaseMap(
 		asGeo(rewound)
 	);
 
-	// Tiles sit between the background and everything D3 draws.
+	const envelopeFeatures = rewound.features.filter(
+		(f) => f.properties.kind === "envelope"
+	);
+	const islandFeatures = rewound.features.filter(
+		(f) => f.properties.kind === "island"
+	);
+
+	// Tiles sit between the background and everything D3 draws. Under them
+	// goes a plain outline of the land, hidden once the (opaque) tiles load
+	// but still there if they don't: offline, blocked, or a server outage.
 	if (tiles) {
+		const fallbackLand = svg.append("g").attr("pointer-events", "none");
+		if (lines) {
+			drawCoastlines(
+				fallbackLand,
+				lines,
+				{ coast: theme.labelColor },
+				geoPath
+			);
+		} else {
+			fallbackLand
+				.selectAll("path")
+				.data(islandFeatures)
+				.join("path")
+				.attr("d", (f) => geoPath(asGeo(f)) ?? "")
+				.attr("fill", "none")
+				.attr("stroke", theme.labelColor)
+				.attr("stroke-width", 0.9);
+		}
 		drawTiles(svg.append("g"), tiles, projection, width, height);
 	}
 
@@ -241,13 +268,6 @@ export function drawBaseMap(
 			.attr("stroke-width", theme.graticule.width)
 			.attr("opacity", theme.graticule.opacity);
 	}
-
-	const envelopeFeatures = rewound.features.filter(
-		(f) => f.properties.kind === "envelope"
-	);
-	const islandFeatures = rewound.features.filter(
-		(f) => f.properties.kind === "island"
-	);
 
 	const mapGroup = svg.append("g");
 
@@ -411,6 +431,11 @@ function drawTiles(
 		.data(tiles, (d) => (d as [number, number, number]).join("/"))
 		.join("image")
 		.attr("href", ([x, y, z]) => source.url(x, y, z))
+		// A failed tile would show the browser's broken-image icon over the
+		// fallback coastline; drop it instead.
+		.on("error", function () {
+			d3.select(this).remove();
+		})
 		.attr("x", ([x]) => (x + tx) * k)
 		.attr("y", ([, y]) => (y + ty) * k)
 		// Tile size is fractional; half a pixel of overlap hides hairline seams.

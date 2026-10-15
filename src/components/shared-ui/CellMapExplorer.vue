@@ -703,6 +703,11 @@ let unmounted = false;
 onMounted(async () => {
 	await load();
 	if (unmounted) return;
+	// Coastlines (4 KB): drawn by the wireframe and, on tiled basemaps, as
+	// the fallback under the tiles. Not awaited; redraw once they arrive.
+	void loadMapLines().then(() => {
+		if (!unmounted && !loading.value) renderMap();
+	});
 	loading.value = false;
 
 	if (mapData.value) {
@@ -724,13 +729,6 @@ onBeforeUnmount(() => {
 watch([mode, selectedSpeciesId, selectedMonth, reliableOnly, basemapId], () => {
 	if (loading.value) return;
 	renderMap();
-});
-
-// Coastlines are fetched on first use; redraw once they arrive.
-watch(basemapId, async (id) => {
-	if (id !== "wireframe" || mapLines.value) return;
-	await loadMapLines();
-	if (!loading.value) renderMap();
 });
 
 watch(dataLayerOpacity, applyDataLayerVisibility);

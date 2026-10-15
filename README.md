@@ -33,8 +33,10 @@ pnpm install
 pnpm dev            # http://localhost:5173
 ```
 
-The app only needs the committed `public/data/` files. To work on the data
-pipeline:
+The app's data is the committed `public/data/` files. The Basic, Satellite
+and Terrain basemaps load map tiles from Esri and EOX over the network; if
+those can't be reached, the map falls back to plain coastlines (see
+`docs/basemaps.md`). To work on the data pipeline:
 
 ```sh
 pnpm data:fetch     # download the raw Darwin Core Archive into data/raw/
