@@ -2,8 +2,10 @@
 
 How real maps (satellite, terrain, …) get under the D3 visualisations, and
 why it is done this way. Code: `src/lib/map.ts` (`BASEMAPS`, `drawTiles`).
-Status: **pilot in `CellMapExplorer.vue` only** (The External and Filling
-the Gaps), no zoom.
+Status: used by every map. The External and Filling the Gaps
+(`CellMapExplorer.vue`, no zoom) and The Observer and The Animal (with
+zoom). The controls are `shared-ui/BasemapControls.vue` and the credit line is
+`shared-ui/MapAttribution.vue`.
 
 ## How it works
 
@@ -28,8 +30,8 @@ them. Each tile becomes an SVG `<image>` in a group drawn under everything
 else. The zoom level is chosen from the scale; at the default map size this
 is about z7 (z8 on high-DPI screens, via `zoomDelta`).
 
-Layer order in the SVG: background → tiles → graticule (Sand theme only, not
-used by The External) → envelope →
+Layer order in the SVG: background → tiles → graticule (no current basemap
+draws one) → envelope →
 islands → data cells → coastlines (wireframe only) → island labels. The
 wireframe coastlines sit above the data so the map stays readable through
 it; they ignore the mouse so cell hover still works. On tiled basemaps the
@@ -43,9 +45,11 @@ when they fail to load: offline, behind a blocker, or during an outage.
 The data layer toggle hides the cell group with `display: none` instead of
 redrawing, so tiles are not requested again.
 
-So that the basemap stays visible under the data, The External's cell layer is drawn
-with an adjustable layer opacity (default 0.65) and a Gaussian blur of a
-quarter cell width, and has no cell borders. The blur only softens edges.
+So that the basemap stays visible under the data, every cell layer is drawn
+with an adjustable layer opacity (default 0.65). The External additionally
+blurs its cells by a quarter cell width and drops the cell borders; The
+Observer and The Animal keep crisp cells with thin white borders, because
+there you hover and click individual cells. The blur only softens edges.
 It does **not** interpolate between cells, so cells without sightings stay
 empty. Real spatial smoothing (kernel density, kriging) would estimate values
 where nothing was recorded, which is a gap-filling decision for the Filling
@@ -63,8 +67,8 @@ the Gaps direction, not a styling choice.
 "Terrain" is **bathymetry** (seafloor relief), not land relief: for whale
 habitat the depth and the canyons around the islands are what matter.
 
-Every tiled basemap must show its attribution; The External shows it under
-the map.
+Every tiled basemap must show its attribution; each map shows it under the
+map (`MapAttribution.vue`).
 
 ### Wireframe lines
 
@@ -109,29 +113,27 @@ Not used:
   blurry when zoomed, several MB per style when sharp, and most providers
   forbid storing their tiles.
 
-## Next step: zoom
+## Zoom
 
-`drawTiles()` is pure placement maths, so zoom is an extension, not a
-rewrite. In the `d3.zoom` handler (`enableZoom()` in `map.ts`):
-
-```ts
-.on("zoom", (event) => {
-	mapGroup.attr("transform", event.transform); // as today
-	drawTiles(tileGroup, source, projection, width, height, event.transform);
-});
-```
-
-and inside `drawTiles` apply the transform to both inputs:
+The Observer and The Animal zoom (`enableZoom()` in `map.ts`, up to 6×).
+The D3 layers zoom by transforming their group, but a scaled tile is a
+blurry tile. So on every zoom event `drawTiles()` runs again with the zoom
+transform applied to both of its inputs:
 
 ```ts
 .scale(projection.scale() * 2 * Math.PI * t.k)
 .translate(t.apply(projection([0, 0])))
 ```
 
-The `.data(tiles, key)` join already keeps tiles that stay visible and adds or
-removes the rest. Things to handle at that point:
+d3-tile then picks a deeper zoom level, so zooming in loads sharper tiles.
+The `.data(tiles, key)` join keeps tiles that stay visible and adds or
+removes the rest. The fallback coastline under the tiles and the graticule
+get the same transform as the map group.
 
-- the graticule currently does not follow zoom;
+Open points:
+
 - providers have a maximum zoom (Esri Ocean is sparse beyond ~z10 in open
-  water), so `scaleExtent` or a per-source `maxZoom` may be needed;
-- D3 and D4 already zoom; give them tiles only once this works.
+  water). At 6× the default view reaches about z10, so this hasn't
+  mattered yet; a per-source `maxZoom` is needed if `scaleExtent` grows;
+- changing the basemap or resizing the window redraws the map and resets
+  the zoom.

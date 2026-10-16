@@ -200,11 +200,6 @@ D4 uses `d3.interpolateBlues`, while everything else uses the validated teal
 tokens. Its legend shows "0 yr", which cannot occur (see D-16). Its tooltip
 hard-codes "/ 12 years" (`MAX_YEARS`) instead of using `meta.years.length`.
 
-### V-6 The graticule does not zoom with the map (D3, D4) [code]
-
-In `src/lib/map.ts` the graticule is appended outside `mapGroup`, so zooming
-shifts the map against the grid lines.
-
 ### V-7 Small, cramped labels [verified]
 
 Month ticks are 7px, sparkline labels 8px, and island labels 10px (Corvo
@@ -217,10 +212,9 @@ max value, and has no hover.
 because d3 draws them as great-circle arcs. A real coastline (e.g. Natural
 Earth 1:10m clipped to the region) would read far better.
 
-_Partly done:_ The External's wireframe basemap now draws Natural Earth
-coastlines (`public/data/azores-lines.geojson`, docs/basemaps.md). The Animal
-and The Observer maps, and the island label positions everywhere, still use
-the boxes.
+_Partly done:_ every map's wireframe basemap now draws Natural Earth
+coastlines (`public/data/azores-lines.geojson`, docs/basemaps.md). The
+island label positions are still the centroids of the boxes.
 
 ---
 

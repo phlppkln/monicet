@@ -14,7 +14,7 @@ const basemap = ref<BasemapFeatureCollection | null>(null);
 const error = ref<string>("");
 let loadPromise: Promise<void> | null = null;
 
-// Coastlines for the map explorer (wireframe, and the fallback under tiled
+// Coastlines for every map (wireframe, and the fallback under tiled
 // basemaps). Fetched separately so the other views don't wait for them.
 const mapLines = ref<MapLineCollection | null>(null);
 let mapLinesPromise: Promise<void> | null = null;

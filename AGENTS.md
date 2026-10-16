@@ -98,6 +98,8 @@ src/
       CellMapExplorer.vue      grid-cell map with modes (prop), basemaps, layer toggle:
                                The External (species / seasonality / boats) and
                                Filling the Gaps (decline: the dataset to fill)
+      BasemapControls.vue      basemap switch + data-layer toggle + opacity (v-model)
+      MapAttribution.vue       tile provider credits under a map
       ModeSwitch.vue           pill-button option group (v-model)
       BackLink.vue             "← MONICET" link to the landing page
   data/

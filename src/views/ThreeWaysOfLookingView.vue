@@ -13,26 +13,28 @@
 		</p>
 
 		<div class="compare-grid">
-			<div
+			<button
 				v-for="card in compareCards"
 				:key="card.title"
+				type="button"
 				class="compare-card"
+				@click="scrollToSection(card.sectionId)"
 			>
-				<div class="compare-title">{{ card.title }}</div>
-				<div v-if="card.question" class="compare-question">
+				<span class="compare-title">{{ card.title }}</span>
+				<span v-if="card.question" class="compare-question">
 					{{ card.question }}
-				</div>
-				<div v-else class="compare-question open">
+				</span>
+				<span v-else class="compare-question open">
 					Question still open
-				</div>
-				<div class="compare-entry">Entry: {{ card.entry }}</div>
-				<div class="compare-var">
+				</span>
+				<span class="compare-entry">Entry: {{ card.entry }}</span>
+				<span class="compare-var">
 					Visual variable: {{ card.variable }}
-				</div>
-			</div>
+				</span>
+			</button>
 		</div>
 
-		<ViewSection title="The Observer">
+		<ViewSection id="the-observer" title="The Observer">
 			<template #reflection>
 				The observer as the subject. The default map shows not what was
 				found, but where people went — cells shaded by how many of the
@@ -43,7 +45,7 @@
 			<FieldJournal />
 		</ViewSection>
 
-		<ViewSection title="The External">
+		<ViewSection id="the-external" title="The External">
 			<template #reflection>
 				The map from outside. Where are the animals encountered, when in
 				the year, and where do the boats go? Switch to
@@ -55,7 +57,7 @@
 			<CellMapExplorer :modes="['species', 'seasonality', 'boats']" />
 		</ViewSection>
 
-		<ViewSection title="The Animal">
+		<ViewSection id="the-animal" title="The Animal">
 			<template #reflection>
 				The animal as the entry point — not the map. Selecting a species
 				reorganises the map around that one creature: where it
@@ -85,31 +87,49 @@ import BackLink from "@/components/shared-ui/BackLink.vue";
 import CellMapExplorer from "@/components/shared-ui/CellMapExplorer.vue";
 
 // question: null renders as "Question still open".
+// sectionId matches the id on the view's <ViewSection>; clicking the card
+// scrolls there.
 const compareCards: {
 	title: string;
+	sectionId: string;
 	question: string | null;
 	entry: string;
 	variable: string;
 }[] = [
 	{
 		title: "The Observer",
+		sectionId: "the-observer",
 		question: "What did I see?",
 		entry: "a location",
 		variable: "survey effort",
 	},
 	{
 		title: "The External",
+		sectionId: "the-external",
 		question: null,
 		entry: "the map",
 		variable: "encounters and cruises per cell",
 	},
 	{
 		title: "The Animal",
+		sectionId: "the-animal",
 		question: "Where will I meet my kind?",
 		entry: "a species",
 		variable: "territory + time",
 	},
 ];
+
+// A button + scrollIntoView rather than an <a href="#id">: the hash router
+// owns location.hash, so a fragment link would navigate away from the page.
+function scrollToSection(sectionId: string) {
+	const prefersReducedMotion = window.matchMedia(
+		"(prefers-reduced-motion: reduce)"
+	).matches;
+	document.getElementById(sectionId)?.scrollIntoView({
+		behavior: prefersReducedMotion ? "auto" : "smooth",
+		block: "start",
+	});
+}
 </script>
 
 <style scoped lang="scss">
@@ -152,6 +172,23 @@ h1 {
 	display: flex;
 	flex-direction: column;
 	gap: 0.3rem;
+	// Reset <button> defaults so the card looks as before.
+	font: inherit;
+	text-align: left;
+	cursor: pointer;
+	transition:
+		border-color $transition-fast,
+		box-shadow $transition-fast;
+
+	&:hover {
+		border-color: $primary;
+		box-shadow: $shadow-sm;
+	}
+
+	&:focus-visible {
+		outline: 2px solid $primary;
+		outline-offset: 2px;
+	}
 }
 
 .compare-title {

@@ -1,13 +1,21 @@
 <template>
 	<div class="d4-journal" :class="{ 'panel-open': !!selectedCell }">
+		<BasemapControls
+			class="toolbar"
+			v-model:basemap-id="basemapId"
+			v-model:show-data-layer="showDataLayer"
+			v-model:data-layer-opacity="dataLayerOpacity"
+		/>
+
 		<div v-if="loading" class="status">Preparing field journal…</div>
 		<div v-else-if="error" class="status error">{{ error }}</div>
 
 		<div v-else class="layout">
 			<div class="map-shell">
 				<div ref="mapContainer" class="map-container"></div>
+				<MapAttribution :basemap-id="basemapId" />
 
-				<div class="effort-legend">
+				<div v-show="showDataLayer" class="effort-legend">
 					<span class="effort-label">Survey coverage</span>
 					<div class="swatches">
 						<span
@@ -138,8 +146,17 @@
 // The Observer (formerly D4, "The Field Journal"). The map shows how many years each
 // cell was active; clicking a cell opens its logbook record.
 import * as d3 from "d3";
-import { computed, nextTick, onBeforeUnmount, onMounted, ref } from "vue";
+import {
+	computed,
+	nextTick,
+	onBeforeUnmount,
+	onMounted,
+	ref,
+	watch,
+} from "vue";
 
+import BasemapControls from "@/components/shared-ui/BasemapControls.vue";
+import MapAttribution from "@/components/shared-ui/MapAttribution.vue";
 import {
 	activeYearRange,
 	activeYearRows,
@@ -148,23 +165,22 @@ import {
 import { useMonicetData } from "@/data/useMonicetData";
 import { CHART_PRIMARY } from "@/lib/chartTokens";
 import { formatCellLabel } from "@/lib/format";
-import { drawBaseMap, type MapTheme } from "@/lib/map";
+import { BASEMAPS, drawBaseMap, type BasemapId } from "@/lib/map";
 import { hideTooltip, showTooltip } from "@/lib/tooltip";
 import type { MonicetGridCell } from "@/types/monicet";
-
-const THEME: MapTheme = {
-	background: "#f0f4f8",
-	graticule: { stroke: "#c9d6e0", width: 0.5, opacity: 0.65 },
-	envelope: { fill: "#dde8ef", stroke: "#b5c9d5" },
-	island: { fill: "#cbbda1", stroke: "#9a8562" },
-	labelColor: "#5a4a2f",
-};
 
 const SPECIES_PREVIEW = 5;
 const MAX_YEARS = 12;
 
-const { mapData, basemap, error, load } = useMonicetData();
+const { mapData, basemap, mapLines, error, load, loadMapLines } =
+	useMonicetData();
 const loading = ref(true);
+
+// Same basemaps as The External (docs/basemaps.md), with the cells as a
+// toggleable layer whose opacity lets the basemap show through.
+const basemapId = ref<BasemapId>("basic");
+const showDataLayer = ref(true);
+const dataLayerOpacity = ref(0.65);
 
 const mapContainer = ref<HTMLElement | null>(null);
 const tooltipRef = ref<HTMLElement | null>(null);
@@ -235,21 +251,45 @@ function onCellHover(event: MouseEvent, cell: MonicetGridCell) {
 
 // ─── Render ──────────────────────────────────────────────────────────────────
 
+let dataLayer: d3.Selection<SVGGElement, unknown, null, undefined> | null =
+	null;
+
+function applyDataLayerVisibility() {
+	dataLayer
+		?.attr("display", showDataLayer.value ? null : "none")
+		.attr("opacity", dataLayerOpacity.value);
+}
+
 function renderMap() {
 	if (!mapContainer.value || !mapData.value || !basemap.value) return;
 
 	hideTooltip(tooltipRef.value);
-	const { mapGroup, cellPath, drawIslandLabels, enableZoom } = drawBaseMap(
-		mapContainer.value,
-		basemap.value,
-		{ theme: THEME, fallbackWidth: 720, minHeight: 380, aspect: 0.68 }
-	);
+	const { theme, tiles } = BASEMAPS[basemapId.value];
+	const {
+		cellPath,
+		raiseLines,
+		insertDataLayer,
+		drawIslandLabels,
+		enableZoom,
+	} = drawBaseMap(mapContainer.value, basemap.value, {
+		theme,
+		tiles,
+		lines: mapLines.value,
+		fallbackWidth: 720,
+		minHeight: 380,
+		aspect: 0.68,
+	});
+
+	// Wireframe: coastlines and labels on top, cells inserted below them.
+	raiseLines();
+	drawIslandLabels();
+	dataLayer = insertDataLayer();
+	applyDataLayerVisibility();
 
 	const isSelected = (cell: MonicetGridCell) =>
 		selectedCell.value?.id === cell.id;
 
-	mapGroup
-		.append("g")
+	dataLayer
 		.selectAll("path")
 		.data(mapData.value.gridCells)
 		.join("path")
@@ -259,7 +299,6 @@ function renderMap() {
 			isSelected(cell) ? CHART_PRIMARY : "#ffffff"
 		)
 		.attr("stroke-width", (cell) => (isSelected(cell) ? 1.8 : 0.7))
-		.attr("opacity", 0.88)
 		.style("cursor", "pointer")
 		.on("mousemove", (event: MouseEvent, cell) => onCellHover(event, cell))
 		.on("mouseleave", () => hideTooltip(tooltipRef.value))
@@ -268,7 +307,6 @@ function renderMap() {
 			selectedCell.value = cell;
 		});
 
-	drawIslandLabels();
 	enableZoom();
 }
 
@@ -282,6 +320,11 @@ let unmounted = false;
 onMounted(async () => {
 	await load();
 	if (unmounted) return;
+	// Coastlines: drawn by the wireframe and, on tiled basemaps, as the
+	// fallback under the tiles. Not awaited; redraw once they arrive.
+	void loadMapLines().then(() => {
+		if (!unmounted && !loading.value) renderMap();
+	});
 	loading.value = false;
 	if (mapData.value) {
 		await nextTick();
@@ -294,6 +337,18 @@ onMounted(async () => {
 onBeforeUnmount(() => {
 	unmounted = true;
 	window.removeEventListener("resize", renderMap);
+});
+
+watch(basemapId, () => {
+	if (!loading.value) renderMap();
+});
+
+watch(dataLayerOpacity, applyDataLayerVisibility);
+
+// Toggling the data layer only hides it: no redraw, so tiles don't reload.
+watch(showDataLayer, () => {
+	hideTooltip(tooltipRef.value);
+	applyDataLayerVisibility();
 });
 </script>
 
@@ -310,6 +365,10 @@ onBeforeUnmount(() => {
 		),
 		linear-gradient(150deg, #f0f4f8, #f8f6f2);
 	border-radius: 12px;
+}
+
+.toolbar {
+	margin-bottom: 1rem;
 }
 
 .status {

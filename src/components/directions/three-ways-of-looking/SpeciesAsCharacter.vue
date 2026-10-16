@@ -1,24 +1,32 @@
 <template>
 	<div class="d3-explorer">
 		<div class="toolbar">
-			<div class="control">
-				<label for="d3-species-select">Species</label>
-				<select id="d3-species-select" v-model="selectedSpeciesId">
-					<option
-						v-for="opt in speciesList"
-						:key="opt.id"
-						:value="opt.id"
-					>
-						{{ opt.label }}
-					</option>
-				</select>
+			<div class="controls-row">
+				<div class="control">
+					<label for="d3-species-select">Species</label>
+					<select id="d3-species-select" v-model="selectedSpeciesId">
+						<option
+							v-for="opt in speciesList"
+							:key="opt.id"
+							:value="opt.id"
+						>
+							{{ opt.label }}
+						</option>
+					</select>
+				</div>
+
+				<ModeSwitch
+					v-model="showDominance"
+					:options="viewOptions"
+					label="Map mode"
+					variant="compact"
+				/>
 			</div>
 
-			<ModeSwitch
-				v-model="showDominance"
-				:options="viewOptions"
-				label="Map mode"
-				variant="compact"
+			<BasemapControls
+				v-model:basemap-id="basemapId"
+				v-model:show-data-layer="showDataLayer"
+				v-model:data-layer-opacity="dataLayerOpacity"
 			/>
 		</div>
 
@@ -28,7 +36,8 @@
 		<div v-else class="layout">
 			<div class="map-shell">
 				<div ref="mapContainer" class="map-container"></div>
-				<div class="legend-shell">
+				<MapAttribution :basemap-id="basemapId" />
+				<div v-show="showDataLayer" class="legend-shell">
 					<template v-if="showDominance">
 						<div class="legend-title">Habitat role</div>
 						<div class="dominance-legend">
@@ -148,6 +157,8 @@ import {
 	watch,
 } from "vue";
 
+import BasemapControls from "@/components/shared-ui/BasemapControls.vue";
+import MapAttribution from "@/components/shared-ui/MapAttribution.vue";
 import ModeSwitch from "@/components/shared-ui/ModeSwitch.vue";
 import {
 	bestMonthIndex,
@@ -166,21 +177,22 @@ import {
 } from "@/lib/chartTokens";
 import { formatCellLabel, MONTH_LABELS } from "@/lib/format";
 import { renderGradientLegend } from "@/lib/legend";
-import { drawBaseMap, SAND_THEME, type MapTheme } from "@/lib/map";
+import { BASEMAPS, drawBaseMap, type BasemapId } from "@/lib/map";
 import { hideTooltip, showTooltip } from "@/lib/tooltip";
 import type { MonicetGridCell } from "@/types/monicet";
 
-const THEME: MapTheme = {
-	...SAND_THEME,
-	background: "#f3f7f4",
-	graticule: { stroke: "#d7dfd0", width: 0.6, opacity: 0.7 },
-};
-
-const { mapData, basemap, error, load } = useMonicetData();
+const { mapData, basemap, mapLines, error, load, loadMapLines } =
+	useMonicetData();
 const loading = ref(true);
 
 const selectedSpeciesId = ref("");
 const showDominance = ref(false);
+
+// Same basemaps as The External (docs/basemaps.md), with the cells as a
+// toggleable layer whose opacity lets the basemap show through.
+const basemapId = ref<BasemapId>("basic");
+const showDataLayer = ref(true);
+const dataLayerOpacity = ref(0.65);
 
 const mapContainer = ref<HTMLElement | null>(null);
 const legendContainer = ref<HTMLElement | null>(null);
@@ -259,15 +271,59 @@ function onCellHover(event: MouseEvent, cell: MonicetGridCell) {
 
 // ─── Render map ──────────────────────────────────────────────────────────────
 
+let dataLayer: d3.Selection<SVGGElement, unknown, null, undefined> | null =
+	null;
+
+function applyDataLayerVisibility() {
+	dataLayer
+		?.attr("display", showDataLayer.value ? null : "none")
+		.attr("opacity", dataLayerOpacity.value);
+}
+
+// Two levels of redraw, as in CellMapExplorer. renderMap() rebuilds the
+// basemap (tiles, lines, labels, zoom) and is needed only when the basemap
+// or the size changes. renderDataLayer() redraws cells and legend only, so
+// species and mode changes don't re-create every tile or reset the zoom.
+let base: {
+	cellPath: ReturnType<typeof drawBaseMap>["cellPath"];
+	insertDataLayer: ReturnType<typeof drawBaseMap>["insertDataLayer"];
+} | null = null;
+
 function renderMap() {
 	if (!mapContainer.value || !mapData.value || !basemap.value) return;
 
+	const { theme, tiles } = BASEMAPS[basemapId.value];
+	const {
+		cellPath,
+		raiseLines,
+		insertDataLayer,
+		drawIslandLabels,
+		enableZoom,
+	} = drawBaseMap(mapContainer.value, basemap.value, {
+		theme,
+		tiles,
+		lines: mapLines.value,
+		fallbackWidth: 720,
+		minHeight: 380,
+		aspect: 0.68,
+	});
+
+	// Wireframe: coastlines and labels on top, cells inserted below them.
+	raiseLines();
+	drawIslandLabels();
+	enableZoom();
+
+	base = { cellPath, insertDataLayer };
+	renderDataLayer();
+}
+
+function renderDataLayer() {
+	if (!base || !mapData.value) return;
 	hideTooltip(tooltipRef.value);
-	const { mapGroup, cellPath, drawIslandLabels, enableZoom } = drawBaseMap(
-		mapContainer.value,
-		basemap.value,
-		{ theme: THEME, fallbackWidth: 720, minHeight: 380, aspect: 0.68 }
-	);
+
+	dataLayer?.remove();
+	dataLayer = base.insertDataLayer();
+	applyDataLayerVisibility();
 
 	const cells = mapData.value.gridCells;
 	const spId = selectedSpeciesId.value;
@@ -298,21 +354,16 @@ function renderMap() {
 		}
 	}
 
-	mapGroup
-		.append("g")
+	dataLayer
 		.selectAll("path")
 		.data(cells)
 		.join("path")
-		.attr("d", cellPath)
+		.attr("d", base.cellPath)
 		.attr("fill", fill)
 		.attr("stroke", "#fff")
 		.attr("stroke-width", 0.7)
-		.attr("opacity", 0.9)
 		.on("mousemove", (event: MouseEvent, cell) => onCellHover(event, cell))
 		.on("mouseleave", () => hideTooltip(tooltipRef.value));
-
-	drawIslandLabels();
-	enableZoom();
 }
 
 // ─── Render sparkline ────────────────────────────────────────────────────────
@@ -418,6 +469,11 @@ let unmounted = false;
 onMounted(async () => {
 	await load();
 	if (unmounted) return;
+	// Coastlines: drawn by the wireframe and, on tiled basemaps, as the
+	// fallback under the tiles. Not awaited; redraw once they arrive.
+	void loadMapLines().then(() => {
+		if (!unmounted && !loading.value) renderMap();
+	});
 	loading.value = false;
 	if (mapData.value) {
 		selectedSpeciesId.value =
@@ -437,14 +493,26 @@ onBeforeUnmount(() => {
 
 watch(selectedSpeciesId, async () => {
 	if (loading.value) return;
-	renderMap();
+	renderDataLayer();
 	await nextTick();
 	renderSparkline();
 });
 
 watch(showDominance, () => {
 	if (loading.value) return;
-	renderMap();
+	renderDataLayer();
+});
+
+watch(basemapId, () => {
+	if (!loading.value) renderMap();
+});
+
+watch(dataLayerOpacity, applyDataLayerVisibility);
+
+// Toggling the data layer only hides it: no redraw, so tiles don't reload.
+watch(showDataLayer, () => {
+	hideTooltip(tooltipRef.value);
+	applyDataLayerVisibility();
 });
 </script>
 
@@ -465,10 +533,16 @@ watch(showDominance, () => {
 
 .toolbar {
 	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	margin-bottom: 1rem;
+}
+
+.controls-row {
+	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
 	gap: 1rem;
-	margin-bottom: 1rem;
 }
 
 .control {

@@ -17,6 +17,8 @@ defineProps<{ title: string }>();
 <style scoped lang="scss">
 .view-section {
 	margin-bottom: 4rem;
+	// Breathing room above the heading when a comparison card scrolls here.
+	scroll-margin-top: 1.5rem;
 
 	&:last-of-type {
 		margin-bottom: 2rem;

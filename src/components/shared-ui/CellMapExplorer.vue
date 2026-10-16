@@ -41,28 +41,11 @@
 				</label>
 			</div>
 
-			<div class="controls-row">
-				<ModeSwitch
-					v-model="basemapId"
-					:options="basemapOptions"
-					label="Basemap"
-					variant="compact"
-				/>
-				<label class="checkbox">
-					<input type="checkbox" v-model="showDataLayer" />
-					<span>Show data layer</span>
-				</label>
-				<label class="checkbox" v-if="showDataLayer">
-					<span>Layer opacity</span>
-					<input
-						type="range"
-						min="0.2"
-						max="1"
-						step="0.05"
-						v-model.number="dataLayerOpacity"
-					/>
-				</label>
-			</div>
+			<BasemapControls
+				v-model:basemap-id="basemapId"
+				v-model:show-data-layer="showDataLayer"
+				v-model:data-layer-opacity="dataLayerOpacity"
+			/>
 		</div>
 
 		<div v-if="loading" class="status">Preparing MONICET map...</div>
@@ -71,17 +54,7 @@
 		<div v-else class="layout">
 			<div class="map-shell">
 				<div ref="mapContainer" class="map-container"></div>
-				<div v-if="attribution.length" class="attribution">
-					<template
-						v-for="(credit, i) in attribution"
-						:key="credit.href"
-					>
-						<span v-if="i > 0"> · </span>
-						<a :href="credit.href" target="_blank" rel="noopener">{{
-							credit.text
-						}}</a>
-					</template>
-				</div>
+				<MapAttribution :basemap-id="basemapId" />
 				<div v-show="showDataLayer" class="legend-shell">
 					<div class="legend-title">{{ copy.legendTitle }}</div>
 					<div ref="legendContainer" class="legend-container"></div>
@@ -214,6 +187,8 @@ import {
 	watch,
 } from "vue";
 
+import BasemapControls from "@/components/shared-ui/BasemapControls.vue";
+import MapAttribution from "@/components/shared-ui/MapAttribution.vue";
 import ModeSwitch from "@/components/shared-ui/ModeSwitch.vue";
 import {
 	averageDecline,
@@ -267,20 +242,13 @@ const selectedSpeciesId = ref("");
 const selectedMonth = ref(6);
 const reliableOnly = ref(true);
 
-// Basemap pilot: tiles under the D3 cells, switchable, with the cells as a
-// toggleable layer. No zoom yet (docs/basemaps.md).
+// Tiles under the D3 cells, switchable, with the cells as a toggleable
+// layer. This map does not zoom (docs/basemaps.md).
 const basemapId = ref<BasemapId>("basic");
 const showDataLayer = ref(true);
 // Whole-layer opacity, so the basemap shows through. Per-cell opacity still
 // encodes reliability on top of this.
 const dataLayerOpacity = ref(0.65);
-const basemapOptions = (Object.keys(BASEMAPS) as BasemapId[]).map((id) => ({
-	value: id,
-	label: BASEMAPS[id].label,
-}));
-const attribution = computed(
-	() => BASEMAPS[basemapId.value].tiles?.attribution ?? []
-);
 
 const mapContainer = ref<HTMLElement | null>(null);
 const legendContainer = ref<HTMLElement | null>(null);
@@ -864,19 +832,6 @@ watch(showDataLayer, () => {
 
 .map-container {
 	min-height: 420px;
-}
-
-.attribution {
-	padding: 0.2rem 0.6rem;
-	font-size: 0.66rem;
-	line-height: 1.3;
-	text-align: right;
-	color: $text-secondary;
-	background: rgba($surface, 0.92);
-
-	a {
-		color: inherit;
-	}
 }
 
 .legend-shell {

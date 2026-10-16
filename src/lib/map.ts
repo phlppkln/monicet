@@ -51,14 +51,6 @@ export interface BaseMapOptions {
 	lines?: MapLineCollection | null;
 }
 
-export const SAND_THEME: MapTheme = {
-	background: "#f8f3ea",
-	graticule: { stroke: "#d7dfd0", width: 0.7, opacity: 0.8 },
-	envelope: { fill: "#eef4e9", stroke: "#c7d5c0" },
-	island: { fill: "#d3be9b", stroke: "#a4895d" },
-	labelColor: "#645742",
-};
-
 // ─── Basemap catalogue ──────────────────────────────────────────────────────
 //
 // Two kinds of basemap:
@@ -236,8 +228,16 @@ export function drawBaseMap(
 	// Tiles sit between the background and everything D3 draws. Under them
 	// goes a plain outline of the land, hidden once the (opaque) tiles load
 	// but still there if they don't: offline, blocked, or a server outage.
+	let fallbackLand: d3.Selection<
+		SVGGElement,
+		unknown,
+		null,
+		undefined
+	> | null = null;
+	let tileGroup: d3.Selection<SVGGElement, unknown, null, undefined> | null =
+		null;
 	if (tiles) {
-		const fallbackLand = svg.append("g").attr("pointer-events", "none");
+		fallbackLand = svg.append("g").attr("pointer-events", "none");
 		if (lines) {
 			drawCoastlines(
 				fallbackLand,
@@ -255,12 +255,21 @@ export function drawBaseMap(
 				.attr("stroke", theme.labelColor)
 				.attr("stroke-width", 0.9);
 		}
-		drawTiles(svg.append("g"), tiles, projection, width, height);
+		tileGroup = svg.append("g");
+		drawTiles(tileGroup, tiles, projection, width, height);
 	}
 
-	// Graticule sits outside mapGroup, so it does not follow zoom.
+	// Graticule sits outside mapGroup (it is drawn before the envelope);
+	// enableZoom() moves it along with the map.
+	let graticule: d3.Selection<
+		SVGPathElement,
+		GeoJSON.MultiLineString,
+		null,
+		undefined
+	> | null = null;
 	if (theme.graticule) {
-		svg.append("path")
+		graticule = svg
+			.append("path")
 			.datum(d3.geoGraticule().step([0.5, 0.5])())
 			.attr("d", geoPath as never)
 			.attr("fill", "none")
@@ -339,9 +348,9 @@ export function drawBaseMap(
 			.text((f) => f.properties.name ?? "");
 	}
 
-	// Note: tiles do not follow zoom yet. Zooming would need drawTiles()
-	// called again from the zoom handler with event.transform applied to
-	// the tile scale and translate (see docs/basemaps.md).
+	// The D3 layers zoom by transforming their group. Tiles can't: a scaled
+	// tile is a blurry tile. They are re-picked for the zoomed view instead,
+	// so zooming in loads sharper tiles (docs/basemaps.md).
 	function enableZoom() {
 		const zoom = d3
 			.zoom<SVGSVGElement, unknown>()
@@ -350,8 +359,21 @@ export function drawBaseMap(
 				[0, 0],
 				[width, height],
 			])
-			.on("zoom", (event) => {
-				mapGroup.attr("transform", event.transform);
+			.on("zoom", (event: d3.D3ZoomEvent<SVGSVGElement, unknown>) => {
+				const transform = event.transform;
+				mapGroup.attr("transform", transform.toString());
+				graticule?.attr("transform", transform.toString());
+				fallbackLand?.attr("transform", transform.toString());
+				if (tiles && tileGroup) {
+					drawTiles(
+						tileGroup,
+						tiles,
+						projection,
+						width,
+						height,
+						transform
+					);
+				}
 			});
 		(svg as d3.Selection<SVGSVGElement, unknown, null, undefined>).call(
 			zoom
@@ -418,18 +440,22 @@ function drawCoastlines(
 //   (d3's Mercator scale is pixels per radian; the world is 2π radians wide)
 // - translate: where longitude 0 / latitude 0 lands on screen
 // The browser then loads each tile as a plain <image>.
+// A zoom transform scales the world by k and shifts it, so it is applied to
+// both inputs. The keyed join keeps tiles that stay in view and only adds
+// or removes the rest.
 
 function drawTiles(
 	group: d3.Selection<SVGGElement, unknown, null, undefined>,
 	source: TileSource,
 	projection: d3.GeoProjection,
 	width: number,
-	height: number
+	height: number,
+	transform: d3.ZoomTransform = d3.zoomIdentity
 ) {
 	const tiles = tile()
 		.size([width, height])
-		.scale(projection.scale() * 2 * Math.PI)
-		.translate(projection([0, 0]) ?? [0, 0])
+		.scale(projection.scale() * 2 * Math.PI * transform.k)
+		.translate(transform.apply(projection([0, 0]) ?? [0, 0]))
 		// On high-DPI screens fetch one zoom level deeper, so tiles stay sharp.
 		.zoomDelta(Math.round(Math.log2(window.devicePixelRatio || 1)))();
 
