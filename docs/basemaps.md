@@ -46,14 +46,29 @@ The data layer toggle hides the cell group with `display: none` instead of
 redrawing, so tiles are not requested again.
 
 So that the basemap stays visible under the data, every cell layer is drawn
-with an adjustable layer opacity (default 0.65). The External additionally
-blurs its cells by a quarter cell width and drops the cell borders; The
-Observer and The Animal keep crisp cells with thin white borders, because
-there you hover and click individual cells. The blur only softens edges.
+with an adjustable layer opacity (default 0.65). All three views of Three
+Ways of Looking also blur their cells by a quarter cell width and drop the
+cell borders (`addSoftEdgeFilter()` in `src/lib/map.ts`). What must stay
+readable per cell is drawn outside the blur: The External's unreliable
+cells and The Observer's selected-cell outline. Hover and click still hit
+the exact cell, because a filter changes only how a shape is painted, not
+its hit area. The blur only softens edges.
 It does **not** interpolate between cells, so cells without sightings stay
 empty. Real spatial smoothing (kernel density, kriging) would estimate values
 where nothing was recorded, which is a gap-filling decision for the Filling
 the Gaps direction, not a styling choice.
+
+Every map has a **Show observation grid** toggle (off by default). It draws
+the grid the build uses to put observations into areas: square cells of
+`meta.binSizeDegrees` (0.2°), counted from the grid origin
+(`bounds.minLatGrid`, `bounds.minLonGrid`), as in `getCellGeometry()` in
+`scripts/build-data.ts`. The lines cover the whole map, not only cells with
+data, to show that the grid is fixed in advance and the observations fall
+into it. They sit above the data layer, so the true cell edges show through
+the blur, and keep a constant width when zoomed. Line positions come from
+`gridLinePositions()` in `src/lib/grid.ts`; drawing is `drawObservationGrid()`
+in `src/lib/map.ts`. Like the data layer, the toggle only hides the group
+and never redraws.
 
 ## Sources
 

@@ -45,6 +45,7 @@
 				v-model:basemap-id="basemapId"
 				v-model:show-data-layer="showDataLayer"
 				v-model:data-layer-opacity="dataLayerOpacity"
+				v-model:show-observation-grid="showObservationGrid"
 			/>
 		</div>
 
@@ -216,7 +217,12 @@ import {
 	toPercent,
 } from "@/lib/format";
 import { renderGradientLegend } from "@/lib/legend";
-import { BASEMAPS, drawBaseMap, type BasemapId } from "@/lib/map";
+import {
+	addSoftEdgeFilter,
+	BASEMAPS,
+	drawBaseMap,
+	type BasemapId,
+} from "@/lib/map";
 import { hideTooltip, showTooltip } from "@/lib/tooltip";
 import type {
 	MonicetCruiseCell,
@@ -249,6 +255,9 @@ const showDataLayer = ref(true);
 // Whole-layer opacity, so the basemap shows through. Per-cell opacity still
 // encodes reliability on top of this.
 const dataLayerOpacity = ref(0.65);
+// The grid the build sorts observations into (drawObservationGrid in
+// src/lib/map.ts). Off by default: it is an explanation, not data.
+const showObservationGrid = ref(false);
 
 const mapContainer = ref<HTMLElement | null>(null);
 const legendContainer = ref<HTMLElement | null>(null);
@@ -506,34 +515,21 @@ function declineEncoding(visibleCells: MonicetGridCell[]): Encoding {
 let dataLayer: d3.Selection<SVGGElement, unknown, null, undefined> | null =
 	null;
 
+let observationGrid: d3.Selection<
+	SVGGElement,
+	unknown,
+	null,
+	undefined
+> | null = null;
+
+function applyObservationGridVisibility() {
+	observationGrid?.attr("display", showObservationGrid.value ? null : "none");
+}
+
 function applyDataLayerVisibility() {
 	dataLayer
 		?.attr("display", showDataLayer.value ? null : "none")
 		.attr("opacity", dataLayerOpacity.value);
-}
-
-// Soft edges for the 0.2° cells: a Gaussian blur over the rendered layer.
-// This is purely visual: values are not interpolated. Colour does bleed
-// about half a cell into neighbours, which is why unreliable cells are
-// drawn outside the blur (see renderMap).
-// (Real spatial smoothing — kernel density, kriging — would estimate values
-// between cells; that is a gap-filling question for Filling the Gaps.)
-// The blur radius is a quarter of a cell's on-screen width, so the look
-// stays the same at any map size.
-function addSoftEdgeFilter(
-	svg: d3.Selection<SVGSVGElement, unknown, null, undefined>,
-	cellWidthPx: number
-) {
-	svg.append("defs")
-		.append("filter")
-		.attr("id", `${svgIdPrefix}-soft-cells`)
-		.attr("x", "-10%")
-		.attr("y", "-10%")
-		.attr("width", "120%")
-		.attr("height", "120%")
-		.append("feGaussianBlur")
-		.attr("stdDeviation", Math.max(1, cellWidthPx / 4));
-	return `url(#${svgIdPrefix}-soft-cells)`;
 }
 
 /**
@@ -597,6 +593,7 @@ function renderMap() {
 		raiseLines,
 		insertDataLayer,
 		drawIslandLabels,
+		drawObservationGrid,
 	} = drawBaseMap(mapContainer.value, basemap.value, {
 		theme,
 		tiles,
@@ -610,11 +607,17 @@ function renderMap() {
 	// through the data. The data layer is inserted below them.
 	raiseLines();
 	drawIslandLabels();
+	observationGrid = drawObservationGrid(mapData.value);
+	applyObservationGridVisibility();
 
 	base = {
 		cellPath,
 		insertDataLayer,
-		softFilterUrl: addSoftEdgeFilter(svg, cellWidthPx),
+		softFilterUrl: addSoftEdgeFilter(
+			svg,
+			cellWidthPx,
+			`${svgIdPrefix}-soft-cells`
+		),
 	};
 	renderDataLayer();
 }
@@ -733,6 +736,8 @@ watch([mode, selectedSpeciesId, selectedMonth, reliableOnly], () => {
 watch(dataLayerOpacity, applyDataLayerVisibility);
 
 // Toggling the data layer only hides it: no redraw, so tiles don't reload.
+watch(showObservationGrid, applyObservationGridVisibility);
+
 watch(showDataLayer, () => {
 	hideTooltip(tooltipRef.value);
 	applyDataLayerVisibility();

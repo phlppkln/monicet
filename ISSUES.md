@@ -185,14 +185,15 @@ binned classes.
 
 ### V-3 Inconsistent "zero/no data" fills across directions [code]
 
-D1 uses `#ecf0f2`, D3 uses `#e8eef2`, and D3 Dominance uses the first teal
-ramp step for "Absent". The last makes absence look like weak presence.
+D1 uses `#ecf0f2` and D3 uses `#e8eef2`.
 
 ### V-4 Linear sequential scales on highly skewed counts [verified]
 
 Species counts per cell go up to 1,103 while most cells hold single or
 double digits, so most cells end up pale. Consider sqrt/log or quantile
 scales.
+
+_Partly done:_ D3 (The Animal) now uses a log scale. D1 is still linear.
 
 ### V-5 D4 uses a different palette system [code]
 
@@ -202,8 +203,8 @@ hard-codes "/ 12 years" (`MAX_YEARS`) instead of using `meta.years.length`.
 
 ### V-7 Small, cramped labels [verified]
 
-Month ticks are 7px, sparkline labels 8px, and island labels 10px (Corvo
-overlaps Flores). The sparkline labels only the first and last year and the
+Sparkline labels are 8px and island labels 10px (Corvo overlaps Flores).
+(The 7px month ticks are fixed: D3 now uses 10px.) The sparkline labels only the first and last year and the
 max value, and has no hover.
 
 ### V-8 The basemap is a rough sketch [verified]
@@ -224,12 +225,6 @@ island label positions are still the centroids of the boxes.
 
 The click handler sets `selectedCell`, but the map is not re-rendered, so
 the teal outline only appears after a window resize.
-
-### U-2 D3 legend goes blank after Dominance → Distribution [code]
-
-`watch(showDominance)` runs `renderMap()` before Vue has re-mounted the
-`v-else` legend container, so `legendContainer` is `null` and the gradient
-is never drawn. A fix would use `nextTick` or `flush: "post"`.
 
 ### U-3 Every change rebuilds the whole SVG and resets zoom [code]
 
@@ -296,7 +291,7 @@ stretches the full width below the map.
 - **A-1** `role="tablist"` is used without `role="tab"` / `aria-selected` on
   the buttons (`src/components/shared-ui/ModeSwitch.vue`).
 - **A-2** Map cells are not focusable and have no text alternative.
-- **A-3** Some encodings rely on color alone (dominance, coverage); small grey
+- **A-3** Some encodings rely on color alone (coverage); small grey
   text sits at low contrast.
 - **A-4** Tooltips are built with `innerHTML` from data strings. That is safe
   today (our own JSON), but it is a risky pattern once data comes from

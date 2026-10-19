@@ -14,19 +14,13 @@
 						</option>
 					</select>
 				</div>
-
-				<ModeSwitch
-					v-model="showDominance"
-					:options="viewOptions"
-					label="Map mode"
-					variant="compact"
-				/>
 			</div>
 
 			<BasemapControls
 				v-model:basemap-id="basemapId"
 				v-model:show-data-layer="showDataLayer"
 				v-model:data-layer-opacity="dataLayerOpacity"
+				v-model:show-observation-grid="showObservationGrid"
 			/>
 		</div>
 
@@ -38,31 +32,10 @@
 				<div ref="mapContainer" class="map-container"></div>
 				<MapAttribution :basemap-id="basemapId" />
 				<div v-show="showDataLayer" class="legend-shell">
-					<template v-if="showDominance">
-						<div class="legend-title">Habitat role</div>
-						<div class="dominance-legend">
-							<span
-								v-for="cat in dominanceLegend"
-								:key="cat.label"
-								class="swatch-item"
-							>
-								<span
-									class="swatch"
-									:style="{ background: cat.color }"
-								></span>
-								{{ cat.label }}
-							</span>
-						</div>
-					</template>
-					<template v-else>
-						<div class="legend-title">
-							Encounters (selected species)
-						</div>
-						<div
-							ref="legendContainer"
-							class="legend-container"
-						></div>
-					</template>
+					<div class="legend-title">
+						Encounters (selected species, log scale)
+					</div>
+					<div ref="legendContainer" class="legend-container"></div>
 				</div>
 				<div ref="tooltipRef" class="tooltip"></div>
 			</div>
@@ -84,59 +57,44 @@
 						<span>Grid cells with sightings</span>
 						<strong>{{ spatialCoverage }}</strong>
 					</div>
-					<div class="metric-row">
-						<span>Best month (per cruise)</span>
-						<strong>{{ bestMonthLabel }}</strong>
-					</div>
 
 					<div class="chart-section">
-						<div class="chart-label">Year-by-year encounters</div>
+						<div class="chart-label">
+							Year by year (encounters per cruise)
+						</div>
 						<div ref="sparklineContainer" class="sparkline"></div>
 					</div>
 
 					<div class="chart-section">
-						<div class="chart-label">Monthly pattern</div>
+						<div class="chart-label">
+							Monthly pattern (encounters per cruise)
+						</div>
 						<div class="monthly-bars">
 							<div
-								v-for="(
-									count, i
-								) in selectedSpecies.monthlyEncounters"
+								v-for="(rate, i) in monthlyRatesForSpecies"
 								:key="i"
 								class="month-col"
-								:title="`${MONTH_LABELS[i]}: ${count.toLocaleString()}`"
+								:title="`${MONTH_LABELS[i]}: ${formatRate(rate)}`"
 							>
 								<div
 									class="month-bar"
 									:style="{
-										height: `${maxMonthly > 0 ? Math.max(2, (count / maxMonthly) * 52) : 2}px`,
+										height: `${maxMonthlyRate > 0 ? Math.max(2, (rate / maxMonthlyRate) * 52) : 2}px`,
 									}"
 								></div>
 								<div class="month-tick">
-									{{
-										i % 3 === 0
-											? (MONTH_LABELS[i] ?? "").slice(
-													0,
-													1
-												)
-											: ""
-									}}
+									{{ MONTH_LABELS[i] }}
 								</div>
 							</div>
 						</div>
 					</div>
-
-					<div v-if="showDominance" class="dominance-note">
-						<strong>Dominant</strong> = this species is the
-						most-sighted in that cell. <strong>Notable</strong> =
-						top-3 but not #1. <strong>Occasional</strong> = present
-						but rare.
-					</div>
 				</div>
 
 				<div class="caveat">
-					Encounter counts are absolute, not normalized by cruise
-					effort. Species presence in a cell reflects the full
-					2009–2020 archive.
+					Map counts are absolute, not normalized by cruise effort.
+					The yearly and monthly charts divide by all cruises in that
+					year or month, pooled over all islands. Species presence in
+					a cell reflects the full 2009–2020 archive.
 				</div>
 			</aside>
 		</div>
@@ -145,8 +103,8 @@
 
 <script setup lang="ts">
 // The Animal (formerly D3, "The Species as Character"). One species reorganises the
-// map: raw encounter distribution or habitat role (dominance), plus a
-// yearly sparkline and monthly bars in the side panel.
+// map around its encounter distribution, plus a yearly sparkline and
+// monthly bars in the side panel.
 import * as d3 from "d3";
 import {
 	computed,
@@ -154,30 +112,32 @@ import {
 	onBeforeUnmount,
 	onMounted,
 	ref,
+	useId,
 	watch,
 } from "vue";
 
 import BasemapControls from "@/components/shared-ui/BasemapControls.vue";
 import MapAttribution from "@/components/shared-ui/MapAttribution.vue";
-import ModeSwitch from "@/components/shared-ui/ModeSwitch.vue";
 import {
-	bestMonthIndex,
 	monthlyRates,
-	cellDominance,
 	findSpecies,
 	speciesOptions,
-	type DominanceCategory,
+	yearlyRates,
 } from "@/data/selectors";
 import { useMonicetData } from "@/data/useMonicetData";
 import {
-	CHART_ORDINAL_TEAL_RAMP,
 	CHART_PRIMARY,
 	CHART_SEQUENTIAL_TEAL,
 	CHART_TEXT_SECONDARY,
 } from "@/lib/chartTokens";
-import { formatCellLabel, MONTH_LABELS } from "@/lib/format";
+import { formatCellLabel, formatRate, MONTH_LABELS } from "@/lib/format";
 import { renderGradientLegend } from "@/lib/legend";
-import { BASEMAPS, drawBaseMap, type BasemapId } from "@/lib/map";
+import {
+	addSoftEdgeFilter,
+	BASEMAPS,
+	drawBaseMap,
+	type BasemapId,
+} from "@/lib/map";
 import { hideTooltip, showTooltip } from "@/lib/tooltip";
 import type { MonicetGridCell } from "@/types/monicet";
 
@@ -186,36 +146,23 @@ const { mapData, basemap, mapLines, error, load, loadMapLines } =
 const loading = ref(true);
 
 const selectedSpeciesId = ref("");
-const showDominance = ref(false);
 
 // Same basemaps as The External (docs/basemaps.md), with the cells as a
 // toggleable layer whose opacity lets the basemap show through.
 const basemapId = ref<BasemapId>("basic");
 const showDataLayer = ref(true);
 const dataLayerOpacity = ref(0.65);
+// The grid the build sorts observations into (drawObservationGrid in
+// src/lib/map.ts). Off by default: it is an explanation, not data.
+const showObservationGrid = ref(false);
+
+// SVG ids (blur filter) are document-wide; prefix them per instance.
+const svgIdPrefix = `sac${useId()}`;
 
 const mapContainer = ref<HTMLElement | null>(null);
 const legendContainer = ref<HTMLElement | null>(null);
 const sparklineContainer = ref<HTMLElement | null>(null);
 const tooltipRef = ref<HTMLElement | null>(null);
-
-const viewOptions = [
-	{ value: false, label: "Distribution" },
-	{ value: true, label: "Dominance" },
-];
-
-// Dominance is an ordinal magnitude bucket, so it takes one hue stepped
-// light → dark rather than four unrelated categorical hues.
-const DOMINANCE: Record<DominanceCategory, { label: string; color: string }> = {
-	absent: { label: "Absent", color: CHART_ORDINAL_TEAL_RAMP[0] },
-	occasional: { label: "Occasional", color: CHART_ORDINAL_TEAL_RAMP[1] },
-	notable: { label: "Notable", color: CHART_ORDINAL_TEAL_RAMP[2] },
-	dominant: { label: "Dominant", color: CHART_ORDINAL_TEAL_RAMP[3] },
-};
-
-const dominanceLegend = (
-	["dominant", "notable", "occasional", "absent"] as DominanceCategory[]
-).map((cat) => DOMINANCE[cat]);
 
 // ─── Derived data ────────────────────────────────────────────────────────────
 
@@ -228,8 +175,18 @@ const selectedSpecies = computed(() => {
 	return findSpecies(mapData.value, selectedSpeciesId.value);
 });
 
-const maxMonthly = computed(() =>
-	Math.max(1, ...(selectedSpecies.value?.monthlyEncounters ?? []))
+// Encounters per cruise, not raw counts: raw monthly counts mostly follow
+// how many trips ran (July has ~15× the cruises of January), so dividing by
+// cruises asks "if I go out this month, how likely am I to meet it?".
+const monthlyRatesForSpecies = computed(() => {
+	const monthly = selectedSpecies.value?.monthlyEncounters;
+	if (!monthly || !mapData.value) return [];
+	const cruises = mapData.value.monthlySummaries.map((m) => m.cruises);
+	return monthlyRates(monthly, cruises);
+});
+
+const maxMonthlyRate = computed(() =>
+	Math.max(0, ...monthlyRatesForSpecies.value)
 );
 
 const spatialCoverage = computed(() =>
@@ -238,24 +195,11 @@ const spatialCoverage = computed(() =>
 		: 0
 );
 
-const bestMonthLabel = computed(() => {
-	const monthly = selectedSpecies.value?.monthlyEncounters;
-	if (!monthly || !mapData.value) return "n/a";
-	// Per cruise, like The External's "Best month overall"; raw counts would
-	// mostly show the month with the most trips.
-	const cruises = mapData.value.monthlySummaries.map((m) => m.cruises);
-	return (
-		MONTH_LABELS[bestMonthIndex(monthlyRates(monthly, cruises))] ?? "n/a"
-	);
-});
-
 // ─── Tooltip ─────────────────────────────────────────────────────────────────
 
 function onCellHover(event: MouseEvent, cell: MonicetGridCell) {
 	if (!tooltipRef.value || !mapContainer.value) return;
 	const count = cell.speciesCounts[selectedSpeciesId.value] ?? 0;
-	const cat = cellDominance(cell, selectedSpeciesId.value);
-	const catLabel = cat.charAt(0).toUpperCase() + cat.slice(1);
 
 	showTooltip(
 		tooltipRef.value,
@@ -264,7 +208,6 @@ function onCellHover(event: MouseEvent, cell: MonicetGridCell) {
 		`
 		<div class="tip-title">${formatCellLabel(cell)}</div>
 		<div class="tip-line">${count.toLocaleString()} encounters</div>
-		<div class="tip-line">${catLabel} presence</div>
 	`
 	);
 }
@@ -273,6 +216,17 @@ function onCellHover(event: MouseEvent, cell: MonicetGridCell) {
 
 let dataLayer: d3.Selection<SVGGElement, unknown, null, undefined> | null =
 	null;
+
+let observationGrid: d3.Selection<
+	SVGGElement,
+	unknown,
+	null,
+	undefined
+> | null = null;
+
+function applyObservationGridVisibility() {
+	observationGrid?.attr("display", showObservationGrid.value ? null : "none");
+}
 
 function applyDataLayerVisibility() {
 	dataLayer
@@ -287,6 +241,7 @@ function applyDataLayerVisibility() {
 let base: {
 	cellPath: ReturnType<typeof drawBaseMap>["cellPath"];
 	insertDataLayer: ReturnType<typeof drawBaseMap>["insertDataLayer"];
+	softFilterUrl: string;
 } | null = null;
 
 function renderMap() {
@@ -294,10 +249,13 @@ function renderMap() {
 
 	const { theme, tiles } = BASEMAPS[basemapId.value];
 	const {
+		svg,
 		cellPath,
+		cellWidthPx,
 		raiseLines,
 		insertDataLayer,
 		drawIslandLabels,
+		drawObservationGrid,
 		enableZoom,
 	} = drawBaseMap(mapContainer.value, basemap.value, {
 		theme,
@@ -311,9 +269,19 @@ function renderMap() {
 	// Wireframe: coastlines and labels on top, cells inserted below them.
 	raiseLines();
 	drawIslandLabels();
+	observationGrid = drawObservationGrid(mapData.value);
+	applyObservationGridVisibility();
 	enableZoom();
 
-	base = { cellPath, insertDataLayer };
+	base = {
+		cellPath,
+		insertDataLayer,
+		softFilterUrl: addSoftEdgeFilter(
+			svg,
+			cellWidthPx,
+			`${svgIdPrefix}-soft-cells`
+		),
+	};
 	renderDataLayer();
 }
 
@@ -324,44 +292,53 @@ function renderDataLayer() {
 	dataLayer?.remove();
 	dataLayer = base.insertDataLayer();
 	applyDataLayerVisibility();
+	// Soft edges as in The External: the cells are blurred and have no
+	// borders.
+	const softCells = dataLayer.append("g").attr("filter", base.softFilterUrl);
 
 	const cells = mapData.value.gridCells;
 	const spId = selectedSpeciesId.value;
 
-	let fill: (cell: MonicetGridCell) => string;
-
-	if (showDominance.value) {
-		fill = (cell) => DOMINANCE[cellDominance(cell, spId)].color;
-	} else {
-		const maxCount = Math.max(
-			1,
-			d3.max(cells, (c) => c.speciesCounts[spId] ?? 0) ?? 1
+	// Log scale, because the counts are heavily right-skewed: for the
+	// most common species the median occupied cell has ~2% of the
+	// maximum, so a linear ramp paints most cells near-white. On a log
+	// scale equal colour steps mean equal *ratios* (1→10 looks like
+	// 100→1000), which spreads the many small counts out. The cost:
+	// absolute differences among the top cells are compressed.
+	// Domain starts at 1, not 0 (log 0 is undefined); zero cells keep
+	// their own "absent" grey below, so they never reach the scale.
+	const maxCount = Math.max(
+		1,
+		d3.max(cells, (c) => c.speciesCounts[spId] ?? 0) ?? 1
+	);
+	const scale = d3
+		.scaleSequentialLog(d3.interpolateRgb(...CHART_SEQUENTIAL_TEAL))
+		.domain([1, maxCount]);
+	const fill = (cell: MonicetGridCell) => {
+		const v = cell.speciesCounts[spId] ?? 0;
+		return v > 0 ? scale(v) : "#e8eef2";
+	};
+	if (legendContainer.value) {
+		// The legend bar is evenly spaced in log space, so its midpoint
+		// is the geometric mean sqrt(1 · max), not max / 2.
+		renderGradientLegend(
+			legendContainer.value,
+			"d3-sp-legend",
+			(t) => scale.interpolator()(t),
+			{
+				left: "1",
+				center: `${Math.round(Math.sqrt(maxCount))}`,
+				right: `${maxCount}`,
+			}
 		);
-		const scale = d3
-			.scaleSequential(d3.interpolateRgb(...CHART_SEQUENTIAL_TEAL))
-			.domain([0, maxCount]);
-		fill = (cell) => {
-			const v = cell.speciesCounts[spId] ?? 0;
-			return v > 0 ? scale(v) : "#e8eef2";
-		};
-		if (legendContainer.value) {
-			renderGradientLegend(
-				legendContainer.value,
-				"d3-sp-legend",
-				(t) => scale(t * maxCount),
-				{ left: "0", right: `${maxCount}` }
-			);
-		}
 	}
 
-	dataLayer
+	softCells
 		.selectAll("path")
 		.data(cells)
 		.join("path")
 		.attr("d", base.cellPath)
 		.attr("fill", fill)
-		.attr("stroke", "#fff")
-		.attr("stroke-width", 0.7)
 		.on("mousemove", (event: MouseEvent, cell) => onCellHover(event, cell))
 		.on("mouseleave", () => hideTooltip(tooltipRef.value));
 }
@@ -373,12 +350,12 @@ function renderSparkline() {
 	if (!sparklineContainer.value || !species || !mapData.value) return;
 	d3.select(sparklineContainer.value).selectAll("*").remove();
 
-	type Point = { year: number; count: number };
-	const years = mapData.value.meta.years;
-	const data: Point[] = years.map((year) => ({
-		year,
-		count: species.yearlyEncounters[String(year)] ?? 0,
-	}));
+	// Encounters per cruise per year, for the same reason as the monthly
+	// bars: the number of trips changed a lot between years.
+	type Point = { year: number; rate: number };
+	const { years, yearlyCruises } = mapData.value.meta;
+	const rates = yearlyRates(species.yearlyEncounters, yearlyCruises, years);
+	const data: Point[] = years.map((year, i) => ({ year, rate: rates[i] }));
 
 	const w = sparklineContainer.value.clientWidth || 240;
 	const h = 68;
@@ -390,7 +367,9 @@ function renderSparkline() {
 		.scaleLinear()
 		.domain([firstYear, lastYear])
 		.range([margin.left, w - margin.right]);
-	const yMax = Math.max(1, d3.max(data, (d) => d.count) ?? 1);
+	// Floor the axis so a species with almost no sightings still gets a
+	// non-zero domain.
+	const yMax = Math.max(0.01, d3.max(data, (d) => d.rate) ?? 0);
 	const y = d3
 		.scaleLinear()
 		.domain([0, yMax * 1.1])
@@ -407,13 +386,13 @@ function renderSparkline() {
 		.area<Point>()
 		.x((d) => x(d.year))
 		.y0(y(0))
-		.y1((d) => y(d.count))
+		.y1((d) => y(d.rate))
 		.curve(d3.curveMonotoneX);
 
 	const line = d3
 		.line<Point>()
 		.x((d) => x(d.year))
-		.y((d) => y(d.count))
+		.y((d) => y(d.rate))
 		.curve(d3.curveMonotoneX);
 
 	svg.append("path")
@@ -433,7 +412,7 @@ function renderSparkline() {
 		.data(data)
 		.join("circle")
 		.attr("cx", (d) => x(d.year))
-		.attr("cy", (d) => y(d.count))
+		.attr("cy", (d) => y(d.rate))
 		.attr("r", 2.5)
 		.attr("fill", CHART_PRIMARY);
 
@@ -448,7 +427,7 @@ function renderSparkline() {
 			.text(text);
 
 	// Y axis: max and zero only; X axis: first and last year only.
-	label(margin.left - 3, margin.top + 4, yMax.toLocaleString(), "end");
+	label(margin.left - 3, margin.top + 4, yMax.toFixed(2), "end");
 	label(margin.left - 3, h - margin.bottom, "0", "end");
 	label(x(firstYear), h, String(firstYear));
 	label(x(lastYear), h, String(lastYear), "end");
@@ -498,11 +477,6 @@ watch(selectedSpeciesId, async () => {
 	renderSparkline();
 });
 
-watch(showDominance, () => {
-	if (loading.value) return;
-	renderDataLayer();
-});
-
 watch(basemapId, () => {
 	if (!loading.value) renderMap();
 });
@@ -510,6 +484,8 @@ watch(basemapId, () => {
 watch(dataLayerOpacity, applyDataLayerVisibility);
 
 // Toggling the data layer only hides it: no redraw, so tiles don't reload.
+watch(showObservationGrid, applyObservationGridVisibility);
+
 watch(showDataLayer, () => {
 	hideTooltip(tooltipRef.value);
 	applyDataLayerVisibility();
@@ -608,28 +584,6 @@ watch(showDataLayer, () => {
 	letter-spacing: 0.02em;
 	color: $text-primary;
 	margin-bottom: 0.25rem;
-}
-
-.dominance-legend {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 0.6rem;
-}
-
-.swatch-item {
-	display: flex;
-	align-items: center;
-	gap: 0.3rem;
-	font-size: 0.76rem;
-	color: $text-primary;
-}
-
-.swatch {
-	width: 12px;
-	height: 12px;
-	border-radius: 2px;
-	display: inline-block;
-	border: 1px solid rgba(0, 0, 0, 0.12);
 }
 
 :deep(.legend-label) {
@@ -757,23 +711,12 @@ watch(showDataLayer, () => {
 }
 
 .month-tick {
-	font-size: 7px;
+	// Same size as the map legend labels. In the narrowest side panel each
+	// column is ~18px wide, which still fits "May" or "Mar" at 10px.
+	font-size: 10px;
 	color: $text-secondary;
 	margin-top: 2px;
 	line-height: 1;
-}
-
-.dominance-note {
-	font-size: 0.76rem;
-	color: $text-secondary;
-	line-height: 1.45;
-	background: rgba($background-darker, 0.5);
-	border-radius: 6px;
-	padding: 0.4rem 0.5rem;
-
-	strong {
-		color: $text-primary;
-	}
 }
 
 .caveat {

@@ -1,11 +1,13 @@
 import * as d3 from "d3";
 import { tile } from "d3-tile";
 
+import { gridLinePositions } from "@/lib/grid";
 import type {
 	BasemapFeature,
 	BasemapFeatureCollection,
 	MapLineCollection,
 	MonicetGridCell,
+	MonicetMapData,
 } from "@/types/monicet";
 
 // Shared D3 basemap for all three directions: background, graticule,
@@ -348,6 +350,65 @@ export function drawBaseMap(
 			.text((f) => f.properties.name ?? "");
 	}
 
+	/**
+	 * The observation grid: the binSize° cells the build sorts every
+	 * sighting and cruise position into. Drawn as thin lines over the whole
+	 * map, not only where there is data, to show that the grid is fixed and
+	 * the data falls into it. It goes on top of everything drawn so far
+	 * (call after raiseLines() and drawIslandLabels()); data layers added
+	 * later with insertDataLayer() still go below it, so the true cell edges
+	 * show through the soft-edge blur. It ignores the pointer, so hover and
+	 * click reach the cells below.
+	 *
+	 * Mercator draws parallels and meridians as straight lines, so each grid
+	 * line is one straight SVG line across the map. The stroke keeps its
+	 * width when zoomed (non-scaling-stroke). Returns the group, so the
+	 * caller can hide it without redrawing.
+	 */
+	function drawObservationGrid(
+		data: Pick<MonicetMapData, "meta" | "bounds">
+	) {
+		const binSize = data.meta.binSizeDegrees;
+		const [west, north] = projection.invert?.([0, 0]) ?? [0, 0];
+		const [east, south] = projection.invert?.([width, height]) ?? [0, 0];
+		const xOf = (lon: number) => projection([lon, 0])?.[0] ?? 0;
+		const yOf = (lat: number) => projection([0, lat])?.[1] ?? 0;
+
+		const group = mapGroup
+			.append("g")
+			.attr("pointer-events", "none")
+			.attr("stroke", theme.labelColor)
+			.attr("stroke-opacity", 0.45)
+			.attr("stroke-width", 0.6);
+
+		group
+			.selectAll("line.meridian")
+			.data(
+				gridLinePositions(data.bounds.minLonGrid, binSize, west, east)
+			)
+			.join("line")
+			.attr("class", "meridian")
+			.attr("x1", xOf)
+			.attr("x2", xOf)
+			.attr("y1", 0)
+			.attr("y2", height);
+
+		group
+			.selectAll("line.parallel")
+			.data(
+				gridLinePositions(data.bounds.minLatGrid, binSize, south, north)
+			)
+			.join("line")
+			.attr("class", "parallel")
+			.attr("x1", 0)
+			.attr("x2", width)
+			.attr("y1", yOf)
+			.attr("y2", yOf);
+
+		group.selectAll("line").attr("vector-effect", "non-scaling-stroke");
+		return group;
+	}
+
 	// The D3 layers zoom by transforming their group. Tiles can't: a scaled
 	// tile is a blurry tile. They are re-picked for the zoomed view instead,
 	// so zooming in loads sharper tiles (docs/basemaps.md).
@@ -405,8 +466,46 @@ export function drawBaseMap(
 		raiseLines,
 		insertDataLayer,
 		drawIslandLabels,
+		drawObservationGrid,
 		enableZoom,
 	};
+}
+
+// ─── Soft cell edges ────────────────────────────────────────────────────────
+
+/**
+ * Soft edges for the 0.2° cells: a Gaussian blur over a rendered layer.
+ * Returns the `url(#id)` to set as that layer's `filter` attribute.
+ *
+ * This is purely visual: values are not interpolated. Colour does bleed
+ * about half a cell into neighbours, so anything that must stay readable
+ * per cell (unreliable cells, a selection outline) is drawn outside the
+ * blurred group, and blurred cells get no borders.
+ * (Real spatial smoothing — kernel density, kriging — would estimate values
+ * between cells; that is a gap-filling question for Filling the Gaps.)
+ *
+ * The blur radius is a quarter of a cell's width in map units, so the look
+ * stays the same at any map size. On a zoomable map the blurred group sits
+ * inside the transformed `mapGroup`, so the radius scales with the zoom too.
+ *
+ * `id` must be unique in the document: SVG ids are global, and two maps on
+ * one page would otherwise use each other's filter.
+ */
+export function addSoftEdgeFilter(
+	svg: d3.Selection<SVGSVGElement, unknown, null, undefined>,
+	cellWidthPx: number,
+	id: string
+) {
+	svg.append("defs")
+		.append("filter")
+		.attr("id", id)
+		.attr("x", "-10%")
+		.attr("y", "-10%")
+		.attr("width", "120%")
+		.attr("height", "120%")
+		.append("feGaussianBlur")
+		.attr("stdDeviation", Math.max(1, cellWidthPx / 4));
+	return `url(#${id})`;
 }
 
 // ─── Coastlines ─────────────────────────────────────────────────────────────

@@ -5,6 +5,7 @@
 			v-model:basemap-id="basemapId"
 			v-model:show-data-layer="showDataLayer"
 			v-model:data-layer-opacity="dataLayerOpacity"
+			v-model:show-observation-grid="showObservationGrid"
 		/>
 
 		<div v-if="loading" class="status">Preparing field journal…</div>
@@ -152,6 +153,7 @@ import {
 	onBeforeUnmount,
 	onMounted,
 	ref,
+	useId,
 	watch,
 } from "vue";
 
@@ -165,7 +167,12 @@ import {
 import { useMonicetData } from "@/data/useMonicetData";
 import { CHART_PRIMARY } from "@/lib/chartTokens";
 import { formatCellLabel } from "@/lib/format";
-import { BASEMAPS, drawBaseMap, type BasemapId } from "@/lib/map";
+import {
+	addSoftEdgeFilter,
+	BASEMAPS,
+	drawBaseMap,
+	type BasemapId,
+} from "@/lib/map";
 import { hideTooltip, showTooltip } from "@/lib/tooltip";
 import type { MonicetGridCell } from "@/types/monicet";
 
@@ -181,6 +188,12 @@ const loading = ref(true);
 const basemapId = ref<BasemapId>("basic");
 const showDataLayer = ref(true);
 const dataLayerOpacity = ref(0.65);
+// The grid the build sorts observations into (drawObservationGrid in
+// src/lib/map.ts). Off by default: it is an explanation, not data.
+const showObservationGrid = ref(false);
+
+// SVG ids (blur filter) are document-wide; prefix them per instance.
+const svgIdPrefix = `fj${useId()}`;
 
 const mapContainer = ref<HTMLElement | null>(null);
 const tooltipRef = ref<HTMLElement | null>(null);
@@ -254,6 +267,17 @@ function onCellHover(event: MouseEvent, cell: MonicetGridCell) {
 let dataLayer: d3.Selection<SVGGElement, unknown, null, undefined> | null =
 	null;
 
+let observationGrid: d3.Selection<
+	SVGGElement,
+	unknown,
+	null,
+	undefined
+> | null = null;
+
+function applyObservationGridVisibility() {
+	observationGrid?.attr("display", showObservationGrid.value ? null : "none");
+}
+
 function applyDataLayerVisibility() {
 	dataLayer
 		?.attr("display", showDataLayer.value ? null : "none")
@@ -266,10 +290,13 @@ function renderMap() {
 	hideTooltip(tooltipRef.value);
 	const { theme, tiles } = BASEMAPS[basemapId.value];
 	const {
+		svg,
 		cellPath,
+		cellWidthPx,
 		raiseLines,
 		insertDataLayer,
 		drawIslandLabels,
+		drawObservationGrid,
 		enableZoom,
 	} = drawBaseMap(mapContainer.value, basemap.value, {
 		theme,
@@ -283,22 +310,30 @@ function renderMap() {
 	// Wireframe: coastlines and labels on top, cells inserted below them.
 	raiseLines();
 	drawIslandLabels();
+	observationGrid = drawObservationGrid(mapData.value);
+	applyObservationGridVisibility();
 	dataLayer = insertDataLayer();
 	applyDataLayerVisibility();
 
-	const isSelected = (cell: MonicetGridCell) =>
-		selectedCell.value?.id === cell.id;
+	// Soft edges as in The External: cells are blurred and have no borders.
+	// The selected cell's outline sits on top, outside the blur, so it stays
+	// sharp. It ignores the pointer, so hover and click reach the cell below.
+	const softCells = dataLayer
+		.append("g")
+		.attr(
+			"filter",
+			addSoftEdgeFilter(svg, cellWidthPx, `${svgIdPrefix}-soft-cells`)
+		);
+	const selectionOutline = dataLayer
+		.append("g")
+		.attr("pointer-events", "none");
 
-	dataLayer
+	softCells
 		.selectAll("path")
 		.data(mapData.value.gridCells)
 		.join("path")
 		.attr("d", cellPath)
 		.attr("fill", (cell) => blueScale(cell.yearsWithEncounters))
-		.attr("stroke", (cell) =>
-			isSelected(cell) ? CHART_PRIMARY : "#ffffff"
-		)
-		.attr("stroke-width", (cell) => (isSelected(cell) ? 1.8 : 0.7))
 		.style("cursor", "pointer")
 		.on("mousemove", (event: MouseEvent, cell) => onCellHover(event, cell))
 		.on("mouseleave", () => hideTooltip(tooltipRef.value))
@@ -306,6 +341,15 @@ function renderMap() {
 			showAllSpecies.value = false;
 			selectedCell.value = cell;
 		});
+
+	selectionOutline
+		.selectAll("path")
+		.data(selectedCell.value ? [selectedCell.value] : [])
+		.join("path")
+		.attr("d", cellPath)
+		.attr("fill", "none")
+		.attr("stroke", CHART_PRIMARY)
+		.attr("stroke-width", 1.8);
 
 	enableZoom();
 }
@@ -346,6 +390,8 @@ watch(basemapId, () => {
 watch(dataLayerOpacity, applyDataLayerVisibility);
 
 // Toggling the data layer only hides it: no redraw, so tiles don't reload.
+watch(showObservationGrid, applyObservationGridVisibility);
+
 watch(showDataLayer, () => {
 	hideTooltip(tooltipRef.value);
 	applyDataLayerVisibility();

@@ -91,14 +91,14 @@ src/
     directions/
       three-ways-of-looking/   components used only by this direction
         FieldJournal.vue       The Observer — active years per cell, click → logbook panel
-        SpeciesAsCharacter.vue The Animal — one species: distribution / dominance, sparkline
+        SpeciesAsCharacter.vue The Animal — one species: distribution (log scale), sparkline
         ViewSection.vue        heading + framing text around one view
       filling-the-gaps/        components used only by this direction (empty)
     shared-ui/                 components used by more than one view
       CellMapExplorer.vue      grid-cell map with modes (prop), basemaps, layer toggle:
                                The External (species / seasonality / boats) and
                                Filling the Gaps (decline: the dataset to fill)
-      BasemapControls.vue      basemap switch + data-layer toggle + opacity (v-model)
+      BasemapControls.vue      basemap switch + data-layer / observation-grid toggles + opacity (v-model)
       MapAttribution.vue       tile provider credits under a map
       ModeSwitch.vue           pill-button option group (v-model)
       BackLink.vue             "← MONICET" link to the landing page
@@ -106,7 +106,9 @@ src/
     useMonicetData.ts          fetch + module-level cache (one request per page load)
     selectors.ts               pure derivations over the dataset (+ selectors.test.ts)
   lib/                         framework-free helpers
-    map.ts                     shared D3 basemap: projection, graticule, islands, tiles, zoom, cell paths
+    map.ts                     shared D3 basemap: projection, graticule, islands, tiles, zoom, cell paths,
+                               soft-edge blur, observation grid
+    grid.ts                    observation-grid line positions, pure (+ grid.test.ts)
     legend.ts, tooltip.ts      gradient legend, hover tooltip
     format.ts, chartTokens.ts  number/label formatting, chart colors
   types/monicet.ts             JSON schema types — shared with scripts/

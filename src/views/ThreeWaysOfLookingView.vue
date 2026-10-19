@@ -61,10 +61,8 @@
 			<template #reflection>
 				The animal as the entry point — not the map. Selecting a species
 				reorganises the map around that one creature: where it
-				concentrates, which cells it dominates versus merely visits, and
-				how its encounter count has moved year by year since 2009.
-				Switch to <em>Dominance</em> to see habitat role rather than raw
-				count.
+				concentrates and how its encounter count has moved year by year
+				since 2009.
 			</template>
 			<SpeciesAsCharacter />
 		</ViewSection>

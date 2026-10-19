@@ -10,6 +10,10 @@
 			<input type="checkbox" v-model="showDataLayer" />
 			<span>Show data layer</span>
 		</label>
+		<label class="checkbox">
+			<input type="checkbox" v-model="showObservationGrid" />
+			<span>Show observation grid</span>
+		</label>
 		<label class="checkbox" v-if="showDataLayer">
 			<span>Layer opacity</span>
 			<input
@@ -24,7 +28,8 @@
 </template>
 
 <script setup lang="ts">
-// Basemap switch + data-layer toggle + layer opacity, shared by every map
+// Basemap switch + data-layer toggle + observation-grid toggle + layer
+// opacity, shared by every map
 // with tiled basemaps (docs/basemaps.md). The map component owns the state
 // (v-model) and decides how each change is redrawn.
 import ModeSwitch from "@/components/shared-ui/ModeSwitch.vue";
@@ -35,6 +40,9 @@ const showDataLayer = defineModel<boolean>("showDataLayer", {
 	required: true,
 });
 const dataLayerOpacity = defineModel<number>("dataLayerOpacity", {
+	required: true,
+});
+const showObservationGrid = defineModel<boolean>("showObservationGrid", {
 	required: true,
 });
 

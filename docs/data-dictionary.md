@@ -20,18 +20,19 @@ Key definitions:
 
 ## `meta`
 
-| Field                          | Meaning                                                              |
-| ------------------------------ | -------------------------------------------------------------------- |
-| `totalSampleEvents`            | sighting events with a valid date and position                       |
-| `totalCruiseEvents`            | rows with `type = "cruise"`                                          |
-| `totalOccurrenceRows`          | all rows in `occurrence.txt`                                         |
-| `totalUniqueSpeciesEncounters` | encounters, as defined above (30,050)                                |
-| `excludedNonSpeciesRows`       | family-level occurrence rows dropped                                 |
-| `rowsWithoutMatchingEvent`     | occurrences whose `eventID` is not a sighting                        |
-| `years`                        | years that have cruises (2009–2020)                                  |
-| `bestMonthOverall`             | month with the highest `encounters / cruises`, pooled over all years |
-| `thresholds`                   | constants behind `isReliable`                                        |
-| `caveats`                      | free-text caveats; the UI shows only the first                       |
+| Field                          | Meaning                                                                |
+| ------------------------------ | ---------------------------------------------------------------------- |
+| `totalSampleEvents`            | sighting events with a valid date and position                         |
+| `totalCruiseEvents`            | rows with `type = "cruise"`                                            |
+| `totalOccurrenceRows`          | all rows in `occurrence.txt`                                           |
+| `totalUniqueSpeciesEncounters` | encounters, as defined above (30,050)                                  |
+| `excludedNonSpeciesRows`       | family-level occurrence rows dropped                                   |
+| `rowsWithoutMatchingEvent`     | occurrences whose `eventID` is not a sighting                          |
+| `years`                        | years that have cruises (2009–2020)                                    |
+| `yearlyCruises`                | `{ "2009": n, … }`, cruises per year (the effort), one key per `years` |
+| `bestMonthOverall`             | month with the highest `encounters / cruises`, pooled over all years   |
+| `thresholds`                   | constants behind `isReliable`                                          |
+| `caveats`                      | free-text caveats; the UI shows only the first                         |
 
 ## `gridCells[]`
 
@@ -131,6 +132,6 @@ code.
 | ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | The Observer (`FieldJournal.vue`)                      | `yearsWithEncounters`, `yearlyEncounters`, `speciesCounts`, `confidenceScore`, `isReliable`                                                                                      |
 | The External (`CellMapExplorer.vue`)                   | species: `speciesCounts`, `topSpecies`; seasonality: `monthlyEncounters`, `monthlySummaries`, `meta.bestMonthOverall`; boats: `cruiseCells`, `meta.cruisesWithoutPositionsAtSea` |
-| The Animal (`SpeciesAsCharacter.vue`)                  | `speciesSummaries`, `speciesCounts`, `topSpecies` (dominance)                                                                                                                    |
+| The Animal (`SpeciesAsCharacter.vue`)                  | `speciesSummaries`, `speciesCounts`                                                                                                                                              |
 | Filling the Gaps (`CellMapExplorer.vue`, decline mode) | `declinePct`, `isReliable`, `meta.caveats[0]`                                                                                                                                    |
 | not shown yet                                          | `speciesCertainty` (planned for The Animal)                                                                                                                                      |
