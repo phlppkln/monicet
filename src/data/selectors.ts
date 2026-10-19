@@ -91,6 +91,24 @@ export function monthlyRates(
 	);
 }
 
+/**
+ * Encounters per cruise for each year in `years`, in that order. Same idea
+ * as monthlyRates: the number of trips grew and shrank over the archive, so
+ * raw yearly counts mostly follow effort. Years without cruises get 0.
+ * Caveat (ISSUES D-1): the cruises pool all islands, and which companies
+ * and islands contributed changed over the years.
+ */
+export function yearlyRates(
+	yearlyEncounters: Record<string, number>,
+	yearlyCruises: Record<string, number>,
+	years: number[]
+): number[] {
+	return years.map((year) => {
+		const cruises = yearlyCruises[String(year)] ?? 0;
+		return cruises ? (yearlyEncounters[String(year)] ?? 0) / cruises : 0;
+	});
+}
+
 export function bestMonthIndex(monthly: number[]): number {
 	return monthly.indexOf(Math.max(...monthly));
 }

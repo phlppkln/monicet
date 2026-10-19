@@ -69,6 +69,7 @@ export interface MonicetMapMeta {
 	excludedNonSpeciesRows: number;
 	rowsWithoutMatchingEvent: number;
 	years: number[];
+	yearlyCruises: Record<string, number>;
 	dateRange: {
 		start: string | null;
 		end: string | null;

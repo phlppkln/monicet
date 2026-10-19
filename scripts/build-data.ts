@@ -532,6 +532,12 @@ export function buildData(
 				(positions) => positions.length === 0
 			).length,
 			years,
+			yearlyCruises: Object.fromEntries(
+				years.map((year) => [
+					String(year),
+					cruisesByYear.get(year) ?? 0,
+				])
+			),
 			dateRange: {
 				start: earliestDate ? earliestDate.toISOString() : null,
 				end: latestDate ? latestDate.toISOString() : null,

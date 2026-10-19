@@ -10,6 +10,7 @@ import {
 	monthlyRates,
 	topCruiseCells,
 	topDecliningCells,
+	yearlyRates,
 } from "./selectors.ts";
 
 function cell(overrides: Partial<MonicetGridCell>): MonicetGridCell {
@@ -119,4 +120,14 @@ test("monthlyRates divides by cruises and moves the best month", () => {
 	assert.deepEqual(rates, [0.5, 0.25, 0]);
 	assert.equal(bestMonthIndex([10, 100, 0]), 1);
 	assert.equal(bestMonthIndex(rates), 0);
+});
+
+test("yearlyRates divides by cruises and fills missing years with 0", () => {
+	// 2010 has cruises but no encounters; 2011 has no cruises at all.
+	const rates = yearlyRates(
+		{ "2009": 30, "2012": 5 },
+		{ "2009": 60, "2010": 40, "2012": 50 },
+		[2009, 2010, 2011, 2012]
+	);
+	assert.deepEqual(rates, [0.5, 0, 0, 0.1]);
 });
