@@ -40,11 +40,11 @@ In practice:
 The two sub-projects are called **directions**. Inside Three Ways of
 Looking, the three visualisations are the **views**, shown in this order:
 
-| View         | Component                                                           | Question                     | Old name                       |
-| ------------ | ------------------------------------------------------------------- | ---------------------------- | ------------------------------ |
-| The Observer | `FieldJournal.vue`                                                  | "What did I see?"            | D4, "The Field Journal"        |
-| The External | `shared-ui/CellMapExplorer.vue` (species, seasonality, boats modes) | still open                   | D1, "Honest Instability"       |
-| The Animal   | `SpeciesAsCharacter.vue`                                            | "Where will I meet my kind?" | D3, "The Species as Character" |
+| View         | Component                                                           | Question                           | Old name                       |
+| ------------ | ------------------------------------------------------------------- | ---------------------------------- | ------------------------------ |
+| The Observer | `FieldJournal.vue`                                                  | "What did I see?"                  | D4, "The Field Journal"        |
+| The External | `shared-ui/CellMapExplorer.vue` (species, seasonality, boats modes) | still open                         | D1, "Honest Instability"       |
+| The Animal   | `SpeciesAsCharacter.vue`                                            | "Where would I go, when, and why?" | D3, "The Species as Character" |
 
 Older notes (`ISSUES.md`, `docs/`) still say D1, D3 and D4; use the table
 to translate.

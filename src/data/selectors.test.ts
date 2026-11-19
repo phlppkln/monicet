@@ -1,13 +1,22 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import type { MonicetCruiseCell, MonicetGridCell } from "../types/monicet.ts";
+import type {
+	MonicetCruiseCell,
+	MonicetGridCell,
+	MonicetSpeciesSummary,
+} from "../types/monicet.ts";
 import {
 	activeYearRange,
 	averageDecline,
 	bestMonthIndex,
 	cellDominance,
+	MIN_BEHAVIOUR_RECORDS,
+	MIN_LIFE_STAGE_RECORDS,
+	monthActivity,
+	monthCalfShare,
 	monthlyRates,
+	speciesCellCountsFor,
 	topCruiseCells,
 	topDecliningCells,
 	yearlyRates,
@@ -130,4 +139,66 @@ test("yearlyRates divides by cruises and fills missing years with 0", () => {
 		[2009, 2010, 2011, 2012]
 	);
 	assert.deepEqual(rates, [0.5, 0, 0, 0.1]);
+});
+
+// ─── The Animal ─────────────────────────────────────────────────────────────
+
+function species(
+	overrides: Partial<MonicetSpeciesSummary>
+): MonicetSpeciesSummary {
+	const zeros = () => Array(12).fill(0);
+	return {
+		speciesId: "sp",
+		scientificName: "Testus testus",
+		commonName: "Test whale",
+		totalEncounters: 0,
+		yearlyEncounters: {},
+		monthlyEncounters: zeros(),
+		cellCounts: { a: 9 },
+		monthlyCellCounts: Array.from({ length: 12 }, () => ({})),
+		monthlyBehaviour: {
+			foraging: zeros(),
+			socialising: zeros(),
+			travelling: zeros(),
+			resting: zeros(),
+		},
+		monthlyWithLifeStage: zeros(),
+		monthlyWithCalf: zeros(),
+		...overrides,
+	};
+}
+
+test("monthActivity: shares only from MIN_BEHAVIOUR_RECORDS on", () => {
+	const s = species({});
+	s.monthlyBehaviour.travelling[3] = 3;
+	s.monthlyBehaviour.foraging[3] = 1;
+	const few = monthActivity(s, 3);
+	assert.equal(few.total, 4);
+	assert.equal(few.shares, null);
+	assert.equal(few.dominant, "travelling");
+
+	s.monthlyBehaviour.foraging[3] = MIN_BEHAVIOUR_RECORDS;
+	const enough = monthActivity(s, 3);
+	assert.equal(enough.dominant, "foraging");
+	assert.equal(enough.shares?.travelling, 3 / (3 + MIN_BEHAVIOUR_RECORDS));
+});
+
+test("monthActivity: no records means no dominant behaviour", () => {
+	assert.equal(monthActivity(species({}), 0).dominant, null);
+});
+
+test("monthCalfShare: null below MIN_LIFE_STAGE_RECORDS", () => {
+	const s = species({});
+	s.monthlyWithLifeStage[6] = MIN_LIFE_STAGE_RECORDS - 1;
+	s.monthlyWithCalf[6] = 5;
+	assert.equal(monthCalfShare(s, 6).share, null);
+	s.monthlyWithLifeStage[6] = 40;
+	assert.equal(monthCalfShare(s, 6).share, 5 / 40);
+});
+
+test("speciesCellCountsFor: null month means all year", () => {
+	const s = species({});
+	s.monthlyCellCounts[1] = { b: 2 };
+	assert.deepEqual(speciesCellCountsFor(s, null), { a: 9 });
+	assert.deepEqual(speciesCellCountsFor(s, 1), { b: 2 });
 });

@@ -6,6 +6,7 @@
 // them without a bundler.
 
 import type {
+	Behaviour,
 	MonicetCruiseCell,
 	MonicetGridCell,
 	MonicetMapData,
@@ -161,4 +162,99 @@ export function cellSpeciesList(cell: MonicetGridCell, data: MonicetMapData) {
 				id,
 		}))
 		.sort((a, b) => b.count - a.count);
+}
+
+// ─── The Animal: "my year in the Azores" ────────────────────────────────────
+
+/** Display order of the behaviours, also the stacking order (bottom first). */
+export const BEHAVIOUR_ORDER: readonly Behaviour[] = [
+	"foraging",
+	"socialising",
+	"resting",
+	"travelling",
+];
+
+/**
+ * Below this many encounters with a behaviour record, a month's activity
+ * mix is not shown as proportions (one or two groups would read as 50% /
+ * 100%). A fixed cut-off is the simplest honest option; alternatives are a
+ * confidence interval per share (as speciesCertainty does) or a Bayesian
+ * shrinkage towards the species' all-year mix.
+ */
+export const MIN_BEHAVIOUR_RECORDS = 5;
+
+/**
+ * Below this many encounters with a life-stage record, a month's calf share
+ * is shown as "too few". 20 keeps the binomial 95% interval of a ~25% share
+ * narrower than roughly ±20 points; see docs/data-dictionary.md.
+ */
+export const MIN_LIFE_STAGE_RECORDS = 20;
+
+export interface MonthActivity {
+	/** Encounters with a behaviour record this month. */
+	total: number;
+	counts: Record<Behaviour, number>;
+	/** null when total < MIN_BEHAVIOUR_RECORDS. */
+	shares: Record<Behaviour, number> | null;
+	/** Most frequent behaviour, null when there is none; first in BEHAVIOUR_ORDER wins ties. */
+	dominant: Behaviour | null;
+}
+
+/** Activity mix for one calendar month (0–11) of one species. */
+export function monthActivity(
+	species: MonicetSpeciesSummary,
+	monthIndex: number
+): MonthActivity {
+	const counts = Object.fromEntries(
+		BEHAVIOUR_ORDER.map((b) => [b, species.monthlyBehaviour[b][monthIndex]])
+	) as Record<Behaviour, number>;
+	const total = BEHAVIOUR_ORDER.reduce((sum, b) => sum + counts[b], 0);
+	const shares =
+		total >= MIN_BEHAVIOUR_RECORDS
+			? (Object.fromEntries(
+					BEHAVIOUR_ORDER.map((b) => [b, counts[b] / total])
+				) as Record<Behaviour, number>)
+			: null;
+	let dominant: Behaviour | null = null;
+	for (const b of BEHAVIOUR_ORDER) {
+		if (counts[b] > 0 && (!dominant || counts[b] > counts[dominant])) {
+			dominant = b;
+		}
+	}
+	return { total, counts, shares, dominant };
+}
+
+export interface CalfShare {
+	/** Encounters with a life-stage record this month. */
+	records: number;
+	withCalf: number;
+	/** withCalf / records, null when records < MIN_LIFE_STAGE_RECORDS. */
+	share: number | null;
+}
+
+/**
+ * Share of encounters in which a calf was recorded. Not calves per animal:
+ * one group with three calves counts once, like a group with one.
+ */
+export function monthCalfShare(
+	species: MonicetSpeciesSummary,
+	monthIndex: number
+): CalfShare {
+	const records = species.monthlyWithLifeStage[monthIndex];
+	const withCalf = species.monthlyWithCalf[monthIndex];
+	return {
+		records,
+		withCalf,
+		share: records >= MIN_LIFE_STAGE_RECORDS ? withCalf / records : null,
+	};
+}
+
+/** `{ cellId: encounters }` for one month (0–11), or all year when month is null. */
+export function speciesCellCountsFor(
+	species: MonicetSpeciesSummary,
+	monthIndex: number | null
+): Record<string, number> {
+	return monthIndex === null
+		? species.cellCounts
+		: species.monthlyCellCounts[monthIndex];
 }

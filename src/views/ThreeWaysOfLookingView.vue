@@ -59,10 +59,11 @@
 
 		<ViewSection id="the-animal" title="The Animal">
 			<template #reflection>
-				The animal as the entry point — not the map. Selecting a species
-				reorganises the map around that one creature: where it
-				concentrates and how its encounter count has moved year by year
-				since 2009.
+				The animal as the entry point, not the map. If I were this
+				species, when would I be here, what would I be doing, would I
+				bring my young, and where would I go? The year chart answers the
+				first three from the archive; pick a month and the map shows
+				where I was met then.
 			</template>
 			<SpeciesAsCharacter />
 		</ViewSection>
@@ -111,9 +112,9 @@ const compareCards: {
 	{
 		title: "The Animal",
 		sectionId: "the-animal",
-		question: "Where will I meet my kind?",
+		question: "Where would I go, when, and why?",
 		entry: "a species",
-		variable: "territory + time",
+		variable: "season + behaviour + territory",
 	},
 ];
 

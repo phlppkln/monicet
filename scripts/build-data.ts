@@ -2,7 +2,7 @@
 //
 //   pnpm data:build                 # data/raw → public/data/monicet-map-data.json
 //   pnpm data:check                 # rebuild in memory, diff against committed JSON
-//   node scripts/build-data.ts <event.txt> <occurrence.txt> [out.json]
+//   node scripts/build-data.ts <event.txt> <occurrence.txt> <extendedmeasurementorfact.txt> [out.json]
 //
 // Every derived number in the app is computed here. What each field means
 // and its known weaknesses: docs/data-dictionary.md and ISSUES.md.
@@ -11,6 +11,7 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 import type {
+	Behaviour,
 	IslandGroup,
 	MonicetCruiseCell,
 	MonicetGridCell,
@@ -32,6 +33,11 @@ import {
 	type EncounterInput,
 } from "./lib/certainty.ts";
 import { MAP_DATA_PATH, readTable, tablePath, type Row } from "./lib/dwca.ts";
+import {
+	BEHAVIOURS,
+	encounterKey,
+	indexEncounterMeasurements,
+} from "./lib/encounter-measurements.ts";
 
 const BIN_SIZE_DEGREES = 0.2;
 const RELIABLE_MIN_ENCOUNTERS = 24;
@@ -92,6 +98,14 @@ interface SpeciesAccumulator {
 	yearlyEncounters: Record<string, number>;
 	monthlyEncounters: number[];
 	cellCounts: Record<string, number>;
+	monthlyCellCounts: Record<string, number>[];
+	monthlyBehaviour: Record<Behaviour, number[]>;
+	monthlyWithLifeStage: number[];
+	monthlyWithCalf: number[];
+}
+
+function twelveZeros() {
+	return Array.from({ length: 12 }, () => 0);
 }
 
 // eventDate is "start" or "start/end"; only the start is used.
@@ -184,7 +198,8 @@ function sumByYears(record: Record<string, number>, years: number[]) {
 
 export function buildData(
 	eventRows: Row[],
-	occurrenceRows: Row[]
+	occurrenceRows: Row[],
+	emofRows: Row[]
 ): MonicetMapData {
 	// ── 1. Events: count cruises (effort proxy), index sightings ──────────
 	const sampleEvents = new Map<string, SampleEvent>();
@@ -283,6 +298,9 @@ export function buildData(
 	}));
 
 	const encounterInputs: EncounterInput[] = [];
+	// Behaviour and life stage per encounter (The Animal: "what am I doing
+	// here, and are calves along?"). See scripts/lib/encounter-measurements.ts.
+	const measurements = indexEncounterMeasurements(emofRows, occurrenceRows);
 
 	let excludedNonSpeciesRows = 0;
 	let rowsWithoutEvent = 0;
@@ -301,7 +319,7 @@ export function buildData(
 
 		// Life stages (adult/juvenile/calf) are separate occurrence rows of
 		// the same species in the same event — collapse them.
-		const dedupeKey = `${row.eventID}::${row.scientificNameID}`;
+		const dedupeKey = encounterKey(row.eventID, row.scientificNameID);
 		if (uniqueEncounterSpecies.has(dedupeKey)) continue;
 		uniqueEncounterSpecies.add(dedupeKey);
 		encounterInputs.push({
@@ -347,6 +365,12 @@ export function buildData(
 				yearlyEncounters: {},
 				monthlyEncounters: Array.from({ length: 12 }, () => 0),
 				cellCounts: {},
+				monthlyCellCounts: Array.from({ length: 12 }, () => ({})),
+				monthlyBehaviour: Object.fromEntries(
+					BEHAVIOURS.map((b) => [b, twelveZeros()])
+				) as Record<Behaviour, number[]>,
+				monthlyWithLifeStage: twelveZeros(),
+				monthlyWithCalf: twelveZeros(),
 			};
 			speciesStats.set(row.scientificNameID, species);
 		}
@@ -357,6 +381,19 @@ export function buildData(
 		species.monthlyEncounters[event.month - 1] += 1;
 		species.cellCounts[geometry.id] =
 			(species.cellCounts[geometry.id] ?? 0) + 1;
+		const monthCells = species.monthlyCellCounts[event.month - 1];
+		monthCells[geometry.id] = (monthCells[geometry.id] ?? 0) + 1;
+
+		const measured = measurements.get(dedupeKey);
+		if (measured?.behaviour) {
+			species.monthlyBehaviour[measured.behaviour][event.month - 1] += 1;
+		}
+		if (measured?.lifeStages.size) {
+			species.monthlyWithLifeStage[event.month - 1] += 1;
+			if (measured.lifeStages.has("calf")) {
+				species.monthlyWithCalf[event.month - 1] += 1;
+			}
+		}
 
 		monthlyStats[event.month - 1].encounters += 1;
 		const monthSpeciesCount = monthlyStats[event.month - 1].speciesCounts;
@@ -475,6 +512,10 @@ export function buildData(
 			yearlyEncounters: species.yearlyEncounters,
 			monthlyEncounters: species.monthlyEncounters,
 			cellCounts: species.cellCounts,
+			monthlyCellCounts: species.monthlyCellCounts,
+			monthlyBehaviour: species.monthlyBehaviour,
+			monthlyWithLifeStage: species.monthlyWithLifeStage,
+			monthlyWithCalf: species.monthlyWithCalf,
 		}));
 
 	const monthlySummaries: MonicetMonthlySummary[] = monthlyStats.map(
@@ -648,13 +689,14 @@ function sameData(a: MonicetMapData, b: MonicetMapData) {
 function main() {
 	const args = process.argv.slice(2);
 	const check = args.includes("--check");
-	const [eventPath, occurrencePath, outputPath] = args.filter(
+	const [eventPath, occurrencePath, emofPath, outputPath] = args.filter(
 		(a) => !a.startsWith("--")
 	);
 
 	const output = buildData(
 		readTable("event", eventPath ?? tablePath("event")),
-		readTable("occurrence", occurrencePath ?? tablePath("occurrence"))
+		readTable("occurrence", occurrencePath ?? tablePath("occurrence")),
+		readTable("emof", emofPath ?? tablePath("emof"))
 	);
 	const target = outputPath ?? MAP_DATA_PATH;
 
