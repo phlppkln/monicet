@@ -48,6 +48,9 @@ export interface MonicetMonthlySummary {
 	topSpecies: MonicetTopSpeciesEntry[];
 }
 
+/** Behavioural state of a species group when the boat arrived. */
+export type Behaviour = "foraging" | "socialising" | "travelling" | "resting";
+
 export interface MonicetSpeciesSummary {
 	speciesId: string;
 	scientificName: string;
@@ -56,6 +59,14 @@ export interface MonicetSpeciesSummary {
 	yearlyEncounters: Record<string, number>;
 	monthlyEncounters: number[];
 	cellCounts: Record<string, number>;
+	/** 12 entries (Jan…Dec): `{ cellId: encounters }` in that calendar month, all years. */
+	monthlyCellCounts: Record<string, number>[];
+	/** Per behaviour, 12 monthly encounter counts. Encounters without a behaviour record are in none. */
+	monthlyBehaviour: Record<Behaviour, number[]>;
+	/** 12 entries: encounters with at least one life-stage record (the calf-share denominator). */
+	monthlyWithLifeStage: number[];
+	/** 12 entries: encounters with at least one calf among their life-stage records. */
+	monthlyWithCalf: number[];
 }
 
 export interface MonicetMapMeta {

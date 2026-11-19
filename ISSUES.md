@@ -112,12 +112,28 @@ population change.
 Only São Miguel operates year-round; the other islands mostly run May–Sep.
 Monthly rates and the "what to expect" species shares pool all islands, so
 summer composition is weighted toward the central-group species.
+The same holds for The Animal's monthly behaviour mix and calf share: a
+winter bar describes mostly animals met off São Miguel, a summer bar animals
+off all islands.
 
-### D-13 The eMoF table is not used at all [idea]
+### D-20 The Animal's "why I come" notes need checking [verified]
 
-Group size, behaviour, life stage, Beaufort and visibility (199,792 rows)
-are ignored. Sea state and visibility affect detectability, so they matter
-for any effort or reliability model.
+`src/components/directions/three-ways-of-looking/animalReasons.ts` holds
+background notes from the literature, written from memory. The three cited
+papers (Visser et al. 2011, Silva et al. 2013, Bolten et al. 1998) must be
+checked against the originals (titles, volumes, and that they say what the
+note says). Sperm whale and Atlantic spotted dolphin have no source yet,
+and the UI says so. Only 7 of 25 species have a note.
+
+### D-13 Most of the eMoF table is unused [idea]
+
+_Partly done:_ behaviour and life stage now feed The Animal
+(`monthlyBehaviour`, `monthlyWithCalf`, built by
+`scripts/lib/encounter-measurements.ts`). Group size, Beaufort and
+visibility are still ignored. Sea state and visibility affect
+detectability, so they matter for any effort or reliability model. They
+matter for The Animal too: part of a summer peak can be calmer seas making
+animals easier to spot, not more animals (strongest for beaked whales).
 
 ### D-14 Known identification problems are not surfaced [idea]
 

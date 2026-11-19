@@ -3,7 +3,7 @@
 		<div class="toolbar">
 			<div class="controls-row">
 				<div class="control">
-					<label for="d3-species-select">Species</label>
+					<label for="d3-species-select">If I were a…</label>
 					<select id="d3-species-select" v-model="selectedSpeciesId">
 						<option
 							v-for="opt in speciesList"
@@ -27,84 +27,291 @@
 		<div v-if="loading" class="status">Preparing species map…</div>
 		<div v-else-if="error" class="status error">{{ error }}</div>
 
-		<div v-else class="layout">
-			<div class="map-shell">
-				<div ref="mapContainer" class="map-container"></div>
-				<MapAttribution :basemap-id="basemapId" />
-				<div v-show="showDataLayer" class="legend-shell">
-					<div class="legend-title">
-						Encounters (selected species, log scale)
+		<template v-else-if="selectedSpecies">
+			<!-- ─── My year ─────────────────────────────────────────────── -->
+			<section class="year-card" aria-labelledby="animal-year-title">
+				<div class="year-head">
+					<div>
+						<h3 id="animal-year-title">My year in the Azores</h3>
+						<p class="year-sub">
+							Bar height: encounters per cruise. Colour: what I
+							was doing when the boat arrived. Dots: share of my
+							groups with a calf. Pick a month to see where I am.
+						</p>
 					</div>
-					<div ref="legendContainer" class="legend-container"></div>
+					<button
+						type="button"
+						class="all-year"
+						:class="{ active: selectedMonth === null }"
+						:aria-pressed="selectedMonth === null"
+						@click="selectedMonth = null"
+					>
+						All year
+					</button>
 				</div>
-				<div ref="tooltipRef" class="tooltip"></div>
-			</div>
 
-			<aside class="species-panel">
-				<div v-if="selectedSpecies" class="panel-content">
-					<div class="species-name">
-						<strong>{{ selectedSpecies.commonName }}</strong>
-						<em>{{ selectedSpecies.scientificName }}</em>
-					</div>
+				<div ref="yearShell" class="year-shell">
+					<svg
+						class="year-chart"
+						:viewBox="`0 0 ${YEAR.width} ${YEAR.height}`"
+						role="group"
+						aria-label="Encounters per cruise, behaviour and calf share by month"
+					>
+						<text
+							class="axis-label"
+							:x="YEAR.left - 6"
+							:y="YEAR.top + 4"
+							text-anchor="end"
+						>
+							{{ formatRate(maxMonthlyRate) }}
+						</text>
+						<text
+							class="axis-label"
+							:x="YEAR.left - 6"
+							:y="YEAR.baseline"
+							text-anchor="end"
+						>
+							0
+						</text>
+						<line
+							class="baseline"
+							:x1="YEAR.left"
+							:x2="YEAR.width"
+							:y1="YEAR.baseline"
+							:y2="YEAR.baseline"
+						/>
+						<text
+							class="axis-label row-label"
+							:x="YEAR.left - 6"
+							:y="YEAR.calfRow + 4"
+							text-anchor="end"
+						>
+							calves
+						</text>
 
-					<div class="metric-row">
-						<span>Total encounters</span>
-						<strong>{{
-							selectedSpecies.totalEncounters.toLocaleString()
-						}}</strong>
-					</div>
-					<div class="metric-row">
-						<span>Grid cells with sightings</span>
-						<strong>{{ spatialCoverage }}</strong>
-					</div>
-
-					<div class="chart-section">
-						<div class="chart-label">
-							Year by year (encounters per cruise)
-						</div>
-						<div ref="sparklineContainer" class="sparkline"></div>
-					</div>
-
-					<div class="chart-section">
-						<div class="chart-label">
-							Monthly pattern (encounters per cruise)
-						</div>
-						<div class="monthly-bars">
-							<div
-								v-for="(rate, i) in monthlyRatesForSpecies"
-								:key="i"
-								class="month-col"
-								:title="`${MONTH_LABELS[i]}: ${formatRate(rate)}`"
+						<g
+							v-for="col in yearColumns"
+							:key="col.month"
+							class="month-col"
+							:class="{ selected: selectedMonth === col.month }"
+							role="button"
+							tabindex="0"
+							:aria-pressed="selectedMonth === col.month"
+							:aria-label="col.ariaLabel"
+							@click="toggleMonth(col.month)"
+							@keydown.enter.prevent="toggleMonth(col.month)"
+							@keydown.space.prevent="toggleMonth(col.month)"
+							@mousemove="onMonthHover($event, col.month)"
+							@mouseleave="hideTooltip(yearTooltipRef)"
+						>
+							<rect
+								class="hit"
+								:x="col.x - col.slot / 2"
+								:y="0"
+								:width="col.slot"
+								:height="YEAR.height"
+							/>
+							<rect
+								v-for="seg in col.segments"
+								:key="seg.behaviour"
+								:x="col.x - col.barWidth / 2"
+								:y="seg.y"
+								:width="col.barWidth"
+								:height="seg.height"
+								:fill="CHART_BEHAVIOUR[seg.behaviour]"
+							/>
+							<rect
+								v-if="col.unsplit"
+								class="unsplit"
+								:x="col.x - col.barWidth / 2"
+								:y="YEAR.baseline - col.barHeight"
+								:width="col.barWidth"
+								:height="col.barHeight"
+							/>
+							<text
+								class="month-tick"
+								:x="col.x"
+								:y="YEAR.baseline + 16"
+								text-anchor="middle"
 							>
-								<div
-									class="month-bar"
-									:style="{
-										height: `${maxMonthlyRate > 0 ? Math.max(2, (rate / maxMonthlyRate) * 52) : 2}px`,
-									}"
-								></div>
-								<div class="month-tick">
-									{{ MONTH_LABELS[i] }}
-								</div>
-							</div>
-						</div>
-					</div>
+								{{ MONTH_LABELS[col.month] }}
+							</text>
+							<circle
+								v-if="col.calf"
+								:class="col.calf.reliable ? 'calf' : 'calf few'"
+								:cx="col.x"
+								:cy="YEAR.calfRow"
+								:r="col.calf.radius"
+							/>
+						</g>
+					</svg>
+					<div ref="yearTooltipRef" class="tooltip"></div>
 				</div>
 
-				<div class="caveat">
-					Map counts are absolute, not normalized by cruise effort.
-					The yearly and monthly charts divide by all cruises in that
-					year or month, pooled over all islands. Species presence in
-					a cell reflects the full 2009–2020 archive.
+				<ul class="behaviour-legend">
+					<li v-for="b in BEHAVIOUR_ORDER" :key="b">
+						<span
+							class="swatch"
+							:style="{ background: CHART_BEHAVIOUR[b] }"
+						></span>
+						{{ b }}
+					</li>
+					<li>
+						<span class="swatch unsplit-swatch"></span>
+						fewer than {{ MIN_BEHAVIOUR_RECORDS }} behaviour records
+					</li>
+					<li>
+						<span class="dot-swatch"></span>
+						calves (area = share)
+					</li>
+					<li>
+						<span class="dot-swatch few"></span>
+						fewer than {{ MIN_LIFE_STAGE_RECORDS }} life-stage
+						records
+					</li>
+				</ul>
+			</section>
+
+			<div class="layout">
+				<div class="map-shell">
+					<div class="map-heading">
+						Where I am in <strong>{{ monthName }}</strong>
+					</div>
+					<div ref="mapContainer" class="map-container"></div>
+					<MapAttribution :basemap-id="basemapId" />
+					<div v-show="showDataLayer" class="legend-shell">
+						<div class="legend-title">
+							Encounters in {{ monthName }}, all years (log scale)
+						</div>
+						<div
+							ref="legendContainer"
+							class="legend-container"
+						></div>
+					</div>
+					<div ref="tooltipRef" class="tooltip"></div>
 				</div>
-			</aside>
-		</div>
+
+				<aside class="species-panel">
+					<div class="panel-content">
+						<div class="species-name">
+							<strong>{{ selectedSpecies.commonName }}</strong>
+							<em>{{ selectedSpecies.scientificName }}</em>
+						</div>
+
+						<div v-if="reason" class="reason">
+							<div class="reason-kicker">
+								Why I come (background, not from this archive)
+							</div>
+							<div class="reason-title">{{ reason.title }}</div>
+							<p class="reason-text">{{ reason.text }}</p>
+							<details v-if="reason.sources.length">
+								<summary>Sources</summary>
+								<ul>
+									<li
+										v-for="src in reason.sources"
+										:key="src"
+									>
+										{{ src }}
+									</li>
+								</ul>
+							</details>
+							<p v-else class="reason-missing">
+								Source still to be added.
+							</p>
+						</div>
+						<p v-else class="reason-missing">
+							No background note for this species yet. The charts
+							show only what the archive records.
+						</p>
+
+						<div class="month-facts">
+							<div class="facts-title">{{ monthName }}</div>
+							<div class="metric-row">
+								<span>Encounters per cruise</span>
+								<strong>{{ formatRate(facts.rate) }}</strong>
+							</div>
+							<div class="metric-row">
+								<span>Encounters</span>
+								<strong>{{
+									facts.encounters.toLocaleString()
+								}}</strong>
+							</div>
+							<div class="metric-row">
+								<span>Groups with a calf</span>
+								<strong>{{ facts.calfLabel }}</strong>
+							</div>
+							<div class="metric-row">
+								<span>Grid cells with sightings</span>
+								<strong>{{ facts.cells }}</strong>
+							</div>
+							<ul
+								v-if="facts.activity.shares"
+								class="activity-list"
+							>
+								<li v-for="b in BEHAVIOUR_ORDER" :key="b">
+									<span
+										class="swatch"
+										:style="{
+											background: CHART_BEHAVIOUR[b],
+										}"
+									></span>
+									<span class="activity-name">{{ b }}</span>
+									<strong
+										>{{
+											Math.round(
+												facts.activity.shares[b] * 100
+											)
+										}}%</strong
+									>
+								</li>
+								<li class="activity-n">
+									of {{ facts.activity.total }} groups with a
+									behaviour record
+								</li>
+							</ul>
+							<p v-else class="activity-n">
+								Only {{ facts.activity.total }} groups with a
+								behaviour record: too few to split.
+							</p>
+						</div>
+
+						<div class="chart-section">
+							<div class="chart-label">
+								Year by year (encounters per cruise)
+							</div>
+							<div
+								ref="sparklineContainer"
+								class="sparkline"
+							></div>
+						</div>
+					</div>
+
+					<div class="caveat">
+						Behaviour is the state when the boat arrived, and the
+						boat may have changed it; deep divers forage out of
+						sight. Calf share counts groups, not animals. Winter
+						months have few cruises ({{ quietestMonth }}), so their
+						shares are noisy. Map counts are absolute, not
+						normalised by cruise effort.
+					</div>
+				</aside>
+			</div>
+		</template>
 	</div>
 </template>
 
 <script setup lang="ts">
-// The Animal (formerly D3, "The Species as Character"). One species reorganises the
-// map around its encounter distribution, plus a yearly sparkline and
-// monthly bars in the side panel.
+// The Animal (formerly D3, "The Species as Character"). The question is the
+// animal's own: "if I were this species, where would I go, and when, and
+// why?" One species reorganises the view into
+//   - "My year": encounters per cruise by month (when am I here?), stacked
+//     by behaviour on arrival (what am I doing?) with a calf-share dot row
+//     (am I raising young?);
+//   - a map filtered to the selected month (where am I then?);
+//   - a side panel with that month in words, a background note on why the
+//     species comes (from the literature, not from this archive) and the
+//     year-by-year sparkline.
+// Why this design and its alternatives: docs/ideas/the-animal.md.
 import * as d3 from "d3";
 import {
 	computed,
@@ -119,13 +326,21 @@ import {
 import BasemapControls from "@/components/shared-ui/BasemapControls.vue";
 import MapAttribution from "@/components/shared-ui/MapAttribution.vue";
 import {
-	monthlyRates,
+	BEHAVIOUR_ORDER,
+	MIN_BEHAVIOUR_RECORDS,
+	MIN_LIFE_STAGE_RECORDS,
+	bestMonthIndex,
 	findSpecies,
+	monthActivity,
+	monthCalfShare,
+	monthlyRates,
+	speciesCellCountsFor,
 	speciesOptions,
 	yearlyRates,
 } from "@/data/selectors";
 import { useMonicetData } from "@/data/useMonicetData";
 import {
+	CHART_BEHAVIOUR,
 	CHART_PRIMARY,
 	CHART_SEQUENTIAL_TEAL,
 	CHART_TEXT_SECONDARY,
@@ -139,13 +354,32 @@ import {
 	type BasemapId,
 } from "@/lib/map";
 import { hideTooltip, showTooltip } from "@/lib/tooltip";
-import type { MonicetGridCell } from "@/types/monicet";
+import type { Behaviour, MonicetGridCell } from "@/types/monicet";
+
+import { ANIMAL_REASONS } from "./animalReasons";
+
+const MONTH_NAMES = [
+	"January",
+	"February",
+	"March",
+	"April",
+	"May",
+	"June",
+	"July",
+	"August",
+	"September",
+	"October",
+	"November",
+	"December",
+];
 
 const { mapData, basemap, mapLines, error, load, loadMapLines } =
 	useMonicetData();
 const loading = ref(true);
 
 const selectedSpeciesId = ref("");
+/** 0–11, or null for "all year". */
+const selectedMonth = ref<number | null>(null);
 
 // Same basemaps as The External (docs/basemaps.md), with the cells as a
 // toggleable layer whose opacity lets the basemap show through.
@@ -163,6 +397,8 @@ const mapContainer = ref<HTMLElement | null>(null);
 const legendContainer = ref<HTMLElement | null>(null);
 const sparklineContainer = ref<HTMLElement | null>(null);
 const tooltipRef = ref<HTMLElement | null>(null);
+const yearShell = ref<HTMLElement | null>(null);
+const yearTooltipRef = ref<HTMLElement | null>(null);
 
 // ─── Derived data ────────────────────────────────────────────────────────────
 
@@ -175,31 +411,258 @@ const selectedSpecies = computed(() => {
 	return findSpecies(mapData.value, selectedSpeciesId.value);
 });
 
+const reason = computed(() =>
+	selectedSpecies.value
+		? (ANIMAL_REASONS[selectedSpecies.value.scientificName] ?? null)
+		: null
+);
+
+const monthlyCruises = computed(
+	() => mapData.value?.monthlySummaries.map((m) => m.cruises) ?? []
+);
+
+const quietestMonth = computed(() => {
+	const cruises = monthlyCruises.value;
+	if (!cruises.length) return "";
+	const i = cruises.indexOf(Math.min(...cruises));
+	return `${cruises[i]} in ${MONTH_NAMES[i]}`;
+});
+
 // Encounters per cruise, not raw counts: raw monthly counts mostly follow
 // how many trips ran (July has ~15× the cruises of January), so dividing by
 // cruises asks "if I go out this month, how likely am I to meet it?".
 const monthlyRatesForSpecies = computed(() => {
 	const monthly = selectedSpecies.value?.monthlyEncounters;
-	if (!monthly || !mapData.value) return [];
-	const cruises = mapData.value.monthlySummaries.map((m) => m.cruises);
-	return monthlyRates(monthly, cruises);
+	if (!monthly) return [];
+	return monthlyRates(monthly, monthlyCruises.value);
 });
 
 const maxMonthlyRate = computed(() =>
 	Math.max(0, ...monthlyRatesForSpecies.value)
 );
 
-const spatialCoverage = computed(() =>
-	selectedSpecies.value
-		? Object.keys(selectedSpecies.value.cellCounts).length
-		: 0
+const monthName = computed(() =>
+	selectedMonth.value === null ? "all year" : MONTH_NAMES[selectedMonth.value]
 );
+
+function toggleMonth(month: number) {
+	selectedMonth.value = selectedMonth.value === month ? null : month;
+}
+
+// ─── My year: chart geometry ─────────────────────────────────────────────────
+// Drawn by the template (Vue SVG), not by D3: the chart is twelve columns
+// with fixed positions, and each column is a keyboard-focusable button.
+
+const YEAR = {
+	width: 720,
+	height: 196,
+	left: 40,
+	top: 8,
+	barArea: 120,
+	get baseline() {
+		return this.top + this.barArea;
+	},
+	get calfRow() {
+		return this.baseline + 42;
+	},
+	// Largest calf dot (share = 100%). Area, not radius, follows the share,
+	// so a 40% month looks twice as heavy as a 20% month.
+	maxCalfRadius: 13,
+	// Surface gap between stacked segments (dataviz mark spec).
+	segmentGap: 2,
+};
+
+interface YearColumn {
+	month: number;
+	x: number;
+	slot: number;
+	barWidth: number;
+	barHeight: number;
+	segments: { behaviour: Behaviour; y: number; height: number }[];
+	/** Bar drawn as an outline: present, but too few behaviour records to split. */
+	unsplit: boolean;
+	calf: { radius: number; reliable: boolean } | null;
+	ariaLabel: string;
+}
+
+const yearColumns = computed<YearColumn[]>(() => {
+	const species = selectedSpecies.value;
+	if (!species) return [];
+	const rates = monthlyRatesForSpecies.value;
+	const maxRate = maxMonthlyRate.value || 1;
+	const slot = (YEAR.width - YEAR.left) / 12;
+	const barWidth = slot * 0.62;
+
+	return rates.map((rate, month) => {
+		const x = YEAR.left + slot * (month + 0.5);
+		const barHeight = (rate / maxRate) * YEAR.barArea;
+		const activity = monthActivity(species, month);
+		const calf = monthCalfShare(species, month);
+
+		// Stack bottom-up in BEHAVIOUR_ORDER; each segment is its share of
+		// the bar. The gap is taken out of the segment, so the bar's total
+		// height still reads as the rate.
+		const segments: YearColumn["segments"] = [];
+		if (activity.shares && barHeight > 0) {
+			let y = YEAR.baseline;
+			for (const behaviour of BEHAVIOUR_ORDER) {
+				const full = barHeight * activity.shares[behaviour];
+				if (full <= 0) continue;
+				const height = Math.max(0.5, full - YEAR.segmentGap);
+				y -= full;
+				segments.push({ behaviour, y: y + YEAR.segmentGap, height });
+			}
+		}
+
+		let calfDot: YearColumn["calf"] = null;
+		if (calf.share !== null) {
+			calfDot = {
+				radius: Math.max(
+					1.5,
+					Math.sqrt(calf.share) * YEAR.maxCalfRadius
+				),
+				reliable: true,
+			};
+		} else if (calf.records > 0) {
+			calfDot = { radius: 3, reliable: false };
+		}
+
+		const parts = [
+			`${MONTH_NAMES[month]}: ${formatRate(rate)} encounters per cruise`,
+		];
+		if (activity.shares && activity.dominant) {
+			parts.push(
+				`mostly ${activity.dominant} (${Math.round(activity.shares[activity.dominant] * 100)}%)`
+			);
+		}
+		if (calf.share !== null) {
+			parts.push(`calves in ${Math.round(calf.share * 100)}% of groups`);
+		}
+
+		return {
+			month,
+			x,
+			slot,
+			barWidth,
+			barHeight,
+			segments,
+			unsplit: barHeight > 0 && !activity.shares,
+			calf: calfDot,
+			ariaLabel: parts.join(", "),
+		};
+	});
+});
+
+function onMonthHover(event: MouseEvent, month: number) {
+	const species = selectedSpecies.value;
+	if (!species || !yearTooltipRef.value || !yearShell.value) return;
+	const activity = monthActivity(species, month);
+	const calf = monthCalfShare(species, month);
+	const rate = monthlyRatesForSpecies.value[month] ?? 0;
+
+	const behaviourLines = activity.shares
+		? BEHAVIOUR_ORDER.map(
+				(b) =>
+					`<div class="tip-line">${b}: ${Math.round((activity.shares?.[b] ?? 0) * 100)}%</div>`
+			).join("")
+		: `<div class="tip-line">${activity.total} behaviour records: too few to split</div>`;
+	const calfLine =
+		calf.share !== null
+			? `calves in ${calf.withCalf} of ${calf.records} groups (${Math.round(calf.share * 100)}%)`
+			: `${calf.records} life-stage records: too few`;
+
+	showTooltip(
+		yearTooltipRef.value,
+		yearShell.value,
+		event,
+		`
+		<div class="tip-title">${MONTH_NAMES[month]}</div>
+		<div class="tip-line">${formatRate(rate)} encounters per cruise (${species.monthlyEncounters[month]} in ${monthlyCruises.value[month]} cruises)</div>
+		${behaviourLines}
+		<div class="tip-line">${calfLine}</div>
+	`
+	);
+}
+
+// ─── Month (or all-year) facts for the side panel ────────────────────────────
+
+const facts = computed(() => {
+	const species = selectedSpecies.value;
+	const month = selectedMonth.value;
+	const empty = {
+		rate: 0,
+		encounters: 0,
+		calfLabel: "–",
+		cells: 0,
+		activity: { total: 0, shares: null } as {
+			total: number;
+			shares: Record<Behaviour, number> | null;
+		},
+	};
+	if (!species) return empty;
+
+	const cells = Object.keys(speciesCellCountsFor(species, month)).length;
+
+	if (month !== null) {
+		const calf = monthCalfShare(species, month);
+		return {
+			rate: monthlyRatesForSpecies.value[month] ?? 0,
+			encounters: species.monthlyEncounters[month],
+			calfLabel:
+				calf.share !== null
+					? `${Math.round(calf.share * 100)}%`
+					: `too few (${calf.records})`,
+			cells,
+			activity: monthActivity(species, month),
+		};
+	}
+
+	// All year: pool the twelve months. Same thresholds as for one month.
+	const totalCruises = monthlyCruises.value.reduce((a, b) => a + b, 0);
+	const counts = Object.fromEntries(
+		BEHAVIOUR_ORDER.map((b) => [
+			b,
+			species.monthlyBehaviour[b].reduce((x, y) => x + y, 0),
+		])
+	) as Record<Behaviour, number>;
+	const total = BEHAVIOUR_ORDER.reduce((sum, b) => sum + counts[b], 0);
+	const records = species.monthlyWithLifeStage.reduce((a, b) => a + b, 0);
+	const withCalf = species.monthlyWithCalf.reduce((a, b) => a + b, 0);
+	return {
+		rate: totalCruises ? species.totalEncounters / totalCruises : 0,
+		encounters: species.totalEncounters,
+		calfLabel:
+			records >= MIN_LIFE_STAGE_RECORDS
+				? `${Math.round((withCalf / records) * 100)}%`
+				: `too few (${records})`,
+		cells,
+		activity: {
+			total,
+			shares:
+				total >= MIN_BEHAVIOUR_RECORDS
+					? (Object.fromEntries(
+							BEHAVIOUR_ORDER.map((b) => [b, counts[b] / total])
+						) as Record<Behaviour, number>)
+					: null,
+		},
+	};
+});
 
 // ─── Tooltip ─────────────────────────────────────────────────────────────────
 
 function onCellHover(event: MouseEvent, cell: MonicetGridCell) {
-	if (!tooltipRef.value || !mapContainer.value) return;
-	const count = cell.speciesCounts[selectedSpeciesId.value] ?? 0;
+	if (!tooltipRef.value || !mapContainer.value || !selectedSpecies.value) {
+		return;
+	}
+	const counts = speciesCellCountsFor(
+		selectedSpecies.value,
+		selectedMonth.value
+	);
+	const count = counts[cell.id] ?? 0;
+	const when =
+		selectedMonth.value === null
+			? "2009–2020"
+			: `${MONTH_NAMES[selectedMonth.value]}, all years`;
 
 	showTooltip(
 		tooltipRef.value,
@@ -207,7 +670,7 @@ function onCellHover(event: MouseEvent, cell: MonicetGridCell) {
 		event,
 		`
 		<div class="tip-title">${formatCellLabel(cell)}</div>
-		<div class="tip-line">${count.toLocaleString()} encounters</div>
+		<div class="tip-line">${count.toLocaleString()} encounters (${when})</div>
 	`
 	);
 }
@@ -297,7 +760,10 @@ function renderDataLayer() {
 	const softCells = dataLayer.append("g").attr("filter", base.softFilterUrl);
 
 	const cells = mapData.value.gridCells;
-	const spId = selectedSpeciesId.value;
+	const species = selectedSpecies.value;
+	if (!species) return;
+	const month = selectedMonth.value;
+	const counts = speciesCellCountsFor(species, month);
 
 	// Log scale, because the counts are heavily right-skewed: for the
 	// most common species the median occupied cell has ~2% of the
@@ -307,15 +773,23 @@ function renderDataLayer() {
 	// absolute differences among the top cells are compressed.
 	// Domain starts at 1, not 0 (log 0 is undefined); zero cells keep
 	// their own "absent" grey below, so they never reach the scale.
+	//
+	// One domain for all twelve months: the largest single-month cell
+	// count of this species. With a per-month domain every month would
+	// have a dark cell, and a month with three sightings would look as
+	// busy as July. The all-year view sums the months, so it gets its own
+	// domain (the legend says which one is shown).
+	const domainCounts =
+		month === null ? [species.cellCounts] : species.monthlyCellCounts;
 	const maxCount = Math.max(
 		1,
-		d3.max(cells, (c) => c.speciesCounts[spId] ?? 0) ?? 1
+		...domainCounts.flatMap((record) => Object.values(record))
 	);
 	const scale = d3
 		.scaleSequentialLog(d3.interpolateRgb(...CHART_SEQUENTIAL_TEAL))
 		.domain([1, maxCount]);
 	const fill = (cell: MonicetGridCell) => {
-		const v = cell.speciesCounts[spId] ?? 0;
+		const v = counts[cell.id] ?? 0;
 		return v > 0 ? scale(v) : "#e8eef2";
 	};
 	if (legendContainer.value) {
@@ -457,6 +931,7 @@ onMounted(async () => {
 	if (mapData.value) {
 		selectedSpeciesId.value =
 			mapData.value.speciesSummaries[0]?.speciesId ?? "";
+		selectedMonth.value = peakMonth();
 		await nextTick();
 		if (unmounted) return;
 		renderMap();
@@ -470,11 +945,25 @@ onBeforeUnmount(() => {
 	window.removeEventListener("resize", handleResize);
 });
 
+// Open each species on its own peak month, so the map starts where the
+// animal is most often met.
+function peakMonth(): number | null {
+	const rates = monthlyRatesForSpecies.value;
+	return rates.length && Math.max(...rates) > 0
+		? bestMonthIndex(rates)
+		: null;
+}
+
 watch(selectedSpeciesId, async () => {
 	if (loading.value) return;
+	selectedMonth.value = peakMonth();
 	renderDataLayer();
 	await nextTick();
 	renderSparkline();
+});
+
+watch(selectedMonth, () => {
+	if (!loading.value) renderDataLayer();
 });
 
 watch(basemapId, () => {
@@ -615,6 +1104,254 @@ watch(showDataLayer, () => {
 	margin-bottom: 0.2rem;
 }
 
+// ─── My year ─────────────────────────────────────────────────────────────────
+
+.year-card {
+	background: rgba($surface, 0.92);
+	border: 1px solid rgba($primary, 0.2);
+	border-radius: 10px;
+	padding: 0.9rem 1rem 0.75rem;
+	margin-bottom: 1rem;
+}
+
+.year-head {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 1rem;
+
+	h3 {
+		margin: 0;
+		font-size: 1rem;
+		color: $primary;
+	}
+}
+
+.year-sub {
+	margin: 0.2rem 0 0.4rem;
+	font-size: 0.8rem;
+	color: $text-secondary;
+	max-width: 60ch;
+}
+
+.all-year {
+	flex-shrink: 0;
+	padding: 0.3rem 0.8rem;
+	border-radius: 999px;
+	border: 1px solid $border;
+	background: $surface;
+	font-size: 0.8rem;
+	cursor: pointer;
+
+	&.active {
+		background: $primary;
+		border-color: $primary;
+		color: $surface;
+	}
+}
+
+.year-shell {
+	position: relative;
+}
+
+.year-chart {
+	display: block;
+	width: 100%;
+	height: auto;
+	overflow: visible;
+
+	.axis-label,
+	.month-tick {
+		font-size: 11px;
+		fill: $text-secondary;
+	}
+
+	.row-label {
+		font-style: italic;
+	}
+
+	.baseline {
+		stroke: $border;
+	}
+
+	.hit {
+		fill: transparent;
+	}
+
+	.month-col {
+		cursor: pointer;
+		outline: none;
+
+		&:hover .hit {
+			fill: rgba($primary, 0.05);
+		}
+
+		&.selected .hit {
+			fill: rgba($primary, 0.12);
+		}
+
+		&.selected .month-tick {
+			fill: $text-primary;
+			font-weight: 700;
+		}
+
+		&:focus-visible .hit {
+			stroke: $primary;
+			stroke-width: 2;
+		}
+	}
+
+	.unsplit {
+		fill: none;
+		stroke: $text-secondary;
+		stroke-dasharray: 3 2;
+	}
+
+	.calf {
+		fill: $text-secondary;
+
+		&.few {
+			fill: none;
+			stroke: $text-secondary;
+		}
+	}
+}
+
+.behaviour-legend,
+.activity-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	font-size: 0.78rem;
+	color: $text-secondary;
+}
+
+.behaviour-legend {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.3rem 1rem;
+	margin-top: 0.4rem;
+
+	li {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+	}
+}
+
+.swatch {
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+	border-radius: 2px;
+	flex-shrink: 0;
+}
+
+.unsplit-swatch {
+	border: 1px dashed $text-secondary;
+}
+
+.dot-swatch {
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: $text-secondary;
+
+	&.few {
+		width: 6px;
+		height: 6px;
+		background: none;
+		border: 1px solid $text-secondary;
+	}
+}
+
+.map-heading {
+	padding: 0.5rem 0.75rem;
+	font-size: 0.85rem;
+	color: $text-primary;
+	border-bottom: 1px solid rgba($primary, 0.16);
+	background: rgba($surface, 0.92);
+}
+
+// ─── Reason and month facts ──────────────────────────────────────────────────
+
+.reason {
+	padding: 0.6rem 0.7rem;
+	border-radius: 8px;
+	background: rgba($primary, 0.06);
+	border: 1px solid rgba($primary, 0.16);
+
+	details {
+		font-size: 0.72rem;
+		color: $text-secondary;
+
+		ul {
+			margin: 0.3rem 0 0;
+			padding-left: 1rem;
+		}
+	}
+}
+
+.reason-kicker {
+	font-size: 0.7rem;
+	color: $text-secondary;
+}
+
+.reason-title {
+	font-size: 0.98rem;
+	font-weight: 700;
+	color: $primary;
+	margin: 0.1rem 0 0.2rem;
+}
+
+.reason-text {
+	margin: 0 0 0.3rem;
+	font-size: 0.82rem;
+	line-height: 1.45;
+}
+
+.reason-missing {
+	margin: 0;
+	font-size: 0.74rem;
+	font-style: italic;
+	color: $text-secondary;
+}
+
+.month-facts {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+}
+
+.facts-title {
+	font-size: 0.8rem;
+	font-weight: 700;
+	text-transform: capitalize;
+	color: $text-primary;
+}
+
+.activity-list li {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+	padding: 0.1rem 0.4rem;
+
+	.activity-name {
+		flex: 1;
+	}
+
+	strong {
+		color: $text-primary;
+	}
+}
+
+.activity-n {
+	margin: 0;
+	font-size: 0.72rem;
+	color: $text-secondary;
+}
+
 // ─── Species panel ───────────────────────────────────────────────────────────
 
 .species-panel {
@@ -683,40 +1420,6 @@ watch(showDataLayer, () => {
 .sparkline {
 	width: 100%;
 	min-height: 68px;
-}
-
-.monthly-bars {
-	display: flex;
-	align-items: flex-end;
-	gap: 2px;
-	height: 68px;
-	padding-bottom: 16px;
-}
-
-.month-col {
-	flex: 1;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: flex-end;
-	height: 100%;
-}
-
-.month-bar {
-	width: 100%;
-	background: rgba($primary, 0.55);
-	border-radius: 2px 2px 0 0;
-	min-height: 2px;
-	transition: height 0.2s ease;
-}
-
-.month-tick {
-	// Same size as the map legend labels. In the narrowest side panel each
-	// column is ~18px wide, which still fits "May" or "Mar" at 10px.
-	font-size: 10px;
-	color: $text-secondary;
-	margin-top: 2px;
-	line-height: 1;
 }
 
 .caveat {

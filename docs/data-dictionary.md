@@ -60,6 +60,21 @@ Key definitions:
 | `scientificName`, `commonName`                             | the common name comes from a hand-written map; it falls back to the scientific name |
 | `totalEncounters`, `yearlyEncounters`, `monthlyEncounters` | as for cells                                                                        |
 | `cellCounts`                                               | `{ cellId: n }`                                                                     |
+| `monthlyCellCounts`                                        | 12 × `{ cellId: n }`: `cellCounts` split by calendar month (all years pooled)       |
+| `monthlyBehaviour`                                         | `{ foraging, socialising, travelling, resting }`, each 12 monthly encounter counts  |
+| `monthlyWithLifeStage`                                     | 12 monthly counts of encounters with at least one life-stage record                 |
+| `monthlyWithCalf`                                          | 12 monthly counts of encounters with at least one `calf` life-stage record          |
+
+Behaviour and life stage come from `extendedmeasurementorfact.txt`
+(`scripts/lib/encounter-measurements.ts`). Behaviour is recorded once per
+species group, the state on the boat's arrival; every encounter has at most
+one value, and the build fails if that ever changes. Life stages are
+separate occurrence rows of the same encounter, so they are collected over
+all of them. "Calf share" (`monthlyWithCalf / monthlyWithLifeStage`) is
+therefore the share of _groups_ with a calf, not calves per animal. The
+Animal hides a month's calf share below 20 life-stage records (a ~25% share
+has a 95% interval of about ±19 points at n = 20) and its behaviour split
+below 5 records (`MIN_*` in `src/data/selectors.ts`).
 
 ## `monthlySummaries[]` (12 entries)
 
@@ -132,6 +147,6 @@ code.
 | ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | The Observer (`FieldJournal.vue`)                      | `yearsWithEncounters`, `yearlyEncounters`, `speciesCounts`, `confidenceScore`, `isReliable`                                                                                      |
 | The External (`CellMapExplorer.vue`)                   | species: `speciesCounts`, `topSpecies`; seasonality: `monthlyEncounters`, `monthlySummaries`, `meta.bestMonthOverall`; boats: `cruiseCells`, `meta.cruisesWithoutPositionsAtSea` |
-| The Animal (`SpeciesAsCharacter.vue`)                  | `speciesSummaries`, `speciesCounts`                                                                                                                                              |
+| The Animal (`SpeciesAsCharacter.vue`)                  | `speciesSummaries` (incl. `monthlyCellCounts`, `monthlyBehaviour`, `monthlyWith*`), `monthlySummaries[].cruises`, `meta.yearlyCruises`                                           |
 | Filling the Gaps (`CellMapExplorer.vue`, decline mode) | `declinePct`, `isReliable`, `meta.caveats[0]`                                                                                                                                    |
 | not shown yet                                          | `speciesCertainty` (planned for The Animal)                                                                                                                                      |

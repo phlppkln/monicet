@@ -41,3 +41,20 @@ export const CHART_ORDINAL_TEAL_RAMP = [
 	"#32847e",
 	CHART_PRIMARY,
 ] as const;
+
+// Categorical: behaviour on arrival (The Animal's year chart). Slots 1–4 of
+// the dataviz skill's default categorical palette, in the stacking order
+// of BEHAVIOUR_ORDER (src/data/selectors.ts), because only neighbours in a
+// stack need to be told apart:
+// `validate_palette.js "#2a78d6,#eb6834,#1baf7a,#eda100" --surface "#ffffff"`
+// -> worst adjacent CVD ΔE 9.1 (protan), normal-vision ΔE 22.9: pass.
+// Contrast WARN for aqua (2.8:1) and yellow (2.2:1) against white: the
+// legend and the month panel give every share as text, so colour is
+// never the only carrier. Across *all* pairs yellow↔orange is only ΔE 13.7,
+// so don't reuse this set for a non-stacked chart without re-validating.
+export const CHART_BEHAVIOUR = {
+	foraging: "#2a78d6",
+	socialising: "#eb6834",
+	resting: "#1baf7a",
+	travelling: "#eda100",
+} as const;
