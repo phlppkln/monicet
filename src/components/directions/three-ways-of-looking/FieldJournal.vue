@@ -205,10 +205,13 @@ const blueScale = d3
 	.scaleSequential(d3.interpolateBlues)
 	.domain([0, MAX_YEARS]);
 
-const effortStops = [0, 3, 6, 9, 12].map((y) => ({
+// Starts at 1: a cell exists only where something was seen (ISSUES.md
+// D-16), so no cell has 0 active years and a "0 yr" swatch would show a
+// state the map never draws.
+const effortStops = [1, 3, 6, 9, 12].map((y) => ({
 	years: y,
 	color: blueScale(y),
-	label: y === 0 ? "0 yr" : y === 12 ? "12 yr" : String(y),
+	label: y === 1 ? "1 yr" : y === 12 ? "12 yr" : String(y),
 }));
 
 // ─── Derived from selectedCell ───────────────────────────────────────────────

@@ -187,6 +187,7 @@
 							ref="legendContainer"
 							class="legend-container"
 						></div>
+						<MapMissingKey :items="MISSING_KEY" />
 					</div>
 					<div ref="tooltipRef" class="tooltip"></div>
 				</div>
@@ -325,6 +326,9 @@ import {
 
 import BasemapControls from "@/components/shared-ui/BasemapControls.vue";
 import MapAttribution from "@/components/shared-ui/MapAttribution.vue";
+import MapMissingKey, {
+	type MissingKeyItem,
+} from "@/components/shared-ui/MapMissingKey.vue";
 import {
 	BEHAVIOUR_ORDER,
 	MIN_BEHAVIOUR_RECORDS,
@@ -341,6 +345,7 @@ import {
 import { useMonicetData } from "@/data/useMonicetData";
 import {
 	CHART_BEHAVIOUR,
+	CHART_NONE_RECORDED,
 	CHART_PRIMARY,
 	CHART_SEQUENTIAL_TEAL,
 	CHART_TEXT_SECONDARY,
@@ -371,6 +376,12 @@ const MONTH_NAMES = [
 	"October",
 	"November",
 	"December",
+];
+
+// Cells where the species was not logged in the selected period: other
+// species were, so the cell is on the map, but off the colour scale.
+const MISSING_KEY: MissingKeyItem[] = [
+	{ kind: "none-recorded", label: "none recorded" },
 ];
 
 const { mapData, basemap, mapLines, error, load, loadMapLines } =
@@ -772,7 +783,7 @@ function renderDataLayer() {
 	// 100→1000), which spreads the many small counts out. The cost:
 	// absolute differences among the top cells are compressed.
 	// Domain starts at 1, not 0 (log 0 is undefined); zero cells keep
-	// their own "absent" grey below, so they never reach the scale.
+	// their own "none recorded" grey below, so they never reach the scale.
 	//
 	// One domain for all twelve months: the largest single-month cell
 	// count of this species. With a per-month domain every month would
@@ -790,7 +801,7 @@ function renderDataLayer() {
 		.domain([1, maxCount]);
 	const fill = (cell: MonicetGridCell) => {
 		const v = counts[cell.id] ?? 0;
-		return v > 0 ? scale(v) : "#e8eef2";
+		return v > 0 ? scale(v) : CHART_NONE_RECORDED;
 	};
 	if (legendContainer.value) {
 		// The legend bar is evenly spaced in log space, so its midpoint

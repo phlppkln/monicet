@@ -508,6 +508,49 @@ export function addSoftEdgeFilter(
 	return `url(#${id})`;
 }
 
+// ─── No-value hatching ──────────────────────────────────────────────────────
+
+/**
+ * Diagonal hatching for cells whose value can't be computed, so they never
+ * share a colour with a real value (see CHART_NO_VALUE_HATCH in
+ * src/lib/chartTokens.ts). Returns the `url(#id)` to use as a fill.
+ *
+ * Draw hatched cells outside the soft-edge blur: blurred, the lines would
+ * melt into a flat grey that looks like a value again.
+ *
+ * `id` must be unique in the document, as for addSoftEdgeFilter.
+ */
+export function addNoValuePattern(
+	svg: d3.Selection<SVGSVGElement, unknown, null, undefined>,
+	color: string,
+	id: string
+) {
+	const size = 5;
+	const pattern = svg
+		.append("defs")
+		.append("pattern")
+		.attr("id", id)
+		.attr("patternUnits", "userSpaceOnUse")
+		.attr("width", size)
+		.attr("height", size)
+		.attr("patternTransform", "rotate(45)");
+	pattern
+		.append("rect")
+		.attr("width", size)
+		.attr("height", size)
+		.attr("fill", "#ffffff")
+		.attr("fill-opacity", 0.55);
+	pattern
+		.append("line")
+		.attr("x1", 0)
+		.attr("y1", 0)
+		.attr("x2", 0)
+		.attr("y2", size)
+		.attr("stroke", color)
+		.attr("stroke-width", 1.4);
+	return `url(#${id})`;
+}
+
 // ─── Coastlines ─────────────────────────────────────────────────────────────
 //
 // Lines, not polygons, so there is no winding order to rewind.

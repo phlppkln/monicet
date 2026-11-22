@@ -195,13 +195,15 @@ The diverging domain is ±max(|declinePct|). With the D-1/D-2 outliers almost
 every cell maps to near-gray. Clamp to a percentile, use a log ratio, or use
 binned classes.
 
-### V-2 Gray means both "no change" and "no value" [code]
+### ~~V-2 Gray means both "no change" and "no value"~~ [fixed]
 
-`CHART_DIVERGING_NEUTRAL` is used for `declinePct === 0` and for `null`.
+Fixed: `null` decline cells are hatched (`addNoValuePattern`) and named in
+the legend; gray is left for 0%.
 
-### V-3 Inconsistent "zero/no data" fills across directions [code]
+### ~~V-3 Inconsistent "zero/no data" fills across directions~~ [fixed]
 
-D1 uses `#ecf0f2` and D3 uses `#e8eef2`.
+Fixed: both maps use `CHART_NONE_RECORDED`, a grey that isn't a step of
+the ramp, with a "none recorded" legend entry (`MapMissingKey.vue`).
 
 ### V-4 Linear sequential scales on highly skewed counts [verified]
 
@@ -214,7 +216,7 @@ _Partly done:_ D3 (The Animal) now uses a log scale. D1 is still linear.
 ### V-5 D4 uses a different palette system [code]
 
 D4 uses `d3.interpolateBlues`, while everything else uses the validated teal
-tokens. Its legend shows "0 yr", which cannot occur (see D-16). Its tooltip
+tokens. (Its legend no longer shows "0 yr", which cannot occur.) Its tooltip
 hard-codes "/ 12 years" (`MAX_YEARS`) instead of using `meta.years.length`.
 
 ### V-7 Small, cramped labels [verified]

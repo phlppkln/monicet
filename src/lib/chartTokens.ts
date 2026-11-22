@@ -31,6 +31,19 @@ export const CHART_SEQUENTIAL_TEAL: [string, string] = [
 	CHART_PRIMARY,
 ];
 
+// Cells that are on the map but off the colour scale. Two states, two
+// styles, and neither is a step of any ramp, so neither reads as "low":
+// - "none recorded": a real zero count for what is selected (other things
+//   were seen in the cell). A flat neutral grey, no hue. Not "absent": the
+//   archive has no absences, only nothing logged.
+// - "no value": the metric can't be computed for the cell (e.g. no early
+//   or late years to compare). Diagonal hatching from CHART_NO_VALUE_HATCH
+//   (addNoValuePattern in src/lib/map.ts, .no-value swatch in MapMissingKey).
+// The alternative, the scale's lightest step for both, is exactly what the
+// "show missing data as missing" caveat warns against.
+export const CHART_NONE_RECORDED = "#d4d7da";
+export const CHART_NO_VALUE_HATCH = CHART_TEXT_SECONDARY;
+
 // Ordinal ramp (discrete ordered buckets, e.g. dominance tiers) — one hue,
 // monotone lightness, light end still >= 2:1 against a white surface:
 // `validate_palette.js "#87b9b3,#5da09a,#32847e,#0a6b64" --ordinal`

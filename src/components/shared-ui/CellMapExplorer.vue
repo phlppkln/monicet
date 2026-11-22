@@ -59,6 +59,7 @@
 				<div v-show="showDataLayer" class="legend-shell">
 					<div class="legend-title">{{ copy.legendTitle }}</div>
 					<div ref="legendContainer" class="legend-container"></div>
+					<MapMissingKey :items="missingKeyItems" />
 				</div>
 				<div ref="tooltipRef" class="tooltip"></div>
 			</div>
@@ -190,6 +191,9 @@ import {
 
 import BasemapControls from "@/components/shared-ui/BasemapControls.vue";
 import MapAttribution from "@/components/shared-ui/MapAttribution.vue";
+import MapMissingKey, {
+	type MissingKeyItem,
+} from "@/components/shared-ui/MapMissingKey.vue";
 import ModeSwitch from "@/components/shared-ui/ModeSwitch.vue";
 import {
 	averageDecline,
@@ -206,6 +210,8 @@ import {
 	CHART_DIVERGING_NEGATIVE,
 	CHART_DIVERGING_NEUTRAL,
 	CHART_DIVERGING_POSITIVE,
+	CHART_NO_VALUE_HATCH,
+	CHART_NONE_RECORDED,
 	CHART_SEQUENTIAL_TEAL,
 	CHART_TEXT_SECONDARY,
 } from "@/lib/chartTokens";
@@ -218,6 +224,7 @@ import {
 } from "@/lib/format";
 import { renderGradientLegend } from "@/lib/legend";
 import {
+	addNoValuePattern,
 	addSoftEdgeFilter,
 	BASEMAPS,
 	drawBaseMap,
@@ -307,6 +314,18 @@ const MODE_COPY: Record<
 };
 
 const copy = computed(() => MODE_COPY[mode.value]);
+
+// Legend entries for cells drawn off the colour scale (MapMissingKey).
+// Boats mode draws only cells some cruise reached, so it has none.
+const MISSING_KEY: Record<MonicetInsightMode, MissingKeyItem[]> = {
+	decline: [
+		{ kind: "no-value", label: "no value: too few years to compare" },
+	],
+	species: [{ kind: "none-recorded", label: "none recorded" }],
+	seasonality: [{ kind: "none-recorded", label: "none recorded" }],
+	boats: [],
+};
+const missingKeyItems = computed(() => MISSING_KEY[mode.value]);
 
 // Footer caveat per mode. meta.caveats[0] is about the decline metric, so
 // it belongs to decline mode only; species and seasonality have none.
@@ -438,6 +457,7 @@ function onCruiseCellHover(event: MouseEvent, cell: MonicetCruiseCell) {
 // ─── Color encodings per mode ────────────────────────────────────────────────
 
 interface Encoding {
+	/** null = no value: the cell is drawn hatched, outside the blur. */
 	value: (cell: MonicetGridCell) => number | null;
 	color: (value: number | null) => string;
 }
@@ -467,7 +487,9 @@ function countEncoding(
 
 	return {
 		value,
-		color: (v) => (v === null || v <= 0 ? "#ecf0f2" : scale(v)),
+		// Zero gets its own neutral grey, not the ramp's light end, so
+		// "none recorded" never reads as "a few" (CHART_NONE_RECORDED).
+		color: (v) => (v === null || v <= 0 ? CHART_NONE_RECORDED : scale(v)),
 	};
 }
 
@@ -506,7 +528,9 @@ function declineEncoding(visibleCells: MonicetGridCell[]): Encoding {
 
 	return {
 		value: (cell) => cell.declinePct,
-		color: (v) => (v === null ? CHART_DIVERGING_NEUTRAL : scale(v)),
+		// null (no early or late years to compare) is hatched, not the
+		// midpoint gray: gray means "no change", which is a value.
+		color: (v) => (v === null ? (base?.noValueFill ?? "none") : scale(v)),
 	};
 }
 
@@ -580,6 +604,7 @@ let base: {
 	cellPath: ReturnType<typeof drawBaseMap>["cellPath"];
 	insertDataLayer: ReturnType<typeof drawBaseMap>["insertDataLayer"];
 	softFilterUrl: string;
+	noValueFill: string;
 } | null = null;
 
 function renderMap() {
@@ -618,6 +643,11 @@ function renderMap() {
 			cellWidthPx,
 			`${svgIdPrefix}-soft-cells`
 		),
+		noValueFill: addNoValuePattern(
+			svg,
+			CHART_NO_VALUE_HATCH,
+			`${svgIdPrefix}-no-value`
+		),
 	};
 	renderDataLayer();
 }
@@ -626,13 +656,15 @@ function renderDataLayer() {
 	if (!base || !mapData.value) return;
 	hideTooltip(tooltipRef.value);
 
-	// dataLayer carries visibility and layer opacity. Inside it, reliable
-	// cells are blurred; unreliable ones sit on top unblurred with a dashed
-	// outline, so their uncertainty isn't washed out by neighbours' colour.
+	// dataLayer carries visibility and layer opacity. Inside it, cells with
+	// a value are blurred; cells with no value (hatched) and unreliable
+	// cells (dashed outline) sit on top unblurred, so neither is washed out
+	// by neighbours' colour.
 	dataLayer?.remove();
 	dataLayer = base.insertDataLayer();
 	applyDataLayerVisibility();
 	const softCells = dataLayer.append("g").attr("filter", base.softFilterUrl);
+	const noValueCells = dataLayer.append("g");
 	const faintCells = dataLayer.append("g");
 
 	if (mode.value === "boats") {
@@ -681,9 +713,14 @@ function renderDataLayer() {
 			)
 			.on("mouseleave", () => hideTooltip(tooltipRef.value));
 
+	const hasValue = (cell: MonicetGridCell) => encoding.value(cell) !== null;
 	drawCells(
 		softCells,
-		visibleCells.filter((cell) => !isFaint(cell))
+		visibleCells.filter((cell) => !isFaint(cell) && hasValue(cell))
+	);
+	drawCells(
+		noValueCells,
+		visibleCells.filter((cell) => !isFaint(cell) && !hasValue(cell))
 	);
 	drawCells(faintCells, visibleCells.filter(isFaint))
 		.attr("fill-opacity", 0.3)
