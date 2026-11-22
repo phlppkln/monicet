@@ -10,6 +10,8 @@ import {
 	activeYearRange,
 	averageDecline,
 	bestMonthIndex,
+	cellRate,
+	MIN_CRUISES_FOR_RATE,
 	cellDominance,
 	MIN_BEHAVIOUR_RECORDS,
 	MIN_LIFE_STAGE_RECORDS,
@@ -100,6 +102,13 @@ test("activeYearRange spans first to last year with encounters", () => {
 		"2010 – 2013"
 	);
 	assert.equal(activeYearRange(cell({}), [2009]), "no active years recorded");
+});
+
+test("cellRate divides by cruises and gives no value below the minimum", () => {
+	assert.equal(cellRate(5, 20), 0.25);
+	assert.equal(cellRate(0, 20), 0);
+	assert.equal(cellRate(3, MIN_CRUISES_FOR_RATE - 1), null);
+	assert.equal(cellRate(0, 0, 0), null);
 });
 
 test("yearRecord keeps years without encounters as zero rows", () => {

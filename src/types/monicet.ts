@@ -134,6 +134,8 @@ export interface MonicetCruiseCell {
 	cruises: number;
 	/** cruises / all cruises in the archive. */
 	share: number;
+	/** The same count split by month, Jan..Dec (index 0..11). */
+	monthlyCruises: number[];
 	cruisesByIsland: Record<IslandGroup, number>;
 }
 

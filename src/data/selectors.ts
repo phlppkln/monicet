@@ -76,6 +76,46 @@ export function speciesHotspots(
 		.slice(0, limit);
 }
 
+// ─── Per-cell rates ──────────────────────────────────────────────────────────
+//
+// A raw count per cell mostly maps where boats go: the three cells off
+// Ponta Delgada see 2,000–2,900 cruises, most cells a few dozen. Dividing by
+// the cruises that reached the cell (cruiseCells) asks "on a cruise that
+// stopped here, how often did I meet it?".
+//
+// The denominator has a bias of its own: positions are logged only at
+// sightings, so a cruise "reached" a cell only if it saw something there
+// (ISSUES.md D-10). The rate is per cruise that stopped for animals here,
+// not per cruise that searched here.
+
+/**
+ * Below this many cruises a cell gets no rate. With 10 cruises one extra
+ * encounter moves the rate by 0.1; with 2 cruises, by 0.5, so a single
+ * lucky trip would paint the darkest cell. The cut is a judgement call.
+ * Alternatives that keep small cells: shrink each rate toward the overall
+ * rate (empirical Bayes), or show a Wilson interval instead of a point
+ * value. Both are gap-filling questions for Filling the Gaps.
+ */
+export const MIN_CRUISES_FOR_RATE = 10;
+
+/** Cruise cells by id, to look up a grid cell's denominator. */
+export function indexCruiseCells(cells: MonicetCruiseCell[]) {
+	return new Map(cells.map((cell) => [cell.id, cell]));
+}
+
+/**
+ * Encounters per cruise for one cell, or null when fewer than
+ * MIN_CRUISES_FOR_RATE cruises reached it (no value, not zero).
+ */
+export function cellRate(
+	encounters: number,
+	cruises: number,
+	minCruises = MIN_CRUISES_FOR_RATE
+): number | null {
+	if (cruises < minCruises || cruises <= 0) return null;
+	return encounters / cruises;
+}
+
 /** Index (0–11) of the month with the most encounters; first wins ties. */
 /**
  * Encounters per cruise for each calendar month. Raw monthly counts mostly

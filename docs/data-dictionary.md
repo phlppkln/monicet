@@ -108,6 +108,7 @@ Go?".
 | `id`, `row`, `col`, `center…`, `polygon` | as in `gridCells`                                                |
 | `cruises`                                | distinct cruises with ≥ 1 position in the cell; once per cruise  |
 | `share`                                  | `cruises / all cruises`                                          |
+| `monthlyCruises`                         | `cruises` split by month, Jan..Dec (index 0..11)                 |
 | `cruisesByIsland`                        | the same count split by the cruise's island group (home harbour) |
 
 Positions come from the footprints of the cruise's sighting events (a

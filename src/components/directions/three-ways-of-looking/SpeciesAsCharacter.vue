@@ -181,7 +181,8 @@
 					<MapAttribution :basemap-id="basemapId" />
 					<div v-show="showDataLayer" class="legend-shell">
 						<div class="legend-title">
-							Encounters in {{ monthName }}, all years (log scale)
+							Encounters per cruise in {{ monthName }}, all years
+							(log scale)
 						</div>
 						<div
 							ref="legendContainer"
@@ -292,8 +293,9 @@
 						boat may have changed it; deep divers forage out of
 						sight. Calf share counts groups, not animals. Winter
 						months have few cruises ({{ quietestMonth }}), so their
-						shares are noisy. Map counts are absolute, not
-						normalised by cruise effort.
+						shares are noisy. The map divides by the cruises that
+						logged a sighting in each cell, so it is per cruise that
+						stopped there, not per cruise that searched it.
 					</div>
 				</aside>
 			</div>
@@ -334,7 +336,10 @@ import {
 	MIN_BEHAVIOUR_RECORDS,
 	MIN_LIFE_STAGE_RECORDS,
 	bestMonthIndex,
+	cellRate,
 	findSpecies,
+	indexCruiseCells,
+	MIN_CRUISES_FOR_RATE,
 	monthActivity,
 	monthCalfShare,
 	monthlyRates,
@@ -345,6 +350,7 @@ import {
 import { useMonicetData } from "@/data/useMonicetData";
 import {
 	CHART_BEHAVIOUR,
+	CHART_NO_VALUE_HATCH,
 	CHART_NONE_RECORDED,
 	CHART_PRIMARY,
 	CHART_SEQUENTIAL_TEAL,
@@ -353,6 +359,7 @@ import {
 import { formatCellLabel, formatRate, MONTH_LABELS } from "@/lib/format";
 import { renderGradientLegend } from "@/lib/legend";
 import {
+	addNoValuePattern,
 	addSoftEdgeFilter,
 	BASEMAPS,
 	drawBaseMap,
@@ -378,10 +385,15 @@ const MONTH_NAMES = [
 	"December",
 ];
 
-// Cells where the species was not logged in the selected period: other
-// species were, so the cell is on the map, but off the colour scale.
+// Cells drawn off the colour scale: the species was not logged there in
+// the selected period (other species were), or too few cruises reached
+// the cell then to give a rate.
 const MISSING_KEY: MissingKeyItem[] = [
 	{ kind: "none-recorded", label: "none recorded" },
+	{
+		kind: "no-value",
+		label: `no rate: fewer than ${MIN_CRUISES_FOR_RATE} cruises`,
+	},
 ];
 
 const { mapData, basemap, mapLines, error, load, loadMapLines } =
@@ -665,15 +677,18 @@ function onCellHover(event: MouseEvent, cell: MonicetGridCell) {
 	if (!tooltipRef.value || !mapContainer.value || !selectedSpecies.value) {
 		return;
 	}
-	const counts = speciesCellCountsFor(
+	const { encounters, cruises, rate } = cellRates(
 		selectedSpecies.value,
 		selectedMonth.value
-	);
-	const count = counts[cell.id] ?? 0;
+	).get(cell.id) ?? { encounters: 0, cruises: 0, rate: null };
 	const when =
 		selectedMonth.value === null
 			? "2009–2020"
 			: `${MONTH_NAMES[selectedMonth.value]}, all years`;
+	const rateLine =
+		rate === null
+			? `no rate: only ${cruises} cruises reached the cell`
+			: formatRate(rate);
 
 	showTooltip(
 		tooltipRef.value,
@@ -681,8 +696,57 @@ function onCellHover(event: MouseEvent, cell: MonicetGridCell) {
 		event,
 		`
 		<div class="tip-title">${formatCellLabel(cell)}</div>
-		<div class="tip-line">${count.toLocaleString()} encounters (${when})</div>
+		<div class="tip-line">${rateLine}</div>
+		<div class="tip-line">${encounters.toLocaleString()} encounters in ${cruises.toLocaleString()} cruises (${when})</div>
 	`
+	);
+}
+
+// ─── Map rates ───────────────────────────────────────────────────────────────
+// The map shows encounters per cruise that reached the cell, like the bars
+// above it: raw counts mostly map where boats go (see cellRate in
+// src/data/selectors.ts, and its bias: cruises count only where they
+// logged a sighting).
+
+const cruiseCellLookup = computed(() =>
+	indexCruiseCells(mapData.value?.cruiseCells ?? [])
+);
+
+/** Encounters, cruises and rate per grid cell, for one month or all year. */
+function cellRates(
+	species: NonNullable<typeof selectedSpecies.value>,
+	month: number | null
+) {
+	const counts = speciesCellCountsFor(species, month);
+	const rates = new Map<
+		string,
+		{ encounters: number; cruises: number; rate: number | null }
+	>();
+	for (const cell of mapData.value?.gridCells ?? []) {
+		const cruiseCell = cruiseCellLookup.value.get(cell.id);
+		const cruises =
+			(month === null
+				? cruiseCell?.cruises
+				: cruiseCell?.monthlyCruises[month]) ?? 0;
+		const encounters = counts[cell.id] ?? 0;
+		rates.set(cell.id, {
+			encounters,
+			cruises,
+			rate: cellRate(encounters, cruises),
+		});
+	}
+	return rates;
+}
+
+/** All positive rates of a set of months, for the colour domain. */
+function positiveRates(
+	species: NonNullable<typeof selectedSpecies.value>,
+	months: (number | null)[]
+) {
+	return months.flatMap((m) =>
+		[...cellRates(species, m).values()]
+			.map((r) => r.rate)
+			.filter((r): r is number => r !== null && r > 0)
 	);
 }
 
@@ -716,6 +780,7 @@ let base: {
 	cellPath: ReturnType<typeof drawBaseMap>["cellPath"];
 	insertDataLayer: ReturnType<typeof drawBaseMap>["insertDataLayer"];
 	softFilterUrl: string;
+	noValueFill: string;
 } | null = null;
 
 function renderMap() {
@@ -755,6 +820,11 @@ function renderMap() {
 			cellWidthPx,
 			`${svgIdPrefix}-soft-cells`
 		),
+		noValueFill: addNoValuePattern(
+			svg,
+			CHART_NO_VALUE_HATCH,
+			`${svgIdPrefix}-no-value`
+		),
 	};
 	renderDataLayer();
 }
@@ -766,66 +836,85 @@ function renderDataLayer() {
 	dataLayer?.remove();
 	dataLayer = base.insertDataLayer();
 	applyDataLayerVisibility();
-	// Soft edges as in The External: the cells are blurred and have no
-	// borders.
+	// Soft edges as in The External: cells with a rate are blurred and
+	// have no borders. Cells with no rate are hatched, on top and unblurred
+	// so the hatching stays readable.
 	const softCells = dataLayer.append("g").attr("filter", base.softFilterUrl);
+	const noValueCells = dataLayer.append("g");
 
 	const cells = mapData.value.gridCells;
 	const species = selectedSpecies.value;
 	if (!species) return;
 	const month = selectedMonth.value;
-	const counts = speciesCellCountsFor(species, month);
+	const rates = cellRates(species, month);
+	const rateOf = (cell: MonicetGridCell) => rates.get(cell.id)?.rate ?? null;
 
-	// Log scale, because the counts are heavily right-skewed: for the
-	// most common species the median occupied cell has ~2% of the
-	// maximum, so a linear ramp paints most cells near-white. On a log
-	// scale equal colour steps mean equal *ratios* (1→10 looks like
-	// 100→1000), which spreads the many small counts out. The cost:
-	// absolute differences among the top cells are compressed.
-	// Domain starts at 1, not 0 (log 0 is undefined); zero cells keep
-	// their own "none recorded" grey below, so they never reach the scale.
+	// Log scale, because the rates are still right-skewed: across the
+	// months of the most common species they span about 0.02 to 3.4
+	// encounters per cruise, median 0.44. On a log scale equal colour steps
+	// mean equal *ratios* (0.05→0.5 looks like 0.5→5), which spreads the
+	// many small rates out. The cost: absolute differences among the top
+	// cells are compressed. The domain starts at the smallest positive
+	// rate (log 0 is undefined); zero cells keep their own "none recorded"
+	// grey below, so they never reach the scale.
 	//
-	// One domain for all twelve months: the largest single-month cell
-	// count of this species. With a per-month domain every month would
-	// have a dark cell, and a month with three sightings would look as
-	// busy as July. The all-year view sums the months, so it gets its own
-	// domain (the legend says which one is shown).
-	const domainCounts =
-		month === null ? [species.cellCounts] : species.monthlyCellCounts;
-	const maxCount = Math.max(
-		1,
-		...domainCounts.flatMap((record) => Object.values(record))
+	// One domain for all twelve months. With a per-month domain every
+	// month would have a dark cell, and a month with three sightings would
+	// look as busy as July. The all-year view pools the months, so it gets
+	// its own domain (the legend says which one is shown).
+	const domainRates = positiveRates(
+		species,
+		month === null ? [null] : d3.range(12)
 	);
+	const minRate = d3.min(domainRates) ?? 0.01;
+	const maxRate = Math.max(minRate * 2, d3.max(domainRates) ?? 0.02);
 	const scale = d3
 		.scaleSequentialLog(d3.interpolateRgb(...CHART_SEQUENTIAL_TEAL))
-		.domain([1, maxCount]);
+		.domain([minRate, maxRate]);
 	const fill = (cell: MonicetGridCell) => {
-		const v = counts[cell.id] ?? 0;
-		return v > 0 ? scale(v) : CHART_NONE_RECORDED;
+		const rate = rateOf(cell);
+		if (rate === null) return base?.noValueFill ?? "none";
+		return rate > 0 ? scale(rate) : CHART_NONE_RECORDED;
 	};
 	if (legendContainer.value) {
 		// The legend bar is evenly spaced in log space, so its midpoint
-		// is the geometric mean sqrt(1 · max), not max / 2.
+		// is the geometric mean sqrt(min · max), not the arithmetic one.
 		renderGradientLegend(
 			legendContainer.value,
 			"d3-sp-legend",
 			(t) => scale.interpolator()(t),
 			{
-				left: "1",
-				center: `${Math.round(Math.sqrt(maxCount))}`,
-				right: `${maxCount}`,
+				left: minRate.toFixed(2),
+				center: Math.sqrt(minRate * maxRate).toFixed(2),
+				right: maxRate.toFixed(2),
 			}
 		);
 	}
 
-	softCells
-		.selectAll("path")
-		.data(cells)
-		.join("path")
-		.attr("d", base.cellPath)
-		.attr("fill", fill)
-		.on("mousemove", (event: MouseEvent, cell) => onCellHover(event, cell))
-		.on("mouseleave", () => hideTooltip(tooltipRef.value));
+	const cellPath = base.cellPath;
+	const drawCells = (
+		group: d3.Selection<SVGGElement, unknown, null, undefined>,
+		subset: MonicetGridCell[]
+	) =>
+		group
+			.selectAll("path")
+			.data(subset)
+			.join("path")
+			.attr("d", cellPath)
+			.attr("fill", fill)
+			.on("mousemove", (event: MouseEvent, cell) =>
+				onCellHover(event, cell)
+			)
+			.on("mouseleave", () => hideTooltip(tooltipRef.value));
+
+	drawCells(
+		softCells,
+		cells.filter((cell) => rateOf(cell) !== null)
+	);
+	drawCells(
+		noValueCells,
+		cells.filter((cell) => rateOf(cell) === null)
+	);
 }
 
 // ─── Render sparkline ────────────────────────────────────────────────────────

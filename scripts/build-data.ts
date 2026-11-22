@@ -205,7 +205,7 @@ export function buildData(
 	const sampleEvents = new Map<string, SampleEvent>();
 	const cruisesByYear = new Map<number, number>();
 	const cruisesByMonth = new Map<string, number>();
-	const cruiseInputs: CruiseInput[] = [];
+	const cruiseInputs: CruiseCellInput[] = [];
 	const cruisePositions = new Map<string, LonLat[]>();
 
 	let minLat = Number.POSITIVE_INFINITY;
@@ -241,6 +241,7 @@ export function buildData(
 				cruiseId: row.eventID,
 				island: islandGroupOf(harbour[0]),
 				year,
+				month,
 			});
 			if (!cruisePositions.has(row.eventID)) {
 				cruisePositions.set(row.eventID, []);
@@ -622,8 +623,11 @@ export function buildData(
 // ── Where do boats go? ───────────────────────────────────────────────────
 // Distinct cruises per grid cell, from positions logged at sea. Same grid
 // origin as gridCells so the two layers line up.
+/** A cruise as buildCruiseCells needs it: certainty's input plus its month. */
+type CruiseCellInput = CruiseInput & { month: number };
+
 function buildCruiseCells(
-	cruises: CruiseInput[],
+	cruises: CruiseCellInput[],
 	positionsByCruise: Map<string, LonLat[]>,
 	minLatGrid: number,
 	minLonGrid: number
@@ -658,6 +662,7 @@ function buildCruiseCells(
 					polygon: g.polygon,
 					cruises: 0,
 					share: 0,
+					monthlyCruises: Array.from({ length: 12 }, () => 0),
 					cruisesByIsland: {
 						"São Miguel": 0,
 						Terceira: 0,
@@ -667,6 +672,7 @@ function buildCruiseCells(
 				cells.set(id, cell);
 			}
 			cell.cruises += 1;
+			cell.monthlyCruises[cruise.month - 1] += 1;
 			cell.cruisesByIsland[cruise.island] += 1;
 		}
 	}

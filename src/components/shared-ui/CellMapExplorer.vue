@@ -102,7 +102,7 @@
 						}}</strong>
 					</div>
 
-					<h4>Hotspots</h4>
+					<h4>Most encounters (not per cruise)</h4>
 					<ul class="insight-list">
 						<li v-for="hotspot in hotspots" :key="hotspot.id">
 							<div>{{ hotspot.label }}</div>
@@ -197,9 +197,12 @@ import MapMissingKey, {
 import ModeSwitch from "@/components/shared-ui/ModeSwitch.vue";
 import {
 	averageDecline,
+	cellRate,
 	findMonth,
 	findSpecies,
 	indexCells,
+	indexCruiseCells,
+	MIN_CRUISES_FOR_RATE,
 	speciesHotspots,
 	speciesOptions,
 	topCruiseCells,
@@ -296,14 +299,14 @@ const MODE_COPY: Record<
 	species: {
 		panelTitle: "Species Distribution Insight",
 		panelIntro:
-			"Select a species to reveal where encounters concentrate. Darker cells indicate areas where this species appears more frequently.",
-		legendTitle: "Encounters in selected species",
+			"Select a species to see where it is met most often. Cells are colored by encounters per cruise that reached the cell, not by raw counts: raw counts mostly show where boats go, and the harbour cells off Ponta Delgada see thousands of cruises.",
+		legendTitle: "Encounters per cruise, selected species",
 	},
 	seasonality: {
 		panelTitle: "Seasonality Insight",
 		panelIntro:
-			"Select a month to explore where encounters concentrate and which species dominate sightings during that period.",
-		legendTitle: "Encounters in selected month",
+			"Select a month to see where animals are met most often then, and which species dominate. Cells are colored by encounters per cruise that reached the cell in that month, so busy summer harbours don't win by traffic alone.",
+		legendTitle: "Encounters per cruise in selected month",
 	},
 	boats: {
 		panelTitle: "Where Do Boats Go?",
@@ -321,16 +324,32 @@ const MISSING_KEY: Record<MonicetInsightMode, MissingKeyItem[]> = {
 	decline: [
 		{ kind: "no-value", label: "no value: too few years to compare" },
 	],
-	species: [{ kind: "none-recorded", label: "none recorded" }],
-	seasonality: [{ kind: "none-recorded", label: "none recorded" }],
+	species: [
+		{ kind: "none-recorded", label: "none recorded" },
+		{
+			kind: "no-value",
+			label: `no rate: fewer than ${MIN_CRUISES_FOR_RATE} cruises`,
+		},
+	],
+	seasonality: [
+		{ kind: "none-recorded", label: "none recorded" },
+		{
+			kind: "no-value",
+			label: `no rate: fewer than ${MIN_CRUISES_FOR_RATE} cruises that month`,
+		},
+	],
 	boats: [],
 };
 const missingKeyItems = computed(() => MISSING_KEY[mode.value]);
 
 // Footer caveat per mode. meta.caveats[0] is about the decline metric, so
-// it belongs to decline mode only; species and seasonality have none.
+// it belongs to decline mode only. Species and seasonality divide by the
+// cruise positions, so they inherit the boats caveat in a shorter form.
 const caveat = computed(() => {
 	if (mode.value === "decline") return mapData.value?.meta.caveats[0];
+	if (mode.value === "species" || mode.value === "seasonality") {
+		return "A cruise counts for a cell only if it logged a sighting there, so the rate is per cruise that stopped for animals in the cell, not per cruise that searched it.";
+	}
 	if (mode.value === "boats") {
 		return "Positions are only logged at sightings. A boat that searched an area and found nothing leaves no trace there, so this is where boats stopped for animals, not every place they looked.";
 	}
@@ -341,6 +360,34 @@ const caveat = computed(() => {
 
 const cells = computed(() => mapData.value?.gridCells ?? []);
 const cellLookup = computed(() => indexCells(cells.value));
+const cruiseCellLookup = computed(() =>
+	indexCruiseCells(mapData.value?.cruiseCells ?? [])
+);
+
+/**
+ * The count and the cruises behind a cell's rate in species or seasonality
+ * mode. Cruises come from cruiseCells (whole archive, or the selected
+ * month); a grid cell no cruise reached has 0.
+ */
+function rateInputs(cell: MonicetGridCell) {
+	const cruiseCell = cruiseCellLookup.value.get(cell.id);
+	if (mode.value === "species") {
+		return {
+			encounters: cell.speciesCounts[selectedSpeciesId.value] ?? 0,
+			cruises: cruiseCell?.cruises ?? 0,
+		};
+	}
+	const month = selectedMonth.value - 1;
+	return {
+		encounters: cell.monthlyEncounters[month] ?? 0,
+		cruises: cruiseCell?.monthlyCruises[month] ?? 0,
+	};
+}
+
+function cellRateFor(cell: MonicetGridCell) {
+	const { encounters, cruises } = rateInputs(cell);
+	return cellRate(encounters, cruises);
+}
 
 const speciesList = computed(() =>
 	mapData.value ? speciesOptions(mapData.value) : []
@@ -407,11 +454,17 @@ function onCellHover(
 
 	let valueLabel = "";
 	if (mode.value === "decline") {
-		valueLabel = `Change: ${formatSignedPercent(value)}`;
-	} else if (mode.value === "species") {
-		valueLabel = `Encounters: ${(value ?? 0).toLocaleString()}`;
+		valueLabel = `Change: ${value === null ? "no value" : formatSignedPercent(value)}`;
 	} else {
-		valueLabel = `${selectedMonthSummary.value?.label ?? "Month"}: ${(value ?? 0).toLocaleString()} encounters`;
+		const { encounters, cruises } = rateInputs(cell);
+		const prefix =
+			mode.value === "seasonality"
+				? `${selectedMonthSummary.value?.label ?? "Month"}: `
+				: "";
+		valueLabel =
+			value === null
+				? `${prefix}no rate, only ${cruises} cruises (${encounters} encounters)`
+				: `${prefix}${formatRate(value)} (${encounters.toLocaleString()} in ${cruises.toLocaleString()} cruises)`;
 	}
 
 	// topSpecies counts all months; in seasonality mode it sits right under
@@ -462,12 +515,20 @@ interface Encoding {
 	color: (value: number | null) => string;
 }
 
-/** Sequential teal encoding for count-like values (species / month). */
-function countEncoding(
+/**
+ * Sequential teal encoding for encounters per cruise (species / month).
+ * Linear from 0: as rates the values are far less skewed than raw counts
+ * (for the top species the median cell is about a fifth of the maximum),
+ * so a log scale would only blur the differences readers care about.
+ */
+function rateEncoding(
 	visibleCells: MonicetGridCell[],
-	value: (cell: MonicetGridCell) => number
+	value: (cell: MonicetGridCell) => number | null
 ): Encoding {
-	const maxValue = Math.max(1, d3.max(visibleCells.map(value)) ?? 1);
+	const rates = visibleCells
+		.map(value)
+		.filter((v): v is number => v !== null);
+	const maxValue = Math.max(0.01, d3.max(rates) ?? 0.01);
 	const scale = d3
 		.scaleSequential(d3.interpolateRgb(...CHART_SEQUENTIAL_TEAL))
 		.domain([0, maxValue]);
@@ -479,17 +540,21 @@ function countEncoding(
 			(t) => scale(t * maxValue),
 			{
 				left: "0",
-				center: `${Math.round(maxValue / 2)}`,
-				right: `${maxValue}`,
+				center: (maxValue / 2).toFixed(2),
+				right: maxValue.toFixed(2),
 			}
 		);
 	}
 
 	return {
 		value,
-		// Zero gets its own neutral grey, not the ramp's light end, so
-		// "none recorded" never reads as "a few" (CHART_NONE_RECORDED).
-		color: (v) => (v === null || v <= 0 ? CHART_NONE_RECORDED : scale(v)),
+		// null (too few cruises) is hatched. Zero gets its own neutral grey,
+		// not the ramp's light end, so "none recorded" never reads as "a
+		// few" (CHART_NONE_RECORDED).
+		color: (v) => {
+			if (v === null) return base?.noValueFill ?? "none";
+			return v <= 0 ? CHART_NONE_RECORDED : scale(v);
+		},
 	};
 }
 
@@ -685,17 +750,7 @@ function renderDataLayer() {
 	const encoding =
 		mode.value === "decline"
 			? declineEncoding(visibleCells)
-			: mode.value === "species"
-				? countEncoding(
-						visibleCells,
-						(cell) =>
-							cell.speciesCounts[selectedSpeciesId.value] ?? 0
-					)
-				: countEncoding(
-						visibleCells,
-						(cell) =>
-							cell.monthlyEncounters[selectedMonth.value - 1] ?? 0
-					);
+			: rateEncoding(visibleCells, cellRateFor);
 
 	const cellPath = base.cellPath;
 	const drawCells = (

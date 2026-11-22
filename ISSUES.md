@@ -101,11 +101,17 @@ activity" it reads as search effort. There is no spatial effort data at all:
 no tracks, and only 76 of 8,455 trips have no sighting. A cell searched
 every year with nothing seen would not exist on the map.
 
-### D-11 Counts are not effort-normalised in D3 and D4 [verified]
+### D-11 Counts are not effort-normalised in D4 [verified]
 
-This is acknowledged in the caveats, but the species sparkline basically
-traces the cruise curve (2017 peak, 2020 drop). Readers will read it as
-population change.
+The Observer's logbook still shows raw occurrence counts (acknowledged in
+its caveat).
+
+_Partly done:_ The Animal's bars and sparkline divide by cruises, and The
+Animal's map and The External's species and seasonality maps now divide
+by the cruises that reached each cell (`cellRate`, `cruiseCells`
+`monthlyCruises`), with no rate below `MIN_CRUISES_FOR_RATE`. That
+denominator only counts cruises that logged a sighting in the cell
+(D-10), so it is not search effort either.
 
 ### D-12 Seasonal islands distort the monthly mix [code]
 
@@ -211,7 +217,9 @@ Species counts per cell go up to 1,103 while most cells hold single or
 double digits, so most cells end up pale. Consider sqrt/log or quantile
 scales.
 
-_Partly done:_ D3 (The Animal) now uses a log scale. D1 is still linear.
+_Partly done:_ D3 (The Animal) now uses a log scale. D1's species and
+seasonality maps now show encounters per cruise, which are far less skewed
+(median cell ≈ ⅕ of the maximum), so they stay linear.
 
 ### V-5 D4 uses a different palette system [code]
 
