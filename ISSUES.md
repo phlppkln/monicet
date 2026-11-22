@@ -227,6 +227,15 @@ D4 uses `d3.interpolateBlues`, while everything else uses the validated teal
 tokens. (Its legend no longer shows "0 yr", which cannot occur.) Its tooltip
 hard-codes "/ 12 years" (`MAX_YEARS`) instead of using `meta.years.length`.
 
+### V-9 Light-to-dark ramps invert on the Satellite basemap [code]
+
+Every sequential ramp runs light (low) to dark (high), tuned for the light
+basemaps. On Satellite the sea is near-black, so the dark high end sinks
+into it and the pale low end stands out most: the visual weight inverts.
+Options: a dark-to-light ramp for dark basemaps (but "darker = more" would
+then change meaning between basemaps), a white halo or outline per cell,
+or a higher default opacity on Satellite only. Product decision, not made.
+
 ### V-7 Small, cramped labels [verified]
 
 Sparkline labels are 8px and island labels 10px (Corvo overlaps Flores).

@@ -264,7 +264,8 @@ const basemapId = ref<BasemapId>("basic");
 const showDataLayer = ref(true);
 // Whole-layer opacity, so the basemap shows through. Per-cell opacity still
 // encodes reliability on top of this.
-const dataLayerOpacity = ref(0.65);
+// 0.85, not lower: at 0.65 the ramp's light end blended into the basemap.
+const dataLayerOpacity = ref(0.85);
 // The grid the build sorts observations into (drawObservationGrid in
 // src/lib/map.ts). Off by default: it is an explanation, not data.
 const showObservationGrid = ref(false);

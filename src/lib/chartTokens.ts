@@ -26,8 +26,14 @@ export const CHART_DIVERGING_POSITIVE = "#0f9c8e";
 // Single-hue sequential ramp (magnitude encodings). Light tint -> brand teal,
 // light->dark so it stays a one-hue ramp instead of a multi-hue D3 scheme
 // (interpolateYlGnBu / interpolateYlOrRd etc. mix hues mid-ramp).
+// The light end is the ordinal ramp's lightest step (validated >= 2:1 on
+// white), not a near-white tint: the cells are drawn at partial opacity
+// over a light-grey basemap, and the old #eaf5f3 came out at 1.09:1
+// against it, so the lowest values vanished. #87b9b3 at the default 0.85
+// layer opacity is 1.58:1. A light-to-dark ramp can't get its lowest step
+// to 3:1 on a light map, so the tooltips carry every value as text.
 export const CHART_SEQUENTIAL_TEAL: [string, string] = [
-	"#eaf5f3",
+	"#87b9b3",
 	CHART_PRIMARY,
 ];
 

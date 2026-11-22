@@ -408,7 +408,8 @@ const selectedMonth = ref<number | null>(null);
 // toggleable layer whose opacity lets the basemap show through.
 const basemapId = ref<BasemapId>("basic");
 const showDataLayer = ref(true);
-const dataLayerOpacity = ref(0.65);
+// 0.85, not lower: at 0.65 the ramp's light end blended into the basemap.
+const dataLayerOpacity = ref(0.85);
 // The grid the build sorts observations into (drawObservationGrid in
 // src/lib/map.ts). Off by default: it is an explanation, not data.
 const showObservationGrid = ref(false);

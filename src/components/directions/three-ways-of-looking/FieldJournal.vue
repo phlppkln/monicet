@@ -183,7 +183,8 @@ const loading = ref(true);
 // toggleable layer whose opacity lets the basemap show through.
 const basemapId = ref<BasemapId>("basic");
 const showDataLayer = ref(true);
-const dataLayerOpacity = ref(0.65);
+// 0.85, not lower: at 0.65 the ramp's light end blended into the basemap.
+const dataLayerOpacity = ref(0.85);
 // The grid the build sorts observations into (drawObservationGrid in
 // src/lib/map.ts). Off by default: it is an explanation, not data.
 const showObservationGrid = ref(false);
@@ -196,10 +197,16 @@ const tooltipRef = ref<HTMLElement | null>(null);
 const selectedCell = ref<MonicetGridCell | null>(null);
 const showAllSpecies = ref(false);
 
-// Blues scale shared between map render and legend swatches
+// Blues scale shared between map render and legend swatches. Only the
+// upper 65% of interpolateBlues: its bottom is near-white, and 9 cells
+// with a single active year came out almost invisible on the light
+// basemap. The domain starts at 1, the fewest years a cell can have.
+const BLUES_FLOOR = 0.35;
 const blueScale = d3
-	.scaleSequential(d3.interpolateBlues)
-	.domain([0, MAX_YEARS]);
+	.scaleSequential((t) =>
+		d3.interpolateBlues(BLUES_FLOOR + (1 - BLUES_FLOOR) * t)
+	)
+	.domain([1, MAX_YEARS]);
 
 // Starts at 1: a cell exists only where something was seen (ISSUES.md
 // D-16), so no cell has 0 active years and a "0 yr" swatch would show a
