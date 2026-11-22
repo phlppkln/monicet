@@ -63,7 +63,10 @@
 							:y="YEAR.top + 4"
 							text-anchor="end"
 						>
-							{{ formatRate(maxMonthlyRate) }}
+							<!-- Number only: "1.32 encounters/cruise" ran ~100px
+							past the chart's left edge. The unit is in the
+							subtitle ("Bar height: encounters per cruise"). -->
+							{{ maxMonthlyRate.toFixed(2) }}
 						</text>
 						<text
 							class="axis-label"
