@@ -20,6 +20,7 @@ import {
 	topCruiseCells,
 	topDecliningCells,
 	yearlyRates,
+	yearRecord,
 } from "./selectors.ts";
 
 function cell(overrides: Partial<MonicetGridCell>): MonicetGridCell {
@@ -99,6 +100,15 @@ test("activeYearRange spans first to last year with encounters", () => {
 		"2010 – 2013"
 	);
 	assert.equal(activeYearRange(cell({}), [2009]), "no active years recorded");
+});
+
+test("yearRecord keeps years without encounters as zero rows", () => {
+	const c = cell({ yearlyEncounters: { "2010": 2, "2012": 1 } });
+	assert.deepEqual(yearRecord(c, [2010, 2011, 2012]), [
+		{ year: 2010, count: 2 },
+		{ year: 2011, count: 0 },
+		{ year: 2012, count: 1 },
+	]);
 });
 
 test("topCruiseCells sorts by cruises and limits", () => {

@@ -113,11 +113,11 @@
 					<div
 						v-for="row in yearRows"
 						:key="row.year"
-						class="year-row"
+						:class="['year-row', { gap: row.count === 0 }]"
 					>
 						<span class="yr-label">{{ row.year }}</span>
 						<span class="yr-count">{{
-							row.count.toLocaleString()
+							row.count === 0 ? "–" : row.count.toLocaleString()
 						}}</span>
 						<div class="yr-bar-track">
 							<div
@@ -159,11 +159,7 @@ import {
 
 import BasemapControls from "@/components/shared-ui/BasemapControls.vue";
 import MapAttribution from "@/components/shared-ui/MapAttribution.vue";
-import {
-	activeYearRange,
-	activeYearRows,
-	cellSpeciesList,
-} from "@/data/selectors";
+import { activeYearRange, cellSpeciesList, yearRecord } from "@/data/selectors";
 import { useMonicetData } from "@/data/useMonicetData";
 import { CHART_PRIMARY } from "@/lib/chartTokens";
 import { formatCellLabel } from "@/lib/format";
@@ -241,7 +237,7 @@ const visibleSpecies = computed(() =>
 
 const yearRows = computed(() =>
 	selectedCell.value && mapData.value
-		? activeYearRows(selectedCell.value, years.value)
+		? yearRecord(selectedCell.value, years.value)
 		: []
 );
 
@@ -673,6 +669,13 @@ watch(showDataLayer, () => {
 	background: rgba($journal-accent, 0.1);
 	border-radius: 3px;
 	overflow: hidden;
+}
+
+// A year with nothing logged keeps its row, so gaps in the record stay
+// visible; it is dimmed instead of dropped.
+.year-row.gap .yr-label,
+.year-row.gap .yr-count {
+	color: rgba($text-secondary, 0.6);
 }
 
 .yr-bar {

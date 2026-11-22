@@ -134,13 +134,20 @@ export function cellDominance(
 }
 
 /** Per-year encounter counts for a cell, only years with > 0 encounters. */
+/**
+ * One row per year of the archive, zero years included, so that a gap in
+ * the record shows as a gap (2011, –, 2013) instead of closing up.
+ */
+export function yearRecord(cell: MonicetGridCell, years: number[]) {
+	return years.map((year) => ({
+		year,
+		count: cell.yearlyEncounters[String(year)] ?? 0,
+	}));
+}
+
+/** Only the years with at least one encounter. */
 export function activeYearRows(cell: MonicetGridCell, years: number[]) {
-	return years
-		.map((year) => ({
-			year,
-			count: cell.yearlyEncounters[String(year)] ?? 0,
-		}))
-		.filter((row) => row.count > 0);
+	return yearRecord(cell, years).filter((row) => row.count > 0);
 }
 
 /** "first – last" active year of a cell, or a fallback sentence. */
