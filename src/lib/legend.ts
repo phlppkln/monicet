@@ -2,6 +2,9 @@ import * as d3 from "d3";
 
 // Horizontal gradient legend: a 260×52 SVG with a color bar and two or
 // three tick labels underneath. Styled through the `.legend-label` class.
+// Drawn at its real pixel size (shrinking only on narrower containers), so
+// the label font size set in CSS is the size readers see. It used to
+// stretch to the container width, which scaled the labels with it.
 export function renderGradientLegend(
 	container: HTMLElement,
 	gradientId: string,
@@ -18,7 +21,9 @@ export function renderGradientLegend(
 		.append("svg")
 		.attr("viewBox", `0 0 ${width} ${height}`)
 		.attr("preserveAspectRatio", "xMinYMin meet")
-		.style("width", "100%");
+		.style("width", `${width}px`)
+		.style("max-width", "100%")
+		.style("height", "auto");
 
 	const gradient = svg
 		.append("defs")

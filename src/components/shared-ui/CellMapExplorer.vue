@@ -947,7 +947,7 @@ watch(showDataLayer, () => {
 }
 
 :deep(.legend-label) {
-	font-size: 10px;
+	font-size: 12px;
 	font-family: "Space Grotesk", sans-serif;
 	fill: $text-secondary;
 }

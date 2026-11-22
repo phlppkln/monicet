@@ -338,7 +338,7 @@ export function drawBaseMap(
 			.join("text")
 			.attr("x", (f) => geoPath.centroid(asGeo(f))[0])
 			.attr("y", (f) => geoPath.centroid(asGeo(f))[1])
-			.attr("font-size", 10)
+			.attr("font-size", 12)
 			.attr("font-family", "'Space Grotesk', sans-serif")
 			.attr("fill", theme.labelColor)
 			.attr("text-anchor", "middle")

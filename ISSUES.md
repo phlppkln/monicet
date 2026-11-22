@@ -238,9 +238,11 @@ or a higher default opacity on Satellite only. Product decision, not made.
 
 ### V-7 Small, cramped labels [verified]
 
-Sparkline labels are 8px and island labels 10px (Corvo overlaps Flores).
-(The 7px month ticks are fixed: D3 now uses 10px.) The sparkline labels only the first and last year and the
-max value, and has no hover.
+_Partly done:_ sparkline, island, legend and month-chart labels are now
+12px, and the gradient legend no longer stretches with its container.
+Still open: Corvo's label overlaps Flores (worse at 12px); the month chart
+is a scaled viewBox, so its 12px shrinks on phones; the sparkline labels
+only the first and last year and the max value, and has no hover.
 
 ### V-8 The basemap is a rough sketch [verified]
 

@@ -936,8 +936,9 @@ function renderSparkline() {
 	const data: Point[] = years.map((year, i) => ({ year, rate: rates[i] }));
 
 	const w = sparklineContainer.value.clientWidth || 240;
-	const h = 68;
-	const margin = { left: 28, right: 6, top: 6, bottom: 16 };
+	// Sized for 12px labels (they were 8px, too small to read).
+	const h = 84;
+	const margin = { left: 36, right: 6, top: 8, bottom: 20 };
 
 	const firstYear = years[0] ?? 2009;
 	const lastYear = years[years.length - 1] ?? 2020;
@@ -1000,13 +1001,13 @@ function renderSparkline() {
 			.attr("x", lx)
 			.attr("y", ly)
 			.attr("text-anchor", anchor ?? null)
-			.attr("font-size", 8)
+			.attr("font-size", 12)
 			.attr("fill", CHART_TEXT_SECONDARY)
 			.text(text);
 
 	// Y axis: max and zero only; X axis: first and last year only.
-	label(margin.left - 3, margin.top + 4, yMax.toFixed(2), "end");
-	label(margin.left - 3, h - margin.bottom, "0", "end");
+	label(margin.left - 4, margin.top + 5, yMax.toFixed(2), "end");
+	label(margin.left - 4, h - margin.bottom, "0", "end");
 	label(x(firstYear), h, String(firstYear));
 	label(x(lastYear), h, String(lastYear), "end");
 }
@@ -1180,7 +1181,7 @@ watch(showDataLayer, () => {
 }
 
 :deep(.legend-label) {
-	font-size: 10px;
+	font-size: 12px;
 	font-family: "Space Grotesk", sans-serif;
 	fill: $text-secondary;
 }
@@ -1266,7 +1267,7 @@ watch(showDataLayer, () => {
 
 	.axis-label,
 	.month-tick {
-		font-size: 11px;
+		font-size: 12px;
 		fill: $text-secondary;
 	}
 
