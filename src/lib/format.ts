@@ -18,14 +18,24 @@ export function formatRate(value: number | null) {
 	return `${value.toFixed(2)} encounters/cruise`;
 }
 
+/**
+ * Whole percents with a sign: "+12,809%", "-47%". A decimal would claim a
+ * precision these early/late rate changes don't have (ISSUES.md D-2).
+ */
 export function formatSignedPercent(value: number | null) {
 	if (value === null || Number.isNaN(value)) return "n/a";
-	return `${value >= 0 ? "+" : ""}${value.toFixed(1)}%`;
+	const rounded = Math.round(value);
+	return `${rounded >= 0 ? "+" : ""}${rounded.toLocaleString("en-US")}%`;
 }
 
-/** 0.123 → "12.3%" */
+/**
+ * 0.123 → "12%". Shares come from small monthly or per-cell samples, so a
+ * decimal is noise. Shares that would round to 0% show as "<1%", so a cell
+ * a few cruises reached doesn't read as "none".
+ */
 export function toPercent(value = 0) {
-	return `${(value * 100).toFixed(1)}%`;
+	if (value > 0 && value < 0.005) return "<1%";
+	return `${Math.round(value * 100)}%`;
 }
 
 export const MONTH_LABELS = [
