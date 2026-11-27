@@ -77,3 +77,14 @@ export const CHART_BEHAVIOUR = {
 	resting: "#1baf7a",
 	travelling: "#eda100",
 } as const;
+
+// Categorical: the three Azorean island groups in the archive.
+// Three well-separated, CVD-safe hues with >= 3:1 contrast against white:
+// - São Miguel: brand teal (#0a6b64)
+// - Faial/Pico: muted ocean blue (#2f6fa3)
+// - Terceira: warm burnt amber (#c96a1b)
+export const CHART_ISLAND_GROUP = {
+	"São Miguel": CHART_PRIMARY,
+	"Faial/Pico": "#2f6fa3",
+	Terceira: "#c96a1b",
+} as const;

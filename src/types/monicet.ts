@@ -32,6 +32,17 @@ export interface MonicetGridCell {
 	earlyRate: number | null;
 	lateRate: number | null;
 	declinePct: number | null;
+	/** Island group(s) whose cruises ever logged a position in this cell (D-1). */
+	reachableIslands: IslandGroup[];
+	earlyEncounters: number;
+	lateEncounters: number;
+	earlyReachCruises: number;
+	lateReachCruises: number;
+	/** Encounters per cruise from reachable island group(s) only (D-1 fix). */
+	reachEarlyRate: number | null;
+	reachLateRate: number | null;
+	/** Symmetric log2(reachLateRate / reachEarlyRate), null below baseline guard (D-2 fix). */
+	changeLog2Ratio: number | null;
 	trendSlope: number;
 	yearsWithEncounters: number;
 	confidenceScore: number;
@@ -80,7 +91,11 @@ export interface MonicetMapMeta {
 	excludedNonSpeciesRows: number;
 	rowsWithoutMatchingEvent: number;
 	years: number[];
+	earlyYears: number[];
+	lateYears: number[];
 	yearlyCruises: Record<string, number>;
+	/** Cruises per year broken down by island group (powers "The doubt" & D-1). */
+	yearlyCruisesByIsland: Record<IslandGroup, Record<string, number>>;
 	dateRange: {
 		start: string | null;
 		end: string | null;
@@ -93,6 +108,8 @@ export interface MonicetMapMeta {
 	thresholds: {
 		reliableCellMinEncounters: number;
 		reliableCellMinYears: number;
+		changeMinPeriodCruises: number;
+		changeMinPeriodEncounters: number;
 	};
 	caveats: string[];
 	/** Cruises with no logged position away from the harbour (see cruiseCells). */
@@ -136,6 +153,8 @@ export interface MonicetCruiseCell {
 	share: number;
 	/** The same count split by month, Jan..Dec (index 0..11). */
 	monthlyCruises: number[];
+	/** Distinct cruises that logged a position in this cell per year ("2009".."2020"). */
+	yearlyCruises: Record<string, number>;
 	cruisesByIsland: Record<IslandGroup, number>;
 }
 

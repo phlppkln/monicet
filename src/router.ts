@@ -6,11 +6,11 @@ import { computed, ref, type Component } from "vue";
 
 import { ROUTES } from "@/routes";
 import FillingTheGapsView from "@/views/FillingTheGapsView.vue";
-import LandingView from "@/views/LandingView.vue";
+import StoryView from "@/views/StoryView.vue";
 import ThreeWaysOfLookingView from "@/views/ThreeWaysOfLookingView.vue";
 
 const VIEWS: Record<string, Component> = {
-	[ROUTES.landing]: LandingView,
+	[ROUTES.landing]: StoryView,
 	[ROUTES.threeWays]: ThreeWaysOfLookingView,
 	[ROUTES.fillingTheGaps]: FillingTheGapsView,
 };
@@ -26,5 +26,5 @@ window.addEventListener("hashchange", () => {
 	window.scrollTo(0, 0);
 });
 
-/** The view for the current URL; unknown paths fall back to the landing page. */
-export const currentView = computed(() => VIEWS[path.value] ?? LandingView);
+/** The view for the current URL; unknown paths fall back to the main story. */
+export const currentView = computed(() => VIEWS[path.value] ?? StoryView);

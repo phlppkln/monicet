@@ -1,7 +1,7 @@
 {
   "meta": {
     "source": "MONICET Darwin Core Archive",
-    "generatedAt": "2026-11-22T19:34:04.251Z",
+    "generatedAt": "2026-11-26T23:47:36.269Z",
     "binSizeDegrees": 0.2,
     "totalSampleEvents": 29400,
     "totalCruiseEvents": 8455,
@@ -24,6 +24,22 @@
       2019,
       2020
     ],
+    "earlyYears": [
+      2009,
+      2010,
+      2011,
+      2012,
+      2013,
+      2014
+    ],
+    "lateYears": [
+      2015,
+      2016,
+      2017,
+      2018,
+      2019,
+      2020
+    ],
     "yearlyCruises": {
       "2009": 401,
       "2010": 575,
@@ -38,6 +54,50 @@
       "2019": 1065,
       "2020": 287
     },
+    "yearlyCruisesByIsland": {
+      "São Miguel": {
+        "2009": 401,
+        "2010": 575,
+        "2011": 383,
+        "2012": 477,
+        "2013": 287,
+        "2014": 278,
+        "2015": 455,
+        "2016": 641,
+        "2017": 736,
+        "2018": 785,
+        "2019": 827,
+        "2020": 169
+      },
+      "Terceira": {
+        "2009": 0,
+        "2010": 0,
+        "2011": 0,
+        "2012": 0,
+        "2013": 0,
+        "2014": 0,
+        "2015": 80,
+        "2016": 88,
+        "2017": 119,
+        "2018": 69,
+        "2019": 57,
+        "2020": 0
+      },
+      "Faial/Pico": {
+        "2009": 0,
+        "2010": 0,
+        "2011": 54,
+        "2012": 71,
+        "2013": 150,
+        "2014": 122,
+        "2015": 177,
+        "2016": 181,
+        "2017": 543,
+        "2018": 431,
+        "2019": 181,
+        "2020": 118
+      }
+    },
     "dateRange": {
       "start": "2009-01-06T10:55:00.000Z",
       "end": "2020-12-29T10:34:00.000Z"
@@ -49,7 +109,9 @@
     },
     "thresholds": {
       "reliableCellMinEncounters": 24,
-      "reliableCellMinYears": 3
+      "reliableCellMinYears": 3,
+      "changeMinPeriodCruises": 50,
+      "changeMinPeriodEncounters": 5
     },
     "caveats": [
       "Decline is computed as encounter-rate trend, not direct population decline.",
@@ -7141,6 +7203,16 @@
       "earlyRate": 0.43316654753395284,
       "lateRate": 0.5439278769665901,
       "declinePct": 25.570148494432253,
+      "reachableIslands": [
+        "São Miguel"
+      ],
+      "earlyEncounters": 1212,
+      "lateEncounters": 3077,
+      "earlyReachCruises": 2401,
+      "lateReachCruises": 3613,
+      "reachEarlyRate": 0.504789670970429,
+      "reachLateRate": 0.8516468308884584,
+      "changeLog2Ratio": 0.7545728936585667,
       "trendSlope": -0.004145534287412658,
       "yearsWithEncounters": 12,
       "confidenceScore": 1,
@@ -7252,6 +7324,16 @@
       "earlyRate": 0.8366690493209435,
       "lateRate": 0.5165281951564433,
       "declinePct": -38.26373814405261,
+      "reachableIslands": [
+        "São Miguel"
+      ],
+      "earlyEncounters": 2341,
+      "lateEncounters": 2922,
+      "earlyReachCruises": 2401,
+      "lateReachCruises": 3613,
+      "reachEarlyRate": 0.9750104123281966,
+      "reachLateRate": 0.808746194298367,
+      "changeLog2Ratio": -0.2697306075105415,
       "trendSlope": -0.040454051791971694,
       "yearsWithEncounters": 12,
       "confidenceScore": 1,
@@ -7364,6 +7446,16 @@
       "earlyRate": 0.8398856325947105,
       "lateRate": 0.44210712391727064,
       "declinePct": -47.3610326501905,
+      "reachableIslands": [
+        "São Miguel"
+      ],
+      "earlyEncounters": 2350,
+      "lateEncounters": 2501,
+      "earlyReachCruises": 2401,
+      "lateReachCruises": 3613,
+      "reachEarlyRate": 0.978758850478967,
+      "reachLateRate": 0.6922225297536673,
+      "changeLog2Ratio": -0.49971755047341915,
       "trendSlope": -0.051254899234873634,
       "yearsWithEncounters": 12,
       "confidenceScore": 1,
@@ -7466,6 +7558,16 @@
       "earlyRate": 0.013581129378127233,
       "lateRate": 0.05780449001237405,
       "declinePct": 325.62358698584893,
+      "reachableIslands": [
+        "São Miguel"
+      ],
+      "earlyEncounters": 38,
+      "lateEncounters": 327,
+      "earlyReachCruises": 2401,
+      "lateReachCruises": 3613,
+      "reachEarlyRate": 0.01582673885880883,
+      "reachLateRate": 0.09050650429006366,
+      "changeLog2Ratio": 2.51565746085247,
       "trendSlope": 0.004793826733859452,
       "yearsWithEncounters": 10,
       "confidenceScore": 1,
@@ -7570,6 +7672,16 @@
       "earlyRate": 0.09328091493924232,
       "lateRate": 0.10924518295916563,
       "declinePct": 17.11418464358063,
+      "reachableIslands": [
+        "São Miguel"
+      ],
+      "earlyEncounters": 261,
+      "lateEncounters": 618,
+      "earlyReachCruises": 2401,
+      "lateReachCruises": 3613,
+      "reachEarlyRate": 0.10870470637234486,
+      "reachLateRate": 0.17104898975920288,
+      "changeLog2Ratio": 0.653995180132463,
       "trendSlope": -0.0022109125728173766,
       "yearsWithEncounters": 12,
       "confidenceScore": 1,
@@ -7680,6 +7792,16 @@
       "earlyRate": 0.09292351679771266,
       "lateRate": 0.062400565670850276,
       "declinePct": -32.84739125113882,
+      "reachableIslands": [
+        "São Miguel"
+      ],
+      "earlyEncounters": 260,
+      "lateEncounters": 353,
+      "earlyReachCruises": 2401,
+      "lateReachCruises": 3613,
+      "reachEarlyRate": 0.10828821324448147,
+      "reachLateRate": 0.09770274010517575,
+      "changeLog2Ratio": -0.1484052909593012,
       "trendSlope": -0.005522571271781503,
       "yearsWithEncounters": 12,
       "confidenceScore": 1,
@@ -7785,6 +7907,16 @@
       "earlyRate": 0.05325232308791994,
       "lateRate": 0.0758352483648577,
       "declinePct": 42.407399278437474,
+      "reachableIslands": [
+        "São Miguel"
+      ],
+      "earlyEncounters": 149,
+      "lateEncounters": 429,
+      "earlyReachCruises": 2401,
+      "lateReachCruises": 3613,
+      "reachEarlyRate": 0.06205747605164515,
+      "reachLateRate": 0.11873789094934957,
+      "changeLog2Ratio": 0.9361034658353571,
       "trendSlope": 0.0017382135584932366,
       "yearsWithEncounters": 12,
       "confidenceScore": 1,
@@ -7887,6 +8019,16 @@
       "earlyRate": 0.014653323802716226,
       "lateRate": 0.018737846915326144,
       "declinePct": 27.87437968068914,
+      "reachableIslands": [
+        "São Miguel"
+      ],
+      "earlyEncounters": 41,
+      "lateEncounters": 106,
+      "earlyReachCruises": 2401,
+      "lateReachCruises": 3613,
+      "reachEarlyRate": 0.017076218242399,
+      "reachLateRate": 0.02933849986161085,
+      "changeLog2Ratio": 0.7808065987430884,
       "trendSlope": 0.0009520406760762293,
       "yearsWithEncounters": 12,
       "confidenceScore": 1,
@@ -7994,6 +8136,16 @@
       "earlyRate": 0.1958541815582559,
       "lateRate": 0.10323493017500442,
       "declinePct": -47.289902439842635,
+      "reachableIslands": [
+        "São Miguel"
+      ],
+      "earlyEncounters": 548,
+      "lateEncounters": 584,
+      "earlyReachCruises": 2401,
+      "lateReachCruises": 3613,
+      "reachEarlyRate": 0.22823823406913785,
+      "reachLateRate": 0.1616385275394409,
+      "changeLog2Ratio": -0.4977693752825364,
       "trendSlope": -0.014434858670641607,
       "yearsWithEncounters": 12,
       "confidenceScore": 1,
@@ -8089,6 +8241,16 @@
       "earlyRate": 0.0032165832737669764,
       "lateRate": 0.003181898532791232,
       "declinePct": -1.0783100583348093,
+      "reachableIslands": [
+        "São Miguel"
+      ],
+      "earlyEncounters": 9,
+      "lateEncounters": 18,
+      "earlyReachCruises": 2401,
+      "lateReachCruises": 3613,
+      "reachEarlyRate": 0.003748438150770512,
+      "reachLateRate": 0.00498200941046222,
+      "changeLog2Ratio": 0.410438148797973,
       "trendSlope": -0.00027418865268934883,
       "yearsWithEncounters": 8,
       "confidenceScore": 0.3375,
@@ -8184,6 +8346,16 @@
       "earlyRate": 0.005003573981415297,
       "lateRate": 0.00353544281421248,
       "declinePct": -29.341650041667723,
+      "reachableIslands": [
+        "São Miguel"
+      ],
+      "earlyEncounters": 14,
+      "lateEncounters": 20,
+      "earlyReachCruises": 2401,
+      "lateReachCruises": 3613,
+      "reachEarlyRate": 0.0058309037900874635,
+      "reachLateRate": 0.005535566011624689,
+      "changeLog2Ratio": -0.07498867837226866,
       "trendSlope": 0.00025238218722376264,
       "yearsWithEncounters": 11,
       "confidenceScore": 0.425,
@@ -8270,6 +8442,16 @@
       "earlyRate": 0.0007147962830593281,
       "lateRate": 0.003358670673501856,
       "declinePct": 369.8780272229097,
+      "reachableIslands": [
+        "São Miguel"
+      ],
+      "earlyEncounters": 2,
+      "lateEncounters": 19,
+      "earlyReachCruises": 2401,
+      "lateReachCruises": 3613,
+      "reachEarlyRate": 0.0008329862557267805,
+      "reachLateRate": 0.005258787711043454,
+      "changeLog2Ratio": null,
       "trendSlope": 0.00023993704008138793,
       "yearsWithEncounters": 4,
       "confidenceScore": 0.2625,
@@ -8363,6 +8545,16 @@
       "earlyRate": 0.0028591851322373124,
       "lateRate": 0.0037122149549231043,
       "declinePct": 29.834718048435565,
+      "reachableIslands": [
+        "São Miguel"
+      ],
+      "earlyEncounters": 8,
+      "lateEncounters": 21,
+      "earlyReachCruises": 2401,
+      "lateReachCruises": 3613,
+      "reachEarlyRate": 0.003331945022907122,
+      "reachLateRate": 0.005812344312205923,
+      "changeLog2Ratio": 0.8027555715767333,
       "trendSlope": -0.00011312011536998315,
       "yearsWithEncounters": 8,
       "confidenceScore": 0.3625,
@@ -8458,6 +8650,16 @@
       "earlyRate": 0.002144388849177984,
       "lateRate": 0.009368923457663072,
       "declinePct": 336.90413057568793,
+      "reachableIslands": [
+        "São Miguel"
+      ],
+      "earlyEncounters": 6,
+      "lateEncounters": 53,
+      "earlyReachCruises": 2401,
+      "lateReachCruises": 3613,
+      "reachEarlyRate": 0.0024989587671803417,
+      "reachLateRate": 0.014669249930805425,
+      "changeLog2Ratio": 2.553396102640016,
       "trendSlope": 0.000757828512626746,
       "yearsWithEncounters": 8,
       "confidenceScore": 0.7375,
@@ -8565,6 +8767,16 @@
       "earlyRate": 0.2026447462473195,
       "lateRate": 0.1274527134523599,
       "declinePct": -37.105345284003,
+      "reachableIslands": [
+        "Faial/Pico"
+      ],
+      "earlyEncounters": 567,
+      "lateEncounters": 721,
+      "earlyReachCruises": 397,
+      "lateReachCruises": 1631,
+      "reachEarlyRate": 1.4282115869017633,
+      "reachLateRate": 0.44206008583690987,
+      "changeLog2Ratio": -1.6918953452703331,
       "trendSlope": -0.0046132550526324255,
       "yearsWithEncounters": 10,
       "confidenceScore": 1,
@@ -8668,6 +8880,16 @@
       "earlyRate": 0.07398141529664046,
       "lateRate": 0.15591302810677038,
       "declinePct": 110.74620900615628,
+      "reachableIslands": [
+        "Faial/Pico"
+      ],
+      "earlyEncounters": 207,
+      "lateEncounters": 882,
+      "earlyReachCruises": 397,
+      "lateReachCruises": 1631,
+      "reachEarlyRate": 0.5214105793450882,
+      "reachLateRate": 0.5407725321888412,
+      "changeLog2Ratio": 0.052602018489268765,
       "trendSlope": 0.008884787711996982,
       "yearsWithEncounters": 9,
       "confidenceScore": 1,
@@ -8774,6 +8996,16 @@
       "earlyRate": 0.1879914224446033,
       "lateRate": 0.1274527134523599,
       "declinePct": -32.20291022058879,
+      "reachableIslands": [
+        "Faial/Pico"
+      ],
+      "earlyEncounters": 526,
+      "lateEncounters": 721,
+      "earlyReachCruises": 397,
+      "lateReachCruises": 1631,
+      "reachEarlyRate": 1.3249370277078085,
+      "reachLateRate": 0.44206008583690987,
+      "changeLog2Ratio": -1.5836094096204063,
       "trendSlope": -0.003817603839248935,
       "yearsWithEncounters": 9,
       "confidenceScore": 1,
@@ -8878,6 +9110,16 @@
       "earlyRate": 0.10078627591136526,
       "lateRate": 0.158918154498851,
       "declinePct": 57.678367477937975,
+      "reachableIslands": [
+        "Faial/Pico"
+      ],
+      "earlyEncounters": 282,
+      "lateEncounters": 899,
+      "earlyReachCruises": 397,
+      "lateReachCruises": 1631,
+      "reachEarlyRate": 0.7103274559193955,
+      "reachLateRate": 0.5511955855303495,
+      "changeLog2Ratio": -0.36591991645327265,
       "trendSlope": 0.0074077552820184505,
       "yearsWithEncounters": 9,
       "confidenceScore": 1,
@@ -8986,6 +9228,16 @@
       "earlyRate": 0.11722659042172981,
       "lateRate": 0.26780979317659537,
       "declinePct": 128.45481747198593,
+      "reachableIslands": [
+        "Faial/Pico"
+      ],
+      "earlyEncounters": 328,
+      "lateEncounters": 1515,
+      "earlyReachCruises": 397,
+      "lateReachCruises": 1631,
+      "reachEarlyRate": 0.8261964735516373,
+      "reachLateRate": 0.9288779889638259,
+      "changeLog2Ratio": 0.16900420417330295,
       "trendSlope": 0.02812182977355736,
       "yearsWithEncounters": 10,
       "confidenceScore": 1,
@@ -9084,6 +9336,16 @@
       "earlyRate": 0.014653323802716226,
       "lateRate": 0.01679335336750928,
       "declinePct": 14.6043968836365,
+      "reachableIslands": [
+        "Faial/Pico"
+      ],
+      "earlyEncounters": 41,
+      "lateEncounters": 95,
+      "earlyReachCruises": 397,
+      "lateReachCruises": 1631,
+      "reachEarlyRate": 0.10327455919395466,
+      "reachLateRate": 0.05824647455548743,
+      "changeLog2Ratio": -0.8262422658560623,
       "trendSlope": 0.00010205959631044959,
       "yearsWithEncounters": 9,
       "confidenceScore": 1,
@@ -9189,6 +9451,16 @@
       "earlyRate": 0.11186561829878484,
       "lateRate": 0.18508043132402333,
       "declinePct": 65.44889675546878,
+      "reachableIslands": [
+        "Faial/Pico"
+      ],
+      "earlyEncounters": 313,
+      "lateEncounters": 1047,
+      "earlyReachCruises": 397,
+      "lateReachCruises": 1631,
+      "reachEarlyRate": 0.7884130982367759,
+      "reachLateRate": 0.6419374616799509,
+      "changeLog2Ratio": -0.2965189895707366,
       "trendSlope": 0.008237528321829826,
       "yearsWithEncounters": 9,
       "confidenceScore": 1,
@@ -9288,6 +9560,16 @@
       "earlyRate": 0.018227305218012867,
       "lateRate": 0.030051263920806082,
       "declinePct": 64.86948323610865,
+      "reachableIslands": [
+        "Faial/Pico"
+      ],
+      "earlyEncounters": 51,
+      "lateEncounters": 170,
+      "earlyReachCruises": 397,
+      "lateReachCruises": 1631,
+      "reachEarlyRate": 0.12846347607052896,
+      "reachLateRate": 0.10423053341508277,
+      "changeLog2Ratio": -0.30158027540272025,
       "trendSlope": 0.0011322656129676137,
       "yearsWithEncounters": 9,
       "confidenceScore": 1,
@@ -9389,6 +9671,16 @@
       "earlyRate": 0.014653323802716226,
       "lateRate": 0.018384302633904896,
       "declinePct": 25.46165553577048,
+      "reachableIslands": [
+        "Faial/Pico"
+      ],
+      "earlyEncounters": 41,
+      "lateEncounters": 104,
+      "earlyReachCruises": 397,
+      "lateReachCruises": 1631,
+      "reachEarlyRate": 0.10327455919395466,
+      "reachLateRate": 0.06376456161863887,
+      "changeLog2Ratio": -0.6956581560459182,
       "trendSlope": 0.00048173957204499857,
       "yearsWithEncounters": 9,
       "confidenceScore": 1,
@@ -9485,6 +9777,16 @@
       "earlyRate": 0.00035739814152966406,
       "lateRate": 0.046137528725472866,
       "declinePct": 12809.280537387307,
+      "reachableIslands": [
+        "Faial/Pico"
+      ],
+      "earlyEncounters": 1,
+      "lateEncounters": 261,
+      "earlyReachCruises": 397,
+      "lateReachCruises": 1631,
+      "reachEarlyRate": 0.0025188916876574307,
+      "reachLateRate": 0.1600245248313918,
+      "changeLog2Ratio": null,
       "trendSlope": 0.02107220312484382,
       "yearsWithEncounters": 4,
       "confidenceScore": 1,
@@ -9566,6 +9868,16 @@
       "earlyRate": 0.001072194424588992,
       "lateRate": 0.00035354428142124803,
       "declinePct": -67.02610335277826,
+      "reachableIslands": [
+        "Faial/Pico"
+      ],
+      "earlyEncounters": 3,
+      "lateEncounters": 2,
+      "earlyReachCruises": 397,
+      "lateReachCruises": 1631,
+      "reachEarlyRate": 0.007556675062972292,
+      "reachLateRate": 0.001226241569589209,
+      "changeLog2Ratio": null,
       "trendSlope": -0.00009770351985633812,
       "yearsWithEncounters": 3,
       "confidenceScore": 0.046875,
@@ -9649,6 +9961,16 @@
       "earlyRate": 0.003931379556826304,
       "lateRate": 0.012550821990454304,
       "declinePct": 219.24727208446492,
+      "reachableIslands": [
+        "Faial/Pico"
+      ],
+      "earlyEncounters": 11,
+      "lateEncounters": 71,
+      "earlyReachCruises": 397,
+      "lateReachCruises": 1631,
+      "reachEarlyRate": 0.027707808564231738,
+      "reachLateRate": 0.043531575720416923,
+      "changeLog2Ratio": 0.6517696312984582,
       "trendSlope": 0.000633853814263821,
       "yearsWithEncounters": 8,
       "confidenceScore": 1,
@@ -9728,6 +10050,16 @@
       "earlyRate": 0.00035739814152966406,
       "lateRate": 0,
       "declinePct": -100,
+      "reachableIslands": [
+        "São Miguel"
+      ],
+      "earlyEncounters": 1,
+      "lateEncounters": 0,
+      "earlyReachCruises": 2401,
+      "lateReachCruises": 3613,
+      "reachEarlyRate": 0.00041649312786339027,
+      "reachLateRate": 0,
+      "changeLog2Ratio": null,
       "trendSlope": -0.000056008065161386815,
       "yearsWithEncounters": 1,
       "confidenceScore": 0.003125,
@@ -9823,6 +10155,16 @@
       "earlyRate": 0.0017869907076483202,
       "lateRate": 0.20664663249071946,
       "declinePct": 11463.945554180662,
+      "reachableIslands": [
+        "Faial/Pico"
+      ],
+      "earlyEncounters": 5,
+      "lateEncounters": 1169,
+      "earlyReachCruises": 397,
+      "lateReachCruises": 1631,
+      "reachEarlyRate": 0.012594458438287154,
+      "reachLateRate": 0.7167381974248928,
+      "changeLog2Ratio": 5.830585250075368,
       "trendSlope": 0.052955703623281634,
       "yearsWithEncounters": 8,
       "confidenceScore": 1,
@@ -9917,6 +10259,16 @@
       "earlyRate": 0.008220157255182273,
       "lateRate": 0.011136644864769313,
       "declinePct": 35.4797057896719,
+      "reachableIslands": [
+        "Faial/Pico"
+      ],
+      "earlyEncounters": 23,
+      "lateEncounters": 63,
+      "earlyReachCruises": 397,
+      "lateReachCruises": 1631,
+      "reachEarlyRate": 0.05793450881612091,
+      "reachLateRate": 0.03862660944206009,
+      "changeLog2Ratio": -0.5848279021260229,
       "trendSlope": 0.0005163970646862358,
       "yearsWithEncounters": 7,
       "confidenceScore": 1,
@@ -9999,6 +10351,16 @@
       "earlyRate": 0.0007147962830593281,
       "lateRate": 0.0014141771256849921,
       "declinePct": 97.8433798833304,
+      "reachableIslands": [
+        "Faial/Pico"
+      ],
+      "earlyEncounters": 2,
+      "lateEncounters": 8,
+      "earlyReachCruises": 397,
+      "lateReachCruises": 1631,
+      "reachEarlyRate": 0.005037783375314861,
+      "reachLateRate": 0.004904966278356836,
+      "changeLog2Ratio": null,
       "trendSlope": 0.00004782476811146913,
       "yearsWithEncounters": 3,
       "confidenceScore": 0.09375,
@@ -10076,6 +10438,16 @@
       "earlyRate": 0.0014295925661186562,
       "lateRate": 0.00035354428142124803,
       "declinePct": -75.2695775145837,
+      "reachableIslands": [
+        "Faial/Pico"
+      ],
+      "earlyEncounters": 4,
+      "lateEncounters": 2,
+      "earlyReachCruises": 397,
+      "lateReachCruises": 1631,
+      "reachEarlyRate": 0.010075566750629723,
+      "reachLateRate": 0.001226241569589209,
+      "changeLog2Ratio": null,
       "trendSlope": -0.0000654397906278954,
       "yearsWithEncounters": 3,
       "confidenceScore": 0.056249999999999994,
@@ -10170,6 +10542,16 @@
       "earlyRate": 0.00035739814152966406,
       "lateRate": 0.009192151316952448,
       "declinePct": 2471.9639384832944,
+      "reachableIslands": [
+        "Faial/Pico"
+      ],
+      "earlyEncounters": 1,
+      "lateEncounters": 52,
+      "earlyReachCruises": 397,
+      "lateReachCruises": 1631,
+      "reachEarlyRate": 0.0025188916876574307,
+      "reachLateRate": 0.03188228080931944,
+      "changeLog2Ratio": null,
       "trendSlope": 0.004015231972664503,
       "yearsWithEncounters": 6,
       "confidenceScore": 0.6625,
@@ -10270,6 +10652,16 @@
       "earlyRate": 0,
       "lateRate": 0.09775499381297507,
       "declinePct": null,
+      "reachableIslands": [
+        "Terceira"
+      ],
+      "earlyEncounters": 0,
+      "lateEncounters": 553,
+      "earlyReachCruises": 0,
+      "lateReachCruises": 413,
+      "reachEarlyRate": null,
+      "reachLateRate": 1.3389830508474576,
+      "changeLog2Ratio": null,
       "trendSlope": 0.007075018388866628,
       "yearsWithEncounters": 5,
       "confidenceScore": 1,
@@ -10366,6 +10758,16 @@
       "earlyRate": 0,
       "lateRate": 0.008485062754109953,
       "declinePct": null,
+      "reachableIslands": [
+        "Terceira"
+      ],
+      "earlyEncounters": 0,
+      "lateEncounters": 48,
+      "earlyReachCruises": 0,
+      "lateReachCruises": 413,
+      "reachEarlyRate": null,
+      "reachLateRate": 0.1162227602905569,
+      "changeLog2Ratio": null,
       "trendSlope": 0.000697522224627055,
       "yearsWithEncounters": 5,
       "confidenceScore": 0.6,
@@ -10467,6 +10869,16 @@
       "earlyRate": 0,
       "lateRate": 0.06735018561074775,
       "declinePct": null,
+      "reachableIslands": [
+        "Terceira"
+      ],
+      "earlyEncounters": 0,
+      "lateEncounters": 381,
+      "earlyReachCruises": 0,
+      "lateReachCruises": 413,
+      "reachEarlyRate": null,
+      "reachLateRate": 0.9225181598062954,
+      "changeLog2Ratio": null,
       "trendSlope": 0.005498062336509614,
       "yearsWithEncounters": 5,
       "confidenceScore": 1,
@@ -10561,6 +10973,16 @@
       "earlyRate": 0,
       "lateRate": 0.017853986211773025,
       "declinePct": null,
+      "reachableIslands": [
+        "Terceira"
+      ],
+      "earlyEncounters": 0,
+      "lateEncounters": 101,
+      "earlyReachCruises": 0,
+      "lateReachCruises": 413,
+      "reachEarlyRate": null,
+      "reachLateRate": 0.24455205811138014,
+      "changeLog2Ratio": null,
       "trendSlope": 0.0013901598796099064,
       "yearsWithEncounters": 5,
       "confidenceScore": 1,
@@ -10649,6 +11071,16 @@
       "earlyRate": 0,
       "lateRate": 0.01414177125684992,
       "declinePct": null,
+      "reachableIslands": [
+        "Terceira"
+      ],
+      "earlyEncounters": 0,
+      "lateEncounters": 80,
+      "earlyReachCruises": 0,
+      "lateReachCruises": 413,
+      "reachEarlyRate": null,
+      "reachLateRate": 0.1937046004842615,
+      "changeLog2Ratio": null,
       "trendSlope": 0.0009195241639230249,
       "yearsWithEncounters": 5,
       "confidenceScore": 1,
@@ -10733,6 +11165,16 @@
       "earlyRate": 0,
       "lateRate": 0.0014141771256849921,
       "declinePct": null,
+      "reachableIslands": [
+        "Faial/Pico"
+      ],
+      "earlyEncounters": 0,
+      "lateEncounters": 8,
+      "earlyReachCruises": 397,
+      "lateReachCruises": 1631,
+      "reachEarlyRate": 0,
+      "reachLateRate": 0.004904966278356836,
+      "changeLog2Ratio": null,
       "trendSlope": 0.00008191857478340364,
       "yearsWithEncounters": 3,
       "confidenceScore": 0.07500000000000001,
@@ -10818,6 +11260,16 @@
       "earlyRate": 0,
       "lateRate": 0.00176772140710624,
       "declinePct": null,
+      "reachableIslands": [
+        "Terceira"
+      ],
+      "earlyEncounters": 0,
+      "lateEncounters": 10,
+      "earlyReachCruises": 0,
+      "lateReachCruises": 413,
+      "reachEarlyRate": null,
+      "reachLateRate": 0.024213075060532687,
+      "changeLog2Ratio": null,
       "trendSlope": 0.00011354544449420011,
       "yearsWithEncounters": 3,
       "confidenceScore": 0.09375,
@@ -10903,6 +11355,16 @@
       "earlyRate": 0,
       "lateRate": 0.002474809969948736,
       "declinePct": null,
+      "reachableIslands": [
+        "Faial/Pico"
+      ],
+      "earlyEncounters": 0,
+      "lateEncounters": 14,
+      "earlyReachCruises": 397,
+      "lateReachCruises": 1631,
+      "reachEarlyRate": 0,
+      "reachLateRate": 0.008583690987124463,
+      "changeLog2Ratio": null,
       "trendSlope": 0.00020564916110338012,
       "yearsWithEncounters": 5,
       "confidenceScore": 0.175,
@@ -10991,6 +11453,16 @@
       "earlyRate": 0,
       "lateRate": 0.003358670673501856,
       "declinePct": null,
+      "reachableIslands": [
+        "São Miguel"
+      ],
+      "earlyEncounters": 0,
+      "lateEncounters": 19,
+      "earlyReachCruises": 2401,
+      "lateReachCruises": 3613,
+      "reachEarlyRate": 0,
+      "reachLateRate": 0.005258787711043454,
+      "changeLog2Ratio": null,
       "trendSlope": 0.0004345180858533319,
       "yearsWithEncounters": 3,
       "confidenceScore": 0.17812499999999998,
@@ -11076,6 +11548,16 @@
       "earlyRate": 0,
       "lateRate": 0.00265158211065936,
       "declinePct": null,
+      "reachableIslands": [
+        "São Miguel"
+      ],
+      "earlyEncounters": 0,
+      "lateEncounters": 15,
+      "earlyReachCruises": 2401,
+      "lateReachCruises": 3613,
+      "reachEarlyRate": 0,
+      "reachLateRate": 0.004151674508718516,
+      "changeLog2Ratio": null,
       "trendSlope": 0.0002850516962159433,
       "yearsWithEncounters": 4,
       "confidenceScore": 0.1875,
@@ -11169,6 +11651,16 @@
       "earlyRate": 0,
       "lateRate": 0.048082022273289726,
       "declinePct": null,
+      "reachableIslands": [
+        "São Miguel"
+      ],
+      "earlyEncounters": 0,
+      "lateEncounters": 272,
+      "earlyReachCruises": 2401,
+      "lateReachCruises": 3613,
+      "reachEarlyRate": 0,
+      "reachLateRate": 0.07528369775809576,
+      "changeLog2Ratio": null,
       "trendSlope": 0.0053805319585287425,
       "yearsWithEncounters": 4,
       "confidenceScore": 1,
@@ -11255,6 +11747,16 @@
       "earlyRate": 0,
       "lateRate": 0.006010252784161216,
       "declinePct": null,
+      "reachableIslands": [
+        "São Miguel"
+      ],
+      "earlyEncounters": 0,
+      "lateEncounters": 34,
+      "earlyReachCruises": 2401,
+      "lateReachCruises": 3613,
+      "reachEarlyRate": 0,
+      "reachLateRate": 0.00941046221976197,
+      "changeLog2Ratio": null,
       "trendSlope": 0.0006400812596562039,
       "yearsWithEncounters": 2,
       "confidenceScore": 0.2125,
@@ -11334,6 +11836,16 @@
       "earlyRate": 0,
       "lateRate": 0.00017677214071062401,
       "declinePct": null,
+      "reachableIslands": [
+        "Faial/Pico"
+      ],
+      "earlyEncounters": 0,
+      "lateEncounters": 1,
+      "earlyReachCruises": 397,
+      "lateReachCruises": 1631,
+      "reachEarlyRate": 0,
+      "reachLateRate": 0.0006131207847946045,
+      "changeLog2Ratio": null,
       "trendSlope": 0.00001152693460385764,
       "yearsWithEncounters": 1,
       "confidenceScore": 0.003125,
@@ -11407,6 +11919,16 @@
       "earlyRate": 0,
       "lateRate": 0.0021212656885274883,
       "declinePct": null,
+      "reachableIslands": [
+        "Faial/Pico"
+      ],
+      "earlyEncounters": 0,
+      "lateEncounters": 12,
+      "earlyReachCruises": 397,
+      "lateReachCruises": 1631,
+      "reachEarlyRate": 0,
+      "reachLateRate": 0.007357449417535254,
+      "changeLog2Ratio": null,
       "trendSlope": 0.00028502838233921513,
       "yearsWithEncounters": 3,
       "confidenceScore": 0.11249999999999999,
@@ -11490,6 +12012,16 @@
       "earlyRate": 0,
       "lateRate": 0.00088386070355312,
       "declinePct": null,
+      "reachableIslands": [
+        "São Miguel"
+      ],
+      "earlyEncounters": 0,
+      "lateEncounters": 5,
+      "earlyReachCruises": 2401,
+      "lateReachCruises": 3613,
+      "reachEarlyRate": 0,
+      "reachLateRate": 0.0013838915029061722,
+      "changeLog2Ratio": null,
       "trendSlope": 0.00013069704479969077,
       "yearsWithEncounters": 2,
       "confidenceScore": 0.03125,
@@ -11571,6 +12103,16 @@
       "earlyRate": 0,
       "lateRate": 0.00035354428142124803,
       "declinePct": null,
+      "reachableIslands": [
+        "São Miguel"
+      ],
+      "earlyEncounters": 0,
+      "lateEncounters": 2,
+      "earlyReachCruises": 2401,
+      "lateReachCruises": 3613,
+      "reachEarlyRate": 0,
+      "reachLateRate": 0.0005535566011624688,
+      "changeLog2Ratio": null,
       "trendSlope": 0.00014651770644652469,
       "yearsWithEncounters": 2,
       "confidenceScore": 0.0125,
@@ -11644,6 +12186,16 @@
       "earlyRate": 0,
       "lateRate": 0.00017677214071062401,
       "declinePct": null,
+      "reachableIslands": [
+        "Terceira"
+      ],
+      "earlyEncounters": 0,
+      "lateEncounters": 1,
+      "earlyReachCruises": 0,
+      "lateReachCruises": 413,
+      "reachEarlyRate": null,
+      "reachLateRate": 0.002421307506053269,
+      "changeLog2Ratio": null,
       "trendSlope": 0.000019047100759165018,
       "yearsWithEncounters": 1,
       "confidenceScore": 0.003125,
@@ -11711,6 +12263,16 @@
       "earlyRate": 0,
       "lateRate": 0.00017677214071062401,
       "declinePct": null,
+      "reachableIslands": [
+        "Faial/Pico"
+      ],
+      "earlyEncounters": 0,
+      "lateEncounters": 1,
+      "earlyReachCruises": 397,
+      "lateReachCruises": 1631,
+      "reachEarlyRate": 0,
+      "reachLateRate": 0.0006131207847946045,
+      "changeLog2Ratio": null,
       "trendSlope": 0.000019047100759165018,
       "yearsWithEncounters": 1,
       "confidenceScore": 0.003125,
@@ -11778,6 +12340,16 @@
       "earlyRate": 0,
       "lateRate": 0.00088386070355312,
       "declinePct": null,
+      "reachableIslands": [
+        "Faial/Pico"
+      ],
+      "earlyEncounters": 0,
+      "lateEncounters": 5,
+      "earlyReachCruises": 397,
+      "lateReachCruises": 1631,
+      "reachEarlyRate": 0,
+      "reachLateRate": 0.0030656039239730227,
+      "changeLog2Ratio": null,
       "trendSlope": 0.00009523550379581888,
       "yearsWithEncounters": 1,
       "confidenceScore": 0.015625,
@@ -11846,6 +12418,16 @@
       "earlyRate": 0,
       "lateRate": 0.00035354428142124803,
       "declinePct": null,
+      "reachableIslands": [
+        "São Miguel"
+      ],
+      "earlyEncounters": 0,
+      "lateEncounters": 2,
+      "earlyReachCruises": 2401,
+      "lateReachCruises": 3613,
+      "reachEarlyRate": 0,
+      "reachLateRate": 0.0005535566011624688,
+      "changeLog2Ratio": null,
       "trendSlope": 0.000038094201518330036,
       "yearsWithEncounters": 1,
       "confidenceScore": 0.00625,
@@ -11921,6 +12503,16 @@
       "earlyRate": 0,
       "lateRate": 0.0005303164221318721,
       "declinePct": null,
+      "reachableIslands": [
+        "Faial/Pico"
+      ],
+      "earlyEncounters": 0,
+      "lateEncounters": 3,
+      "earlyReachCruises": 397,
+      "lateReachCruises": 1631,
+      "reachEarlyRate": 0,
+      "reachLateRate": 0.0018393623543838135,
+      "changeLog2Ratio": null,
       "trendSlope": 0.0000886437506155789,
       "yearsWithEncounters": 1,
       "confidenceScore": 0.009375,
@@ -12000,6 +12592,16 @@
       "earlyRate": 0,
       "lateRate": 0.00017677214071062401,
       "declinePct": null,
+      "reachableIslands": [
+        "Faial/Pico"
+      ],
+      "earlyEncounters": 0,
+      "lateEncounters": 1,
+      "earlyReachCruises": 397,
+      "lateReachCruises": 1631,
+      "reachEarlyRate": 0,
+      "reachLateRate": 0.0006131207847946045,
+      "changeLog2Ratio": null,
       "trendSlope": 0.000029547916871861014,
       "yearsWithEncounters": 1,
       "confidenceScore": 0.003125,
@@ -12069,6 +12671,16 @@
       "earlyRate": 0,
       "lateRate": 0.0010606328442637441,
       "declinePct": null,
+      "reachableIslands": [
+        "Faial/Pico"
+      ],
+      "earlyEncounters": 0,
+      "lateEncounters": 6,
+      "earlyReachCruises": 397,
+      "lateReachCruises": 1631,
+      "reachEarlyRate": 0,
+      "reachLateRate": 0.003678724708767627,
+      "changeLog2Ratio": null,
       "trendSlope": 0.0008040739748056512,
       "yearsWithEncounters": 1,
       "confidenceScore": 0.01875,
@@ -12140,6 +12752,10 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2017": 1,
+        "2020": 1
+      },
       "cruisesByIsland": {
         "São Miguel": 2,
         "Terceira": 0,
@@ -12190,6 +12806,12 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2010": 2,
+        "2014": 1,
+        "2017": 1,
+        "2019": 5
+      },
       "cruisesByIsland": {
         "São Miguel": 9,
         "Terceira": 0,
@@ -12240,6 +12862,14 @@
         1,
         0
       ],
+      "yearlyCruises": {
+        "2009": 2,
+        "2013": 1,
+        "2015": 1,
+        "2016": 1,
+        "2017": 6,
+        "2019": 8
+      },
       "cruisesByIsland": {
         "São Miguel": 19,
         "Terceira": 0,
@@ -12290,6 +12920,9 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2011": 1
+      },
       "cruisesByIsland": {
         "São Miguel": 1,
         "Terceira": 0,
@@ -12340,6 +12973,16 @@
         2,
         0
       ],
+      "yearlyCruises": {
+        "2009": 3,
+        "2010": 5,
+        "2011": 2,
+        "2012": 2,
+        "2016": 1,
+        "2017": 11,
+        "2018": 1,
+        "2019": 5
+      },
       "cruisesByIsland": {
         "São Miguel": 30,
         "Terceira": 0,
@@ -12390,6 +13033,20 @@
         11,
         5
       ],
+      "yearlyCruises": {
+        "2009": 22,
+        "2010": 42,
+        "2011": 15,
+        "2012": 26,
+        "2013": 6,
+        "2014": 11,
+        "2015": 13,
+        "2016": 50,
+        "2017": 81,
+        "2018": 36,
+        "2019": 99,
+        "2020": 5
+      },
       "cruisesByIsland": {
         "São Miguel": 406,
         "Terceira": 0,
@@ -12440,6 +13097,20 @@
         11,
         5
       ],
+      "yearlyCruises": {
+        "2009": 56,
+        "2010": 121,
+        "2011": 54,
+        "2012": 84,
+        "2013": 16,
+        "2014": 29,
+        "2015": 45,
+        "2016": 69,
+        "2017": 101,
+        "2018": 83,
+        "2019": 98,
+        "2020": 20
+      },
       "cruisesByIsland": {
         "São Miguel": 776,
         "Terceira": 0,
@@ -12490,6 +13161,20 @@
         6,
         3
       ],
+      "yearlyCruises": {
+        "2009": 41,
+        "2010": 45,
+        "2011": 40,
+        "2012": 34,
+        "2013": 18,
+        "2014": 17,
+        "2015": 31,
+        "2016": 13,
+        "2017": 75,
+        "2018": 52,
+        "2019": 52,
+        "2020": 16
+      },
       "cruisesByIsland": {
         "São Miguel": 434,
         "Terceira": 0,
@@ -12540,6 +13225,19 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2009": 2,
+        "2010": 4,
+        "2011": 2,
+        "2012": 3,
+        "2013": 2,
+        "2014": 1,
+        "2015": 1,
+        "2017": 5,
+        "2018": 4,
+        "2019": 4,
+        "2020": 3
+      },
       "cruisesByIsland": {
         "São Miguel": 31,
         "Terceira": 0,
@@ -12590,6 +13288,17 @@
         5,
         0
       ],
+      "yearlyCruises": {
+        "2009": 1,
+        "2010": 2,
+        "2012": 4,
+        "2013": 2,
+        "2015": 3,
+        "2016": 2,
+        "2017": 2,
+        "2018": 9,
+        "2019": 1
+      },
       "cruisesByIsland": {
         "São Miguel": 26,
         "Terceira": 0,
@@ -12640,6 +13349,20 @@
         23,
         7
       ],
+      "yearlyCruises": {
+        "2009": 44,
+        "2010": 59,
+        "2011": 22,
+        "2012": 28,
+        "2013": 28,
+        "2014": 6,
+        "2015": 32,
+        "2016": 82,
+        "2017": 87,
+        "2018": 86,
+        "2019": 103,
+        "2020": 5
+      },
       "cruisesByIsland": {
         "São Miguel": 581,
         "Terceira": 0,
@@ -12690,6 +13413,20 @@
         56,
         23
       ],
+      "yearlyCruises": {
+        "2009": 134,
+        "2010": 167,
+        "2011": 91,
+        "2012": 134,
+        "2013": 102,
+        "2014": 98,
+        "2015": 185,
+        "2016": 374,
+        "2017": 325,
+        "2018": 227,
+        "2019": 316,
+        "2020": 18
+      },
       "cruisesByIsland": {
         "São Miguel": 2169,
         "Terceira": 0,
@@ -12740,6 +13477,20 @@
         78,
         20
       ],
+      "yearlyCruises": {
+        "2009": 190,
+        "2010": 319,
+        "2011": 203,
+        "2012": 240,
+        "2013": 159,
+        "2014": 182,
+        "2015": 265,
+        "2016": 296,
+        "2017": 333,
+        "2018": 287,
+        "2019": 323,
+        "2020": 112
+      },
       "cruisesByIsland": {
         "São Miguel": 2909,
         "Terceira": 0,
@@ -12790,6 +13541,20 @@
         36,
         16
       ],
+      "yearlyCruises": {
+        "2009": 181,
+        "2010": 215,
+        "2011": 187,
+        "2012": 193,
+        "2013": 125,
+        "2014": 106,
+        "2015": 165,
+        "2016": 178,
+        "2017": 260,
+        "2018": 281,
+        "2019": 263,
+        "2020": 97
+      },
       "cruisesByIsland": {
         "São Miguel": 2251,
         "Terceira": 0,
@@ -12840,6 +13605,20 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2009": 6,
+        "2010": 14,
+        "2011": 10,
+        "2012": 7,
+        "2013": 1,
+        "2014": 4,
+        "2015": 9,
+        "2016": 4,
+        "2017": 15,
+        "2018": 25,
+        "2019": 22,
+        "2020": 5
+      },
       "cruisesByIsland": {
         "São Miguel": 122,
         "Terceira": 0,
@@ -12890,6 +13669,16 @@
         2,
         0
       ],
+      "yearlyCruises": {
+        "2010": 3,
+        "2011": 2,
+        "2012": 1,
+        "2015": 3,
+        "2016": 6,
+        "2017": 4,
+        "2018": 7,
+        "2019": 13
+      },
       "cruisesByIsland": {
         "São Miguel": 38,
         "Terceira": 0,
@@ -12940,6 +13729,18 @@
         3,
         0
       ],
+      "yearlyCruises": {
+        "2009": 8,
+        "2010": 13,
+        "2011": 2,
+        "2012": 4,
+        "2013": 2,
+        "2015": 15,
+        "2016": 16,
+        "2017": 14,
+        "2018": 75,
+        "2019": 74
+      },
       "cruisesByIsland": {
         "São Miguel": 223,
         "Terceira": 0,
@@ -12990,6 +13791,12 @@
         2,
         1
       ],
+      "yearlyCruises": {
+        "2015": 3,
+        "2016": 3,
+        "2018": 111,
+        "2019": 18
+      },
       "cruisesByIsland": {
         "São Miguel": 134,
         "Terceira": 0,
@@ -13040,6 +13847,12 @@
         1,
         0
       ],
+      "yearlyCruises": {
+        "2015": 1,
+        "2016": 1,
+        "2018": 2,
+        "2019": 1
+      },
       "cruisesByIsland": {
         "São Miguel": 5,
         "Terceira": 0,
@@ -13090,6 +13903,9 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2016": 1
+      },
       "cruisesByIsland": {
         "São Miguel": 0,
         "Terceira": 0,
@@ -13140,6 +13956,11 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2011": 1,
+        "2014": 1,
+        "2016": 3
+      },
       "cruisesByIsland": {
         "São Miguel": 0,
         "Terceira": 0,
@@ -13190,6 +14011,14 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2014": 1,
+        "2016": 1,
+        "2017": 8,
+        "2018": 6,
+        "2019": 2,
+        "2020": 15
+      },
       "cruisesByIsland": {
         "São Miguel": 0,
         "Terceira": 0,
@@ -13240,6 +14069,12 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2011": 1,
+        "2017": 58,
+        "2018": 11,
+        "2020": 59
+      },
       "cruisesByIsland": {
         "São Miguel": 1,
         "Terceira": 0,
@@ -13290,6 +14125,13 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2009": 1,
+        "2010": 1,
+        "2015": 1,
+        "2018": 8,
+        "2019": 6
+      },
       "cruisesByIsland": {
         "São Miguel": 17,
         "Terceira": 0,
@@ -13340,6 +14182,10 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2016": 1,
+        "2018": 13
+      },
       "cruisesByIsland": {
         "São Miguel": 14,
         "Terceira": 0,
@@ -13390,6 +14236,9 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2018": 1
+      },
       "cruisesByIsland": {
         "São Miguel": 1,
         "Terceira": 0,
@@ -13440,6 +14289,12 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2014": 1,
+        "2015": 1,
+        "2016": 2,
+        "2017": 4
+      },
       "cruisesByIsland": {
         "São Miguel": 0,
         "Terceira": 0,
@@ -13490,6 +14345,17 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2011": 1,
+        "2012": 5,
+        "2013": 9,
+        "2014": 8,
+        "2015": 6,
+        "2016": 11,
+        "2017": 17,
+        "2018": 17,
+        "2019": 2
+      },
       "cruisesByIsland": {
         "São Miguel": 0,
         "Terceira": 0,
@@ -13540,6 +14406,18 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2011": 27,
+        "2012": 29,
+        "2013": 74,
+        "2014": 38,
+        "2015": 55,
+        "2016": 33,
+        "2017": 73,
+        "2018": 65,
+        "2019": 38,
+        "2020": 2
+      },
       "cruisesByIsland": {
         "São Miguel": 0,
         "Terceira": 0,
@@ -13590,6 +14468,18 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2011": 13,
+        "2012": 19,
+        "2013": 42,
+        "2014": 24,
+        "2015": 31,
+        "2016": 20,
+        "2017": 203,
+        "2018": 162,
+        "2019": 71,
+        "2020": 40
+      },
       "cruisesByIsland": {
         "São Miguel": 1,
         "Terceira": 0,
@@ -13640,6 +14530,16 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2012": 1,
+        "2013": 2,
+        "2015": 2,
+        "2016": 1,
+        "2017": 202,
+        "2018": 114,
+        "2019": 41,
+        "2020": 95
+      },
       "cruisesByIsland": {
         "São Miguel": 1,
         "Terceira": 0,
@@ -13690,6 +14590,12 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2013": 1,
+        "2017": 1,
+        "2018": 3,
+        "2019": 5
+      },
       "cruisesByIsland": {
         "São Miguel": 0,
         "Terceira": 0,
@@ -13740,6 +14646,9 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2020": 2
+      },
       "cruisesByIsland": {
         "São Miguel": 0,
         "Terceira": 0,
@@ -13790,6 +14699,9 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2018": 1
+      },
       "cruisesByIsland": {
         "São Miguel": 0,
         "Terceira": 1,
@@ -13840,6 +14752,17 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2011": 2,
+        "2012": 2,
+        "2013": 7,
+        "2014": 5,
+        "2015": 2,
+        "2016": 13,
+        "2017": 14,
+        "2018": 18,
+        "2019": 4
+      },
       "cruisesByIsland": {
         "São Miguel": 0,
         "Terceira": 0,
@@ -13890,6 +14813,17 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2011": 9,
+        "2012": 13,
+        "2013": 34,
+        "2014": 48,
+        "2015": 56,
+        "2016": 74,
+        "2017": 91,
+        "2018": 76,
+        "2019": 23
+      },
       "cruisesByIsland": {
         "São Miguel": 0,
         "Terceira": 0,
@@ -13940,6 +14874,17 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2011": 27,
+        "2012": 25,
+        "2013": 89,
+        "2014": 72,
+        "2015": 91,
+        "2016": 76,
+        "2017": 91,
+        "2018": 67,
+        "2019": 33
+      },
       "cruisesByIsland": {
         "São Miguel": 0,
         "Terceira": 0,
@@ -13990,6 +14935,18 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2011": 4,
+        "2012": 6,
+        "2013": 11,
+        "2014": 8,
+        "2015": 12,
+        "2016": 5,
+        "2017": 11,
+        "2018": 7,
+        "2019": 6,
+        "2020": 1
+      },
       "cruisesByIsland": {
         "São Miguel": 1,
         "Terceira": 0,
@@ -14040,6 +14997,13 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2015": 1,
+        "2016": 2,
+        "2017": 1,
+        "2018": 1,
+        "2019": 1
+      },
       "cruisesByIsland": {
         "São Miguel": 0,
         "Terceira": 0,
@@ -14090,6 +15054,9 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2019": 1
+      },
       "cruisesByIsland": {
         "São Miguel": 0,
         "Terceira": 0,
@@ -14140,6 +15107,9 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2019": 2
+      },
       "cruisesByIsland": {
         "São Miguel": 0,
         "Terceira": 0,
@@ -14190,6 +15160,12 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2015": 2,
+        "2016": 2,
+        "2017": 6,
+        "2018": 1
+      },
       "cruisesByIsland": {
         "São Miguel": 0,
         "Terceira": 11,
@@ -14240,6 +15216,13 @@
         3,
         1
       ],
+      "yearlyCruises": {
+        "2015": 48,
+        "2016": 47,
+        "2017": 66,
+        "2018": 43,
+        "2019": 32
+      },
       "cruisesByIsland": {
         "São Miguel": 1,
         "Terceira": 235,
@@ -14290,6 +15273,13 @@
         2,
         1
       ],
+      "yearlyCruises": {
+        "2015": 12,
+        "2016": 14,
+        "2017": 23,
+        "2018": 14,
+        "2019": 9
+      },
       "cruisesByIsland": {
         "São Miguel": 0,
         "Terceira": 72,
@@ -14340,6 +15330,9 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2016": 1
+      },
       "cruisesByIsland": {
         "São Miguel": 0,
         "Terceira": 0,
@@ -14390,6 +15383,15 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2012": 2,
+        "2013": 2,
+        "2014": 3,
+        "2015": 2,
+        "2016": 6,
+        "2017": 2,
+        "2018": 8
+      },
       "cruisesByIsland": {
         "São Miguel": 0,
         "Terceira": 0,
@@ -14440,6 +15442,17 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2011": 2,
+        "2012": 17,
+        "2013": 22,
+        "2014": 28,
+        "2015": 42,
+        "2016": 56,
+        "2017": 56,
+        "2018": 75,
+        "2019": 32
+      },
       "cruisesByIsland": {
         "São Miguel": 0,
         "Terceira": 0,
@@ -14490,6 +15503,17 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2011": 6,
+        "2012": 10,
+        "2013": 17,
+        "2014": 25,
+        "2015": 44,
+        "2016": 54,
+        "2017": 71,
+        "2018": 62,
+        "2019": 44
+      },
       "cruisesByIsland": {
         "São Miguel": 0,
         "Terceira": 0,
@@ -14540,6 +15564,16 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2011": 2,
+        "2012": 1,
+        "2013": 3,
+        "2015": 2,
+        "2016": 6,
+        "2017": 11,
+        "2018": 7,
+        "2019": 5
+      },
       "cruisesByIsland": {
         "São Miguel": 0,
         "Terceira": 0,
@@ -14590,6 +15624,9 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2018": 1
+      },
       "cruisesByIsland": {
         "São Miguel": 0,
         "Terceira": 0,
@@ -14640,6 +15677,10 @@
         0,
         1
       ],
+      "yearlyCruises": {
+        "2017": 1,
+        "2018": 1
+      },
       "cruisesByIsland": {
         "São Miguel": 0,
         "Terceira": 2,
@@ -14690,6 +15731,13 @@
         0,
         1
       ],
+      "yearlyCruises": {
+        "2015": 5,
+        "2016": 3,
+        "2017": 19,
+        "2018": 4,
+        "2019": 5
+      },
       "cruisesByIsland": {
         "São Miguel": 0,
         "Terceira": 36,
@@ -14740,6 +15788,13 @@
         4,
         5
       ],
+      "yearlyCruises": {
+        "2015": 65,
+        "2016": 57,
+        "2017": 86,
+        "2018": 54,
+        "2019": 33
+      },
       "cruisesByIsland": {
         "São Miguel": 0,
         "Terceira": 295,
@@ -14790,6 +15845,13 @@
         3,
         0
       ],
+      "yearlyCruises": {
+        "2015": 15,
+        "2016": 26,
+        "2017": 7,
+        "2018": 5,
+        "2019": 5
+      },
       "cruisesByIsland": {
         "São Miguel": 0,
         "Terceira": 58,
@@ -14840,6 +15902,9 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2018": 1
+      },
       "cruisesByIsland": {
         "São Miguel": 0,
         "Terceira": 0,
@@ -14890,6 +15955,11 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2013": 1,
+        "2015": 2,
+        "2018": 2
+      },
       "cruisesByIsland": {
         "São Miguel": 0,
         "Terceira": 0,
@@ -14940,6 +16010,12 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2013": 1,
+        "2015": 1,
+        "2016": 1,
+        "2018": 1
+      },
       "cruisesByIsland": {
         "São Miguel": 0,
         "Terceira": 0,
@@ -14990,6 +16066,9 @@
         0,
         0
       ],
+      "yearlyCruises": {
+        "2017": 1
+      },
       "cruisesByIsland": {
         "São Miguel": 0,
         "Terceira": 0,

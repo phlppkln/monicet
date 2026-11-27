@@ -21,6 +21,12 @@ import type {
 	MonicetTopSpeciesEntry,
 } from "../src/types/monicet.ts";
 import {
+	CHANGE_MIN_PERIOD_CRUISES,
+	CHANGE_MIN_PERIOD_ENCOUNTERS,
+	buildYearlyCruisesByIsland,
+	computeCellChange,
+} from "./lib/cell-change.ts";
+import {
 	cellsReached,
 	parseWktPoints,
 	type LonLat,
@@ -439,6 +445,18 @@ export function buildData(
 	const earlyCruises = sumCruises(earlyYears);
 	const lateCruises = sumCruises(lateYears);
 
+	const yearlyCruisesByIsland = buildYearlyCruisesByIsland(
+		cruiseInputs,
+		years
+	);
+	const cruiseCells = buildCruiseCells(
+		cruiseInputs,
+		cruisePositions,
+		minLatGrid,
+		minLonGrid
+	);
+	const cruiseCellById = new Map(cruiseCells.map((c) => [c.id, c]));
+
 	// ── 4. Per-cell metrics ───────────────────────────────────────────────
 	const gridCells: MonicetGridCell[] = [...cells.values()].map((cell) => {
 		const yearlyRates = years.map(
@@ -461,6 +479,14 @@ export function buildData(
 			earlyRate && earlyRate > 0 && lateRate !== null
 				? ((lateRate - earlyRate) / earlyRate) * 100
 				: null;
+
+		const fixedChange = computeCellChange({
+			yearlyEncounters: cell.yearlyEncounters,
+			cruisesByIsland: cruiseCellById.get(cell.id)?.cruisesByIsland,
+			yearlyCruisesByIsland,
+			earlyYears,
+			lateYears,
+		});
 
 		const yearsWithEncounters = years.filter(
 			(year) => (cell.yearlyEncounters[year] ?? 0) > 0
@@ -494,6 +520,7 @@ export function buildData(
 			earlyRate,
 			lateRate,
 			declinePct,
+			...fixedChange,
 			trendSlope: linearSlope(years, yearlyRates),
 			yearsWithEncounters,
 			confidenceScore,
@@ -574,12 +601,15 @@ export function buildData(
 				(positions) => positions.length === 0
 			).length,
 			years,
+			earlyYears,
+			lateYears,
 			yearlyCruises: Object.fromEntries(
 				years.map((year) => [
 					String(year),
 					cruisesByYear.get(year) ?? 0,
 				])
 			),
+			yearlyCruisesByIsland,
 			dateRange: {
 				start: earliestDate ? earliestDate.toISOString() : null,
 				end: latestDate ? latestDate.toISOString() : null,
@@ -594,6 +624,8 @@ export function buildData(
 			thresholds: {
 				reliableCellMinEncounters: RELIABLE_MIN_ENCOUNTERS,
 				reliableCellMinYears: RELIABLE_MIN_YEARS,
+				changeMinPeriodCruises: CHANGE_MIN_PERIOD_CRUISES,
+				changeMinPeriodEncounters: CHANGE_MIN_PERIOD_ENCOUNTERS,
 			},
 			caveats: [
 				"Decline is computed as encounter-rate trend, not direct population decline.",
@@ -606,12 +638,7 @@ export function buildData(
 		monthlySummaries,
 		speciesSummaries,
 		gridCells,
-		cruiseCells: buildCruiseCells(
-			cruiseInputs,
-			cruisePositions,
-			minLatGrid,
-			minLonGrid
-		),
+		cruiseCells,
 		speciesCertainty: computeSpeciesCertainty(
 			cruiseInputs,
 			encounterInputs,
@@ -663,6 +690,7 @@ function buildCruiseCells(
 					cruises: 0,
 					share: 0,
 					monthlyCruises: Array.from({ length: 12 }, () => 0),
+					yearlyCruises: {},
 					cruisesByIsland: {
 						"São Miguel": 0,
 						Terceira: 0,
@@ -673,6 +701,8 @@ function buildCruiseCells(
 			}
 			cell.cruises += 1;
 			cell.monthlyCruises[cruise.month - 1] += 1;
+			const yr = String(cruise.year);
+			cell.yearlyCruises[yr] = (cell.yearlyCruises[yr] ?? 0) + 1;
 			cell.cruisesByIsland[cruise.island] += 1;
 		}
 	}

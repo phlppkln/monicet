@@ -1,27 +1,18 @@
 <template>
 	<div class="d3-explorer">
 		<div class="toolbar">
-			<div class="controls-row">
-				<div class="control">
-					<label for="d3-species-select">If I were a…</label>
-					<select id="d3-species-select" v-model="selectedSpeciesId">
-						<option
-							v-for="opt in speciesList"
-							:key="opt.id"
-							:value="opt.id"
-						>
-							{{ opt.label }}
-						</option>
-					</select>
-				</div>
+			<div class="control">
+				<label for="d3-species-select">Species</label>
+				<select id="d3-species-select" v-model="selectedSpeciesId">
+					<option
+						v-for="opt in speciesList"
+						:key="opt.id"
+						:value="opt.id"
+					>
+						{{ opt.label }}
+					</option>
+				</select>
 			</div>
-
-			<BasemapControls
-				v-model:basemap-id="basemapId"
-				v-model:show-data-layer="showDataLayer"
-				v-model:data-layer-opacity="dataLayerOpacity"
-				v-model:show-observation-grid="showObservationGrid"
-			/>
 		</div>
 
 		<div v-if="loading" class="status">Preparing species map…</div>
@@ -34,9 +25,9 @@
 					<div>
 						<h3 id="animal-year-title">My year in the Azores</h3>
 						<p class="year-sub">
-							Bar height: encounters per cruise. Colour: what I
-							was doing when the boat arrived. Dots: share of my
-							groups with a calf. Pick a month to see where I am.
+							Encounters per cruise by month, coloured by
+							behaviour, with calf share below. Pick a month to
+							filter the map.
 						</p>
 					</div>
 					<button
@@ -63,9 +54,6 @@
 							:y="YEAR.top + 4"
 							text-anchor="end"
 						>
-							<!-- Number only: "1.32 encounters/cruise" ran ~100px
-							past the chart's left edge. The unit is in the
-							subtitle ("Bar height: encounters per cruise"). -->
 							{{ maxMonthlyRate.toFixed(2) }}
 						</text>
 						<text
@@ -161,16 +149,11 @@
 					</li>
 					<li>
 						<span class="swatch unsplit-swatch"></span>
-						fewer than {{ MIN_BEHAVIOUR_RECORDS }} behaviour records
+						&lt; {{ MIN_BEHAVIOUR_RECORDS }} behaviour records
 					</li>
 					<li>
 						<span class="dot-swatch"></span>
-						calves (area = share)
-					</li>
-					<li>
-						<span class="dot-swatch few"></span>
-						fewer than {{ MIN_LIFE_STAGE_RECORDS }} life-stage
-						records
+						calf share
 					</li>
 				</ul>
 			</section>
@@ -178,14 +161,12 @@
 			<div class="layout">
 				<div class="map-shell">
 					<div class="map-heading">
-						Where I am in <strong>{{ monthName }}</strong>
+						Where met in <strong>{{ monthName }}</strong>
 					</div>
 					<div ref="mapContainer" class="map-container"></div>
-					<MapAttribution :basemap-id="basemapId" />
-					<div v-show="showDataLayer" class="legend-shell">
+					<div class="legend-shell">
 						<div class="legend-title">
-							Encounters per cruise in {{ monthName }}, all years
-							(log scale)
+							Encounters per cruise in {{ monthName }} (log scale)
 						</div>
 						<div
 							ref="legendContainer"
@@ -204,13 +185,10 @@
 						</div>
 
 						<div v-if="reason" class="reason">
-							<div class="reason-kicker">
-								Why I come (background, not from this archive)
-							</div>
 							<div class="reason-title">{{ reason.title }}</div>
 							<p class="reason-text">{{ reason.text }}</p>
 							<details v-if="reason.sources.length">
-								<summary>Sources</summary>
+								<summary>Background sources</summary>
 								<ul>
 									<li
 										v-for="src in reason.sources"
@@ -220,14 +198,7 @@
 									</li>
 								</ul>
 							</details>
-							<p v-else class="reason-missing">
-								Source still to be added.
-							</p>
 						</div>
-						<p v-else class="reason-missing">
-							No background note for this species yet. The charts
-							show only what the archive records.
-						</p>
 
 						<div class="month-facts">
 							<div class="facts-title">{{ monthName }}</div>
@@ -246,7 +217,7 @@
 								<strong>{{ facts.calfLabel }}</strong>
 							</div>
 							<div class="metric-row">
-								<span>Grid cells with sightings</span>
+								<span>Active cells</span>
 								<strong>{{ facts.cells }}</strong>
 							</div>
 							<ul
@@ -269,20 +240,12 @@
 										}}%</strong
 									>
 								</li>
-								<li class="activity-n">
-									of {{ facts.activity.total }} groups with a
-									behaviour record
-								</li>
 							</ul>
-							<p v-else class="activity-n">
-								Only {{ facts.activity.total }} groups with a
-								behaviour record: too few to split.
-							</p>
 						</div>
 
 						<div class="chart-section">
 							<div class="chart-label">
-								Year by year (encounters per cruise)
+								Year by year (encounters / cruise)
 							</div>
 							<div
 								ref="sparklineContainer"
@@ -292,13 +255,9 @@
 					</div>
 
 					<div class="caveat">
-						Behaviour is the state when the boat arrived, and the
-						boat may have changed it; deep divers forage out of
-						sight. Calf share counts groups, not animals. Winter
-						months have few cruises ({{ quietestMonth }}), so their
-						shares are noisy. The map divides by the cruises that
-						logged a sighting in each cell, so it is per cruise that
-						stopped there, not per cruise that searched it.
+						Behaviour reflects arrival state; winter months have few
+						cruises ({{ quietestMonth }}). Map rates divide by
+						cruises that logged a sighting in each cell.
 					</div>
 				</aside>
 			</div>
@@ -307,17 +266,8 @@
 </template>
 
 <script setup lang="ts">
-// The Animal (formerly D3, "The Species as Character"). The question is the
-// animal's own: "if I were this species, where would I go, and when, and
-// why?" One species reorganises the view into
-//   - "My year": encounters per cruise by month (when am I here?), stacked
-//     by behaviour on arrival (what am I doing?) with a calf-share dot row
-//     (am I raising young?);
-//   - a map filtered to the selected month (where am I then?);
-//   - a side panel with that month in words, a background note on why the
-//     species comes (from the literature, not from this archive) and the
-//     year-by-year sparkline.
-// Why this design and its alternatives: docs/ideas/the-animal.md.
+// The Animal: one species across its year (encounters/cruise, behaviour,
+// calves), filtered map on a clean wireframe coastline, and yearly sparkline.
 import * as d3 from "d3";
 import {
 	computed,
@@ -329,8 +279,6 @@ import {
 	watch,
 } from "vue";
 
-import BasemapControls from "@/components/shared-ui/BasemapControls.vue";
-import MapAttribution from "@/components/shared-ui/MapAttribution.vue";
 import MapMissingKey, {
 	type MissingKeyItem,
 } from "@/components/shared-ui/MapMissingKey.vue";
@@ -361,13 +309,7 @@ import {
 } from "@/lib/chartTokens";
 import { formatCellLabel, formatRate, MONTH_LABELS } from "@/lib/format";
 import { renderGradientLegend } from "@/lib/legend";
-import {
-	addNoValuePattern,
-	addSoftEdgeFilter,
-	BASEMAPS,
-	drawBaseMap,
-	type BasemapId,
-} from "@/lib/map";
+import { addNoValuePattern, drawBaseMap, WIREFRAME_THEME } from "@/lib/map";
 import { hideTooltip, showTooltip } from "@/lib/tooltip";
 import type { Behaviour, MonicetGridCell } from "@/types/monicet";
 
@@ -388,9 +330,6 @@ const MONTH_NAMES = [
 	"December",
 ];
 
-// Cells drawn off the colour scale: the species was not logged there in
-// the selected period (other species were), or too few cruises reached
-// the cell then to give a rate.
 const MISSING_KEY: MissingKeyItem[] = [
 	{ kind: "none-recorded", label: "none recorded" },
 	{
@@ -407,17 +346,6 @@ const selectedSpeciesId = ref("");
 /** 0–11, or null for "all year". */
 const selectedMonth = ref<number | null>(null);
 
-// Same basemaps as The External (docs/basemaps.md), with the cells as a
-// toggleable layer whose opacity lets the basemap show through.
-const basemapId = ref<BasemapId>("basic");
-const showDataLayer = ref(true);
-// 0.85, not lower: at 0.65 the ramp's light end blended into the basemap.
-const dataLayerOpacity = ref(0.85);
-// The grid the build sorts observations into (drawObservationGrid in
-// src/lib/map.ts). Off by default: it is an explanation, not data.
-const showObservationGrid = ref(false);
-
-// SVG ids (blur filter) are document-wide; prefix them per instance.
 const svgIdPrefix = `sac${useId()}`;
 
 const mapContainer = ref<HTMLElement | null>(null);
@@ -455,9 +383,6 @@ const quietestMonth = computed(() => {
 	return `${cruises[i]} in ${MONTH_NAMES[i]}`;
 });
 
-// Encounters per cruise, not raw counts: raw monthly counts mostly follow
-// how many trips ran (July has ~15× the cruises of January), so dividing by
-// cruises asks "if I go out this month, how likely am I to meet it?".
 const monthlyRatesForSpecies = computed(() => {
 	const monthly = selectedSpecies.value?.monthlyEncounters;
 	if (!monthly) return [];
@@ -477,8 +402,6 @@ function toggleMonth(month: number) {
 }
 
 // ─── My year: chart geometry ─────────────────────────────────────────────────
-// Drawn by the template (Vue SVG), not by D3: the chart is twelve columns
-// with fixed positions, and each column is a keyboard-focusable button.
 
 const YEAR = {
 	width: 720,
@@ -492,10 +415,7 @@ const YEAR = {
 	get calfRow() {
 		return this.baseline + 42;
 	},
-	// Largest calf dot (share = 100%). Area, not radius, follows the share,
-	// so a 40% month looks twice as heavy as a 20% month.
 	maxCalfRadius: 13,
-	// Surface gap between stacked segments (dataviz mark spec).
 	segmentGap: 2,
 };
 
@@ -506,7 +426,6 @@ interface YearColumn {
 	barWidth: number;
 	barHeight: number;
 	segments: { behaviour: Behaviour; y: number; height: number }[];
-	/** Bar drawn as an outline: present, but too few behaviour records to split. */
 	unsplit: boolean;
 	calf: { radius: number; reliable: boolean } | null;
 	ariaLabel: string;
@@ -526,9 +445,6 @@ const yearColumns = computed<YearColumn[]>(() => {
 		const activity = monthActivity(species, month);
 		const calf = monthCalfShare(species, month);
 
-		// Stack bottom-up in BEHAVIOUR_ORDER; each segment is its share of
-		// the bar. The gap is taken out of the segment, so the bar's total
-		// height still reads as the rate.
 		const segments: YearColumn["segments"] = [];
 		if (activity.shares && barHeight > 0) {
 			let y = YEAR.baseline;
@@ -592,11 +508,11 @@ function onMonthHover(event: MouseEvent, month: number) {
 				(b) =>
 					`<div class="tip-line">${b}: ${Math.round((activity.shares?.[b] ?? 0) * 100)}%</div>`
 			).join("")
-		: `<div class="tip-line">${activity.total} behaviour records: too few to split</div>`;
+		: `<div class="tip-line">${activity.total} behaviour records (too few to split)</div>`;
 	const calfLine =
 		calf.share !== null
 			? `calves in ${calf.withCalf} of ${calf.records} groups (${Math.round(calf.share * 100)}%)`
-			: `${calf.records} life-stage records: too few`;
+			: `${calf.records} life-stage records`;
 
 	showTooltip(
 		yearTooltipRef.value,
@@ -604,7 +520,7 @@ function onMonthHover(event: MouseEvent, month: number) {
 		event,
 		`
 		<div class="tip-title">${MONTH_NAMES[month]}</div>
-		<div class="tip-line">${formatRate(rate)} encounters per cruise (${species.monthlyEncounters[month]} in ${monthlyCruises.value[month]} cruises)</div>
+		<div class="tip-line">${formatRate(rate)} (${species.monthlyEncounters[month]} in ${monthlyCruises.value[month]} cruises)</div>
 		${behaviourLines}
 		<div class="tip-line">${calfLine}</div>
 	`
@@ -644,7 +560,6 @@ const facts = computed(() => {
 		};
 	}
 
-	// All year: pool the twelve months. Same thresholds as for one month.
 	const totalCruises = monthlyCruises.value.reduce((a, b) => a + b, 0);
 	const counts = Object.fromEntries(
 		BEHAVIOUR_ORDER.map((b) => [
@@ -690,9 +605,7 @@ function onCellHover(event: MouseEvent, cell: MonicetGridCell) {
 			? "2009–2020"
 			: `${MONTH_NAMES[selectedMonth.value]}, all years`;
 	const rateLine =
-		rate === null
-			? `no rate: only ${cruises} cruises reached the cell`
-			: formatRate(rate);
+		rate === null ? `no rate (${cruises} cruises)` : formatRate(rate);
 
 	showTooltip(
 		tooltipRef.value,
@@ -701,22 +614,17 @@ function onCellHover(event: MouseEvent, cell: MonicetGridCell) {
 		`
 		<div class="tip-title">${formatCellLabel(cell)}</div>
 		<div class="tip-line">${rateLine}</div>
-		<div class="tip-line">${encounters.toLocaleString()} encounters in ${cruises.toLocaleString()} cruises (${when})</div>
+		<div class="tip-line">${encounters.toLocaleString()} in ${cruises.toLocaleString()} cruises (${when})</div>
 	`
 	);
 }
 
 // ─── Map rates ───────────────────────────────────────────────────────────────
-// The map shows encounters per cruise that reached the cell, like the bars
-// above it: raw counts mostly map where boats go (see cellRate in
-// src/data/selectors.ts, and its bias: cruises count only where they
-// logged a sighting).
 
 const cruiseCellLookup = computed(() =>
 	indexCruiseCells(mapData.value?.cruiseCells ?? [])
 );
 
-/** Encounters, cruises and rate per grid cell, for one month or all year. */
 function cellRates(
 	species: NonNullable<typeof selectedSpecies.value>,
 	month: number | null
@@ -742,7 +650,6 @@ function cellRates(
 	return rates;
 }
 
-/** All positive rates of a set of months, for the colour domain. */
 function positiveRates(
 	species: NonNullable<typeof selectedSpecies.value>,
 	months: (number | null)[]
@@ -759,71 +666,30 @@ function positiveRates(
 let dataLayer: d3.Selection<SVGGElement, unknown, null, undefined> | null =
 	null;
 
-let observationGrid: d3.Selection<
-	SVGGElement,
-	unknown,
-	null,
-	undefined
-> | null = null;
-
-function applyObservationGridVisibility() {
-	observationGrid?.attr("display", showObservationGrid.value ? null : "none");
-}
-
-function applyDataLayerVisibility() {
-	dataLayer
-		?.attr("display", showDataLayer.value ? null : "none")
-		.attr("opacity", dataLayerOpacity.value);
-}
-
-// Two levels of redraw, as in CellMapExplorer. renderMap() rebuilds the
-// basemap (tiles, lines, labels, zoom) and is needed only when the basemap
-// or the size changes. renderDataLayer() redraws cells and legend only, so
-// species and mode changes don't re-create every tile or reset the zoom.
 let base: {
 	cellPath: ReturnType<typeof drawBaseMap>["cellPath"];
 	insertDataLayer: ReturnType<typeof drawBaseMap>["insertDataLayer"];
-	softFilterUrl: string;
 	noValueFill: string;
 } | null = null;
 
 function renderMap() {
 	if (!mapContainer.value || !mapData.value || !basemap.value) return;
 
-	const { theme, tiles } = BASEMAPS[basemapId.value];
-	const {
-		svg,
-		cellPath,
-		cellWidthPx,
-		raiseLines,
-		insertDataLayer,
-		drawIslandLabels,
-		drawObservationGrid,
-		enableZoom,
-	} = drawBaseMap(mapContainer.value, basemap.value, {
-		theme,
-		tiles,
-		lines: mapLines.value,
-		fallbackWidth: 720,
-		minHeight: 380,
-		aspect: 0.68,
-	});
+	const { svg, cellPath, raiseLines, insertDataLayer, drawIslandLabels } =
+		drawBaseMap(mapContainer.value, basemap.value, {
+			theme: WIREFRAME_THEME,
+			lines: mapLines.value,
+			fallbackWidth: 720,
+			minHeight: 360,
+			aspect: 0.62,
+		});
 
-	// Wireframe: coastlines and labels on top, cells inserted below them.
 	raiseLines();
 	drawIslandLabels();
-	observationGrid = drawObservationGrid(mapData.value);
-	applyObservationGridVisibility();
-	enableZoom();
 
 	base = {
 		cellPath,
 		insertDataLayer,
-		softFilterUrl: addSoftEdgeFilter(
-			svg,
-			cellWidthPx,
-			`${svgIdPrefix}-soft-cells`
-		),
 		noValueFill: addNoValuePattern(
 			svg,
 			CHART_NO_VALUE_HATCH,
@@ -839,12 +705,6 @@ function renderDataLayer() {
 
 	dataLayer?.remove();
 	dataLayer = base.insertDataLayer();
-	applyDataLayerVisibility();
-	// Soft edges as in The External: cells with a rate are blurred and
-	// have no borders. Cells with no rate are hatched, on top and unblurred
-	// so the hatching stays readable.
-	const softCells = dataLayer.append("g").attr("filter", base.softFilterUrl);
-	const noValueCells = dataLayer.append("g");
 
 	const cells = mapData.value.gridCells;
 	const species = selectedSpecies.value;
@@ -853,19 +713,6 @@ function renderDataLayer() {
 	const rates = cellRates(species, month);
 	const rateOf = (cell: MonicetGridCell) => rates.get(cell.id)?.rate ?? null;
 
-	// Log scale, because the rates are still right-skewed: across the
-	// months of the most common species they span about 0.02 to 3.4
-	// encounters per cruise, median 0.44. On a log scale equal colour steps
-	// mean equal *ratios* (0.05→0.5 looks like 0.5→5), which spreads the
-	// many small rates out. The cost: absolute differences among the top
-	// cells are compressed. The domain starts at the smallest positive
-	// rate (log 0 is undefined); zero cells keep their own "none recorded"
-	// grey below, so they never reach the scale.
-	//
-	// One domain for all twelve months. With a per-month domain every
-	// month would have a dark cell, and a month with three sightings would
-	// look as busy as July. The all-year view pools the months, so it gets
-	// its own domain (the legend says which one is shown).
 	const domainRates = positiveRates(
 		species,
 		month === null ? [null] : d3.range(12)
@@ -881,11 +728,9 @@ function renderDataLayer() {
 		return rate > 0 ? scale(rate) : CHART_NONE_RECORDED;
 	};
 	if (legendContainer.value) {
-		// The legend bar is evenly spaced in log space, so its midpoint
-		// is the geometric mean sqrt(min · max), not the arithmetic one.
 		renderGradientLegend(
 			legendContainer.value,
-			"d3-sp-legend",
+			`${svgIdPrefix}-sp-legend`,
 			(t) => scale.interpolator()(t),
 			{
 				left: minRate.toFixed(2),
@@ -895,30 +740,17 @@ function renderDataLayer() {
 		);
 	}
 
-	const cellPath = base.cellPath;
-	const drawCells = (
-		group: d3.Selection<SVGGElement, unknown, null, undefined>,
-		subset: MonicetGridCell[]
-	) =>
-		group
-			.selectAll("path")
-			.data(subset)
-			.join("path")
-			.attr("d", cellPath)
-			.attr("fill", fill)
-			.on("mousemove", (event: MouseEvent, cell) =>
-				onCellHover(event, cell)
-			)
-			.on("mouseleave", () => hideTooltip(tooltipRef.value));
-
-	drawCells(
-		softCells,
-		cells.filter((cell) => rateOf(cell) !== null)
-	);
-	drawCells(
-		noValueCells,
-		cells.filter((cell) => rateOf(cell) === null)
-	);
+	dataLayer
+		.selectAll("path")
+		.data(cells)
+		.join("path")
+		.attr("d", base.cellPath)
+		.attr("fill", fill)
+		.attr("fill-opacity", 0.9)
+		.attr("stroke", "rgba(26,26,26,0.2)")
+		.attr("stroke-width", 0.5)
+		.on("mousemove", (event: MouseEvent, cell) => onCellHover(event, cell))
+		.on("mouseleave", () => hideTooltip(tooltipRef.value));
 }
 
 // ─── Render sparkline ────────────────────────────────────────────────────────
@@ -928,15 +760,12 @@ function renderSparkline() {
 	if (!sparklineContainer.value || !species || !mapData.value) return;
 	d3.select(sparklineContainer.value).selectAll("*").remove();
 
-	// Encounters per cruise per year, for the same reason as the monthly
-	// bars: the number of trips changed a lot between years.
 	type Point = { year: number; rate: number };
 	const { years, yearlyCruises } = mapData.value.meta;
 	const rates = yearlyRates(species.yearlyEncounters, yearlyCruises, years);
 	const data: Point[] = years.map((year, i) => ({ year, rate: rates[i] }));
 
 	const w = sparklineContainer.value.clientWidth || 240;
-	// Sized for 12px labels (they were 8px, too small to read).
 	const h = 84;
 	const margin = { left: 36, right: 6, top: 8, bottom: 20 };
 
@@ -946,8 +775,6 @@ function renderSparkline() {
 		.scaleLinear()
 		.domain([firstYear, lastYear])
 		.range([margin.left, w - margin.right]);
-	// Floor the axis so a species with almost no sightings still gets a
-	// non-zero domain.
 	const yMax = Math.max(0.01, d3.max(data, (d) => d.rate) ?? 0);
 	const y = d3
 		.scaleLinear()
@@ -978,7 +805,7 @@ function renderSparkline() {
 		.datum(data)
 		.attr("d", area)
 		.attr("fill", CHART_PRIMARY)
-		.attr("fill-opacity", 0.12);
+		.attr("fill-opacity", 0.1);
 
 	svg.append("path")
 		.datum(data)
@@ -1005,7 +832,6 @@ function renderSparkline() {
 			.attr("fill", CHART_TEXT_SECONDARY)
 			.text(text);
 
-	// Y axis: max and zero only; X axis: first and last year only.
 	label(margin.left - 4, margin.top + 5, yMax.toFixed(2), "end");
 	label(margin.left - 4, h - margin.bottom, "0", "end");
 	label(x(firstYear), h, String(firstYear));
@@ -1019,16 +845,11 @@ function handleResize() {
 	renderSparkline();
 }
 
-// The component can unmount while load() is still pending (e.g. a quick
-// click on "← MONICET"); onBeforeUnmount has then already run, so nothing
-// may be set up after an await once this is true.
 let unmounted = false;
 
 onMounted(async () => {
 	await load();
 	if (unmounted) return;
-	// Coastlines: drawn by the wireframe and, on tiled basemaps, as the
-	// fallback under the tiles. Not awaited; redraw once they arrive.
 	void loadMapLines().then(() => {
 		if (!unmounted && !loading.value) renderMap();
 	});
@@ -1050,8 +871,6 @@ onBeforeUnmount(() => {
 	window.removeEventListener("resize", handleResize);
 });
 
-// Open each species on its own peak month, so the map starts where the
-// animal is most often met.
 function peakMonth(): number | null {
 	const rates = monthlyRatesForSpecies.value;
 	return rates.length && Math.max(...rates) > 0
@@ -1070,49 +889,15 @@ watch(selectedSpeciesId, async () => {
 watch(selectedMonth, () => {
 	if (!loading.value) renderDataLayer();
 });
-
-watch(basemapId, () => {
-	if (!loading.value) renderMap();
-});
-
-watch(dataLayerOpacity, applyDataLayerVisibility);
-
-// Toggling the data layer only hides it: no redraw, so tiles don't reload.
-watch(showObservationGrid, applyObservationGridVisibility);
-
-watch(showDataLayer, () => {
-	hideTooltip(tooltipRef.value);
-	applyDataLayerVisibility();
-});
 </script>
 
 <style scoped lang="scss">
 .d3-explorer {
 	position: relative;
-	padding: 1.2rem;
-	border: 1px solid rgba($primary, 0.22);
-	background:
-		radial-gradient(
-			circle at 80% 10%,
-			rgba($primary, 0.1),
-			transparent 36%
-		),
-		linear-gradient(150deg, #f3f8f5, #f8f4ee);
-	border-radius: 12px;
 }
 
 .toolbar {
-	display: flex;
-	flex-direction: column;
-	gap: 0.75rem;
-	margin-bottom: 1rem;
-}
-
-.controls-row {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 1rem;
+	margin-bottom: 0.85rem;
 }
 
 .control {
@@ -1123,24 +908,25 @@ watch(showDataLayer, () => {
 	label {
 		font-size: 0.84rem;
 		font-weight: 600;
-		color: $text-primary;
+		color: $text-secondary;
 		white-space: nowrap;
 	}
 
 	select {
-		padding: 0.35rem 0.5rem;
-		border-radius: 6px;
+		padding: 0.35rem 0.55rem;
+		border-radius: $radius-sm;
 		border: 1px solid $border;
 		font-size: 0.84rem;
-		min-width: 200px;
+		min-width: 210px;
 		max-width: 320px;
 		background-color: $surface;
+		color: $text-primary;
 	}
 }
 
 .status {
 	padding: 2rem 0.5rem;
-	font-size: 0.95rem;
+	font-size: 0.92rem;
 	color: $text-secondary;
 
 	&.error {
@@ -1151,33 +937,34 @@ watch(showDataLayer, () => {
 .layout {
 	display: grid;
 	grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr);
-	gap: 1rem;
+	gap: 1.25rem;
+	align-items: start;
 }
 
 .map-shell {
 	position: relative;
-	border-radius: 10px;
+	border-radius: $radius-md;
 	overflow: hidden;
-	border: 1px solid rgba($primary, 0.2);
-	background: rgba($surface, 0.7);
+	border: 1px solid $border;
+	background: $surface;
 }
 
 .map-container {
-	min-height: 380px;
+	min-height: 360px;
+	line-height: 0;
 }
 
 .legend-shell {
-	padding: 0.5rem 0.75rem 0.6rem;
-	border-top: 1px solid rgba($primary, 0.16);
-	background: rgba($surface, 0.92);
+	padding: 0.6rem 0.85rem;
+	border-top: 1px solid $border;
+	background: $surface;
 }
 
 .legend-title {
 	font-size: 0.78rem;
-	font-weight: 700;
-	letter-spacing: 0.02em;
-	color: $text-primary;
-	margin-bottom: 0.25rem;
+	font-weight: 600;
+	color: $text-secondary;
+	margin-bottom: 0.2rem;
 }
 
 :deep(.legend-label) {
@@ -1192,16 +979,15 @@ watch(showDataLayer, () => {
 	top: 0;
 	pointer-events: none;
 	opacity: 0;
-	padding: 0.55rem 0.65rem;
-	border-radius: 8px;
+	padding: 0.5rem 0.65rem;
+	border-radius: $radius-sm;
 	background: rgba(26, 26, 26, 0.92);
 	color: #fff;
-	font-size: 0.75rem;
-	line-height: 1.35;
+	font-size: 0.76rem;
+	line-height: 1.4;
 	transform: translate(-999px, -999px);
 	transition: opacity 0.08s linear;
-	box-shadow: 0 8px 18px rgba(0, 0, 0, 0.24);
-	max-width: 220px;
+	max-width: 240px;
 }
 
 :deep(.tip-title) {
@@ -1212,11 +998,11 @@ watch(showDataLayer, () => {
 // ─── My year ─────────────────────────────────────────────────────────────────
 
 .year-card {
-	background: rgba($surface, 0.92);
-	border: 1px solid rgba($primary, 0.2);
-	border-radius: 10px;
-	padding: 0.9rem 1rem 0.75rem;
-	margin-bottom: 1rem;
+	background: $surface;
+	border: 1px solid $border;
+	border-radius: $radius-md;
+	padding: 1rem 1.15rem 0.85rem;
+	margin-bottom: 1.25rem;
 }
 
 .year-head {
@@ -1227,16 +1013,15 @@ watch(showDataLayer, () => {
 
 	h3 {
 		margin: 0;
-		font-size: 1rem;
-		color: $primary;
+		font-size: 0.98rem;
+		color: $text-primary;
 	}
 }
 
 .year-sub {
-	margin: 0.2rem 0 0.4rem;
-	font-size: 0.8rem;
+	margin: 0.2rem 0 0.5rem;
+	font-size: 0.82rem;
 	color: $text-secondary;
-	max-width: 60ch;
 }
 
 .all-year {
@@ -1245,6 +1030,7 @@ watch(showDataLayer, () => {
 	border-radius: 999px;
 	border: 1px solid $border;
 	background: $surface;
+	color: $text-primary;
 	font-size: 0.8rem;
 	cursor: pointer;
 
@@ -1335,12 +1121,14 @@ watch(showDataLayer, () => {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 0.3rem 1rem;
-	margin-top: 0.4rem;
+	margin-top: 0.45rem;
 
 	li {
 		display: inline-flex;
 		align-items: center;
 		gap: 0.35rem;
+		margin: 0;
+		padding: 0;
 	}
 }
 
@@ -1358,37 +1146,32 @@ watch(showDataLayer, () => {
 
 .dot-swatch {
 	display: inline-block;
-	width: 10px;
-	height: 10px;
+	width: 9px;
+	height: 9px;
 	border-radius: 50%;
 	background: $text-secondary;
-
-	&.few {
-		width: 6px;
-		height: 6px;
-		background: none;
-		border: 1px solid $text-secondary;
-	}
 }
 
 .map-heading {
-	padding: 0.5rem 0.75rem;
-	font-size: 0.85rem;
-	color: $text-primary;
-	border-bottom: 1px solid rgba($primary, 0.16);
-	background: rgba($surface, 0.92);
+	padding: 0.55rem 0.85rem;
+	font-size: 0.84rem;
+	color: $text-secondary;
+	border-bottom: 1px solid $border;
+	background: $surface;
+
+	strong {
+		color: $text-primary;
+	}
 }
 
 // ─── Reason and month facts ──────────────────────────────────────────────────
 
 .reason {
-	padding: 0.6rem 0.7rem;
-	border-radius: 8px;
-	background: rgba($primary, 0.06);
-	border: 1px solid rgba($primary, 0.16);
+	padding-bottom: 0.75rem;
+	border-bottom: 1px solid $border;
 
 	details {
-		font-size: 0.72rem;
+		font-size: 0.74rem;
 		color: $text-secondary;
 
 		ul {
@@ -1398,82 +1181,71 @@ watch(showDataLayer, () => {
 	}
 }
 
-.reason-kicker {
-	font-size: 0.7rem;
-	color: $text-secondary;
-}
-
 .reason-title {
-	font-size: 0.98rem;
+	font-size: 0.92rem;
 	font-weight: 700;
 	color: $primary;
-	margin: 0.1rem 0 0.2rem;
+	margin: 0 0 0.2rem;
 }
 
 .reason-text {
-	margin: 0 0 0.3rem;
+	margin: 0 0 0.35rem;
 	font-size: 0.82rem;
-	line-height: 1.45;
-}
-
-.reason-missing {
-	margin: 0;
-	font-size: 0.74rem;
-	font-style: italic;
+	line-height: 1.5;
 	color: $text-secondary;
 }
 
 .month-facts {
 	display: flex;
 	flex-direction: column;
-	gap: 0.35rem;
 }
 
 .facts-title {
-	font-size: 0.8rem;
-	font-weight: 700;
-	text-transform: capitalize;
-	color: $text-primary;
-}
-
-.activity-list li {
-	display: flex;
-	align-items: center;
-	gap: 0.4rem;
-	padding: 0.1rem 0.4rem;
-
-	.activity-name {
-		flex: 1;
-	}
-
-	strong {
-		color: $text-primary;
-	}
-}
-
-.activity-n {
-	margin: 0;
-	font-size: 0.72rem;
+	font-size: 0.76rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
 	color: $text-secondary;
+	margin-bottom: 0.2rem;
+}
+
+.activity-list {
+	margin-top: 0.4rem;
+
+	li {
+		display: flex;
+		align-items: center;
+		gap: 0.45rem;
+		padding: 0.18rem 0;
+		margin: 0;
+
+		.activity-name {
+			flex: 1;
+		}
+
+		strong {
+			color: $text-primary;
+			font-variant-numeric: tabular-nums;
+		}
+	}
 }
 
 // ─── Species panel ───────────────────────────────────────────────────────────
 
 .species-panel {
-	background: rgba($surface, 0.92);
-	border: 1px solid rgba($primary, 0.2);
-	border-radius: 10px;
-	padding: 0.9rem;
+	background: $surface;
+	border: 1px solid $border;
+	border-radius: $radius-md;
+	padding: 1.05rem 1.15rem;
 	display: flex;
 	flex-direction: column;
-	gap: 0.65rem;
-	min-height: 380px;
+	gap: 0.75rem;
 }
 
 .panel-content {
 	display: flex;
 	flex-direction: column;
-	gap: 0.6rem;
+	gap: 0.75rem;
 	flex: 1;
 }
 
@@ -1481,12 +1253,12 @@ watch(showDataLayer, () => {
 	display: flex;
 	flex-direction: column;
 	gap: 0.1rem;
-	border-bottom: 1px solid rgba($border, 0.9);
-	padding-bottom: 0.5rem;
+	border-bottom: 1px solid $border;
+	padding-bottom: 0.55rem;
 
 	strong {
 		font-size: 1rem;
-		color: $primary;
+		color: $text-primary;
 	}
 
 	em {
@@ -1498,15 +1270,16 @@ watch(showDataLayer, () => {
 .metric-row {
 	display: flex;
 	justify-content: space-between;
-	align-items: center;
-	font-size: 0.82rem;
-	padding: 0.3rem 0.4rem;
-	background: rgba($background-darker, 0.7);
-	border-radius: 6px;
-	border: 1px solid rgba($border, 0.8);
+	align-items: baseline;
+	gap: 0.75rem;
+	font-size: 0.84rem;
+	padding: 0.38rem 0;
+	border-bottom: 1px solid rgba($border, 0.7);
+	color: $text-secondary;
 
 	strong {
-		color: $primary;
+		color: $text-primary;
+		font-variant-numeric: tabular-nums;
 	}
 }
 
@@ -1517,7 +1290,7 @@ watch(showDataLayer, () => {
 }
 
 .chart-label {
-	font-size: 0.78rem;
+	font-size: 0.76rem;
 	font-weight: 600;
 	color: $text-secondary;
 }
@@ -1528,11 +1301,12 @@ watch(showDataLayer, () => {
 }
 
 .caveat {
-	margin-top: auto;
-	font-size: 0.74rem;
+	margin-top: 0.2rem;
+	font-size: 0.76rem;
+	line-height: 1.5;
 	color: $text-secondary;
-	padding-top: 0.5rem;
-	border-top: 1px dashed rgba($border, 0.9);
+	padding-top: 0.6rem;
+	border-top: 1px solid $border;
 }
 
 @media (max-width: 1024px) {
@@ -1542,15 +1316,9 @@ watch(showDataLayer, () => {
 	.map-container {
 		min-height: 320px;
 	}
-	.species-panel {
-		min-height: auto;
-	}
 }
 
 @media (max-width: 680px) {
-	.d3-explorer {
-		padding: 0.9rem;
-	}
 	.control select {
 		min-width: 0;
 		width: 100%;

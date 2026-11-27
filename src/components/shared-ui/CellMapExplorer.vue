@@ -1,6 +1,6 @@
 <template>
 	<div class="monicet-explorer">
-		<div class="toolbar">
+		<div v-if="hasControls" class="toolbar">
 			<ModeSwitch
 				v-if="modeOptions.length > 1"
 				v-model="mode"
@@ -40,13 +40,6 @@
 					<span>Show only reliable cells</span>
 				</label>
 			</div>
-
-			<BasemapControls
-				v-model:basemap-id="basemapId"
-				v-model:show-data-layer="showDataLayer"
-				v-model:data-layer-opacity="dataLayerOpacity"
-				v-model:show-observation-grid="showObservationGrid"
-			/>
 		</div>
 
 		<div v-if="loading" class="status">Preparing MONICET map...</div>
@@ -55,8 +48,7 @@
 		<div v-else class="layout">
 			<div class="map-shell">
 				<div ref="mapContainer" class="map-container"></div>
-				<MapAttribution :basemap-id="basemapId" />
-				<div v-show="showDataLayer" class="legend-shell">
+				<div class="legend-shell">
 					<div class="legend-title">{{ copy.legendTitle }}</div>
 					<div ref="legendContainer" class="legend-container"></div>
 					<MapMissingKey :items="missingKeyItems" />
@@ -81,7 +73,7 @@
 					<h4>Strongest declines</h4>
 					<ul class="insight-list">
 						<li v-for="cell in topDeclines" :key="cell.id">
-							<div>{{ cell.label }}</div>
+							<span>{{ cell.label }}</span>
 							<strong>{{ cell.change }}</strong>
 						</li>
 					</ul>
@@ -102,18 +94,18 @@
 						}}</strong>
 					</div>
 
-					<h4>Most encounters (not per cruise)</h4>
+					<h4>Most encounters (raw count)</h4>
 					<ul class="insight-list">
 						<li v-for="hotspot in hotspots" :key="hotspot.id">
-							<div>{{ hotspot.label }}</div>
-							<strong>{{ hotspot.count }} encounters</strong>
+							<span>{{ hotspot.label }}</span>
+							<strong>{{ hotspot.count }}</strong>
 						</li>
 					</ul>
 				</div>
 
 				<div v-else-if="mode === 'boats'" class="insight-block">
 					<div class="metric-row">
-						<span>Cruises in the archive</span>
+						<span>Cruises in archive</span>
 						<strong>{{
 							mapData?.meta.totalCruiseEvents.toLocaleString()
 						}}</strong>
@@ -125,7 +117,7 @@
 						}}</strong>
 					</div>
 					<div class="metric-row">
-						<span>Cruises with no position at sea</span>
+						<span>Cruises without sea position</span>
 						<strong>{{
 							mapData?.meta.cruisesWithoutPositionsAtSea ?? "n/a"
 						}}</strong>
@@ -134,7 +126,7 @@
 					<h4>Most visited</h4>
 					<ul class="insight-list">
 						<li v-for="cell in busiestCruiseCells" :key="cell.id">
-							<div>{{ cell.label }}</div>
+							<span>{{ cell.label }}</span>
 							<strong>{{ cell.cruises }}</strong>
 						</li>
 					</ul>
@@ -146,20 +138,20 @@
 						<strong>{{ bestMonthLabel }}</strong>
 					</div>
 					<div class="metric-row">
-						<span>Rate in selected month</span>
+						<span>Selected month</span>
 						<strong>{{
 							formatRate(selectedMonthSummary?.rate ?? null)
 						}}</strong>
 					</div>
 
-					<h4>What to expect in {{ selectedMonthSummary?.label }}</h4>
+					<h4>Top species in {{ selectedMonthSummary?.label }}</h4>
 					<ul class="insight-list">
 						<li
 							v-for="entry in selectedMonthSummary?.topSpecies ??
 							[]"
 							:key="entry.speciesId"
 						>
-							<div>{{ entry.commonName }}</div>
+							<span>{{ entry.commonName }}</span>
 							<strong>{{ toPercent(entry.share) }}</strong>
 						</li>
 					</ul>
@@ -172,12 +164,9 @@
 </template>
 
 <script setup lang="ts">
-// Grid-cell map with switchable insight modes, basemaps and a toggleable
-// data layer. Formerly D1, "Honest Instability". Each page picks its modes:
-// - The External: species, seasonality, boats ("where do boats go?")
-// - Filling the Gaps: decline (encounter-rate change, reliability as
-//   opacity), the dataset to interpolate
-// Fork it into the direction's folder once a page needs more than modes.
+// Grid-cell map with switchable insight modes on a clean wireframe coastline.
+// - The External: species, seasonality, boats
+// - Story & Filling the Gaps: decline (the original naive change map)
 import * as d3 from "d3";
 import {
 	computed,
@@ -189,8 +178,6 @@ import {
 	watch,
 } from "vue";
 
-import BasemapControls from "@/components/shared-ui/BasemapControls.vue";
-import MapAttribution from "@/components/shared-ui/MapAttribution.vue";
 import MapMissingKey, {
 	type MissingKeyItem,
 } from "@/components/shared-ui/MapMissingKey.vue";
@@ -226,13 +213,7 @@ import {
 	toPercent,
 } from "@/lib/format";
 import { renderGradientLegend } from "@/lib/legend";
-import {
-	addNoValuePattern,
-	addSoftEdgeFilter,
-	BASEMAPS,
-	drawBaseMap,
-	type BasemapId,
-} from "@/lib/map";
+import { addNoValuePattern, drawBaseMap, WIREFRAME_THEME } from "@/lib/map";
 import { hideTooltip, showTooltip } from "@/lib/tooltip";
 import type {
 	MonicetCruiseCell,
@@ -251,24 +232,11 @@ const props = defineProps<{
 
 const mode = ref<MonicetInsightMode>(props.modes[0]);
 
-// SVG ids (blur filter, legend gradient) are document-wide; prefix them per
-// instance so two explorers on one page don't use each other's defs.
+// SVG ids (hatch pattern, legend gradient) are document-wide; prefix per instance.
 const svgIdPrefix = `cme${useId()}`;
 const selectedSpeciesId = ref("");
 const selectedMonth = ref(6);
 const reliableOnly = ref(true);
-
-// Tiles under the D3 cells, switchable, with the cells as a toggleable
-// layer. This map does not zoom (docs/basemaps.md).
-const basemapId = ref<BasemapId>("basic");
-const showDataLayer = ref(true);
-// Whole-layer opacity, so the basemap shows through. Per-cell opacity still
-// encodes reliability on top of this.
-// 0.85, not lower: at 0.65 the ramp's light end blended into the basemap.
-const dataLayerOpacity = ref(0.85);
-// The grid the build sorts observations into (drawObservationGrid in
-// src/lib/map.ts). Off by default: it is an explanation, not data.
-const showObservationGrid = ref(false);
 
 const mapContainer = ref<HTMLElement | null>(null);
 const legendContainer = ref<HTMLElement | null>(null);
@@ -285,6 +253,14 @@ const modeOptions = props.modes.map((value) => ({
 	label: MODE_LABELS[value],
 }));
 
+const hasControls = computed(
+	() =>
+		modeOptions.length > 1 ||
+		mode.value === "species" ||
+		mode.value === "seasonality" ||
+		mode.value === "decline"
+);
+
 const monthOptions = MONTH_NAMES.map((label, i) => ({ value: i + 1, label }));
 
 const MODE_COPY: Record<
@@ -292,35 +268,33 @@ const MODE_COPY: Record<
 	{ panelTitle: string; panelIntro: string; legendTitle: string }
 > = {
 	decline: {
-		panelTitle: "Decline Insight",
+		panelTitle: "Early vs. late change",
 		panelIntro:
-			"Cells are colored by change in encounter rate between early and late years. Negative values suggest fewer sightings per cruise in recent years.",
+			"Encounter-rate change between 2009–2014 and 2015–2020, divided by all cruises in the archive.",
 		legendTitle: "Encounter-rate change (%)",
 	},
 	species: {
-		panelTitle: "Species Distribution Insight",
+		panelTitle: "Species by location",
 		panelIntro:
-			"Select a species to see where it is met most often. Cells are colored by encounters per cruise that reached the cell, not by raw counts: raw counts mostly show where boats go, and the harbour cells off Ponta Delgada see thousands of cruises.",
+			"Encounters per cruise that reached each cell, so busy harbours do not dominate by traffic alone.",
 		legendTitle: "Encounters per cruise, selected species",
 	},
 	seasonality: {
-		panelTitle: "Seasonality Insight",
+		panelTitle: "Best time of year",
 		panelIntro:
-			"Select a month to see where animals are met most often then, and which species dominate. Cells are colored by encounters per cruise that reached the cell in that month, so busy summer harbours don't win by traffic alone.",
+			"Encounters per cruise in the selected month, plus which species make up most sightings then.",
 		legendTitle: "Encounters per cruise in selected month",
 	},
 	boats: {
-		panelTitle: "Where Do Boats Go?",
+		panelTitle: "Where boats stopped",
 		panelIntro:
-			"Cells are colored by how many cruises logged a position there. A cruise counts once per cell, however many sightings it had in it. The scale is logarithmic: the busiest cell has thousands of cruises, most have a few dozen.",
+			"Cruises that logged at least one sighting in each cell (log scale).",
 		legendTitle: "Cruises that reached the cell (log scale)",
 	},
 };
 
 const copy = computed(() => MODE_COPY[mode.value]);
 
-// Legend entries for cells drawn off the colour scale (MapMissingKey).
-// Boats mode draws only cells some cruise reached, so it has none.
 const MISSING_KEY: Record<MonicetInsightMode, MissingKeyItem[]> = {
 	decline: [
 		{ kind: "no-value", label: "no value: too few years to compare" },
@@ -343,16 +317,13 @@ const MISSING_KEY: Record<MonicetInsightMode, MissingKeyItem[]> = {
 };
 const missingKeyItems = computed(() => MISSING_KEY[mode.value]);
 
-// Footer caveat per mode. meta.caveats[0] is about the decline metric, so
-// it belongs to decline mode only. Species and seasonality divide by the
-// cruise positions, so they inherit the boats caveat in a shorter form.
 const caveat = computed(() => {
 	if (mode.value === "decline") return mapData.value?.meta.caveats[0];
 	if (mode.value === "species" || mode.value === "seasonality") {
-		return "A cruise counts for a cell only if it logged a sighting there, so the rate is per cruise that stopped for animals in the cell, not per cruise that searched it.";
+		return "Rates divide by cruises that logged a sighting in the cell, not cruises that searched it.";
 	}
 	if (mode.value === "boats") {
-		return "Positions are only logged at sightings. A boat that searched an area and found nothing leaves no trace there, so this is where boats stopped for animals, not every place they looked.";
+		return "Positions are only logged at sightings — empty cells may have been searched without finding animals.";
 	}
 	return null;
 });
@@ -365,11 +336,6 @@ const cruiseCellLookup = computed(() =>
 	indexCruiseCells(mapData.value?.cruiseCells ?? [])
 );
 
-/**
- * The count and the cruises behind a cell's rate in species or seasonality
- * mode. Cruises come from cruiseCells (whole archive, or the selected
- * month); a grid cell no cruise reached has 0.
- */
 function rateInputs(cell: MonicetGridCell) {
 	const cruiseCell = cruiseCellLookup.value.get(cell.id);
 	if (mode.value === "species") {
@@ -464,18 +430,16 @@ function onCellHover(
 				: "";
 		valueLabel =
 			value === null
-				? `${prefix}no rate, only ${cruises} cruises (${encounters} encounters)`
+				? `${prefix}no rate (${cruises} cruises, ${encounters} encounters)`
 				: `${prefix}${formatRate(value)} (${encounters.toLocaleString()} in ${cruises.toLocaleString()} cruises)`;
 	}
 
-	// topSpecies counts all months; in seasonality mode it sits right under
-	// the selected month's count, so say so.
 	const topSpeciesLabel =
 		mode.value === "seasonality" ? "Top species (all year)" : "Top species";
 	const topSpecies = cell.topSpecies
 		.map((entry) => `${entry.commonName} (${entry.count})`)
 		.slice(0, 2)
-		.join(" | ");
+		.join(" · ");
 
 	showTooltip(
 		tooltipRef.value,
@@ -484,7 +448,6 @@ function onCellHover(
 		`
 		<div class="tip-title">${formatCellLabel(cell)}</div>
 		<div class="tip-line">${valueLabel}</div>
-		<div class="tip-line">Total encounters: ${cell.encounterCount.toLocaleString()}</div>
 		<div class="tip-line">${topSpeciesLabel}: ${topSpecies || "n/a"}</div>
 	`
 	);
@@ -495,15 +458,15 @@ function onCruiseCellHover(event: MouseEvent, cell: MonicetCruiseCell) {
 	const islands = Object.entries(cell.cruisesByIsland)
 		.filter(([, n]) => n > 0)
 		.map(([island, n]) => `${island}: ${n.toLocaleString()}`)
-		.join(" | ");
+		.join(" · ");
 	showTooltip(
 		tooltipRef.value,
 		mapContainer.value,
 		event,
 		`
 		<div class="tip-title">${formatCellLabel(cell)}</div>
-		<div class="tip-line">${cell.cruises.toLocaleString()} cruises (${toPercent(cell.share)} of all)</div>
-		<div class="tip-line">From: ${islands}</div>
+		<div class="tip-line">${cell.cruises.toLocaleString()} cruises (${toPercent(cell.share)})</div>
+		<div class="tip-line">${islands}</div>
 	`
 	);
 }
@@ -511,17 +474,10 @@ function onCruiseCellHover(event: MouseEvent, cell: MonicetCruiseCell) {
 // ─── Color encodings per mode ────────────────────────────────────────────────
 
 interface Encoding {
-	/** null = no value: the cell is drawn hatched, outside the blur. */
 	value: (cell: MonicetGridCell) => number | null;
 	color: (value: number | null) => string;
 }
 
-/**
- * Sequential teal encoding for encounters per cruise (species / month).
- * Linear from 0: as rates the values are far less skewed than raw counts
- * (for the top species the median cell is about a fifth of the maximum),
- * so a log scale would only blur the differences readers care about.
- */
 function rateEncoding(
 	visibleCells: MonicetGridCell[],
 	value: (cell: MonicetGridCell) => number | null
@@ -549,9 +505,6 @@ function rateEncoding(
 
 	return {
 		value,
-		// null (too few cruises) is hatched. Zero gets its own neutral grey,
-		// not the ramp's light end, so "none recorded" never reads as "a
-		// few" (CHART_NONE_RECORDED).
 		color: (v) => {
 			if (v === null) return base?.noValueFill ?? "none";
 			return v <= 0 ? CHART_NONE_RECORDED : scale(v);
@@ -559,16 +512,12 @@ function rateEncoding(
 	};
 }
 
-/** Diverging red–gray–teal encoding for declinePct. */
 function declineEncoding(visibleCells: MonicetGridCell[]): Encoding {
 	const values = visibleCells
 		.map((cell) => cell.declinePct)
 		.filter((v): v is number => v !== null && Number.isFinite(v));
 	const maxAbs = Math.max(5, d3.max(values.map(Math.abs)) ?? 5);
 
-	// RdYlGn fails CVD separation and puts a hue (yellow) at the midpoint;
-	// this is brand red vs. a re-stepped brand teal through neutral gray.
-	// See src/lib/chartTokens.ts for the validated ΔE numbers.
 	const scale = d3
 		.scaleDiverging(
 			d3.piecewise(d3.interpolateRgb, [
@@ -594,8 +543,6 @@ function declineEncoding(visibleCells: MonicetGridCell[]): Encoding {
 
 	return {
 		value: (cell) => cell.declinePct,
-		// null (no early or late years to compare) is hatched, not the
-		// midpoint gray: gray means "no change", which is a value.
 		color: (v) => (v === null ? (base?.noValueFill ?? "none") : scale(v)),
 	};
 }
@@ -605,28 +552,6 @@ function declineEncoding(visibleCells: MonicetGridCell[]): Encoding {
 let dataLayer: d3.Selection<SVGGElement, unknown, null, undefined> | null =
 	null;
 
-let observationGrid: d3.Selection<
-	SVGGElement,
-	unknown,
-	null,
-	undefined
-> | null = null;
-
-function applyObservationGridVisibility() {
-	observationGrid?.attr("display", showObservationGrid.value ? null : "none");
-}
-
-function applyDataLayerVisibility() {
-	dataLayer
-		?.attr("display", showDataLayer.value ? null : "none")
-		.attr("opacity", dataLayerOpacity.value);
-}
-
-/**
- * "Where do boats go?": cruises per cell on a log scale. Linear would show
- * the three harbour-side cells off São Miguel (2,000–2,900 cruises each)
- * and leave every other cell near-white; log keeps the 1–50 range readable.
- */
 function drawCruiseCells(
 	layer: d3.Selection<SVGGElement, unknown, null, undefined>,
 	cellPath: (cell: Pick<MonicetCruiseCell, "polygon">) => string
@@ -656,59 +581,39 @@ function drawCruiseCells(
 		.join("path")
 		.attr("d", cellPath)
 		.attr("fill", (cell) => scale(cell.cruises))
+		.attr("fill-opacity", 0.9)
+		.attr("stroke", "rgba(26,26,26,0.2)")
+		.attr("stroke-width", 0.5)
 		.on("mousemove", (event: MouseEvent, cell) =>
 			onCruiseCellHover(event, cell)
 		)
 		.on("mouseleave", () => hideTooltip(tooltipRef.value));
 }
 
-// Two levels of redraw. renderMap() rebuilds the basemap (tiles, lines,
-// labels) and is needed only when the basemap or the size changes.
-// renderDataLayer() redraws cells and legend only, so mode, species, month
-// and reliability changes don't re-create every tile image.
 let base: {
 	cellPath: ReturnType<typeof drawBaseMap>["cellPath"];
 	insertDataLayer: ReturnType<typeof drawBaseMap>["insertDataLayer"];
-	softFilterUrl: string;
 	noValueFill: string;
 } | null = null;
 
 function renderMap() {
 	if (!mapContainer.value || !mapData.value || !basemap.value) return;
 
-	const { theme, tiles } = BASEMAPS[basemapId.value];
-	const {
-		svg,
-		cellPath,
-		cellWidthPx,
-		raiseLines,
-		insertDataLayer,
-		drawIslandLabels,
-		drawObservationGrid,
-	} = drawBaseMap(mapContainer.value, basemap.value, {
-		theme,
-		tiles,
-		lines: mapLines.value,
-		fallbackWidth: 960,
-		minHeight: 420,
-		aspect: 0.62,
-	});
+	const { svg, cellPath, raiseLines, insertDataLayer, drawIslandLabels } =
+		drawBaseMap(mapContainer.value, basemap.value, {
+			theme: WIREFRAME_THEME,
+			lines: mapLines.value,
+			fallbackWidth: 960,
+			minHeight: 380,
+			aspect: 0.6,
+		});
 
-	// Wireframe: coastlines on top of the cells, so the map stays readable
-	// through the data. The data layer is inserted below them.
 	raiseLines();
 	drawIslandLabels();
-	observationGrid = drawObservationGrid(mapData.value);
-	applyObservationGridVisibility();
 
 	base = {
 		cellPath,
 		insertDataLayer,
-		softFilterUrl: addSoftEdgeFilter(
-			svg,
-			cellWidthPx,
-			`${svgIdPrefix}-soft-cells`
-		),
 		noValueFill: addNoValuePattern(
 			svg,
 			CHART_NO_VALUE_HATCH,
@@ -722,24 +627,16 @@ function renderDataLayer() {
 	if (!base || !mapData.value) return;
 	hideTooltip(tooltipRef.value);
 
-	// dataLayer carries visibility and layer opacity. Inside it, cells with
-	// a value are blurred; cells with no value (hatched) and unreliable
-	// cells (dashed outline) sit on top unblurred, so neither is washed out
-	// by neighbours' colour.
 	dataLayer?.remove();
 	dataLayer = base.insertDataLayer();
-	applyDataLayerVisibility();
-	const softCells = dataLayer.append("g").attr("filter", base.softFilterUrl);
-	const noValueCells = dataLayer.append("g");
+	const solidCells = dataLayer.append("g");
 	const faintCells = dataLayer.append("g");
 
 	if (mode.value === "boats") {
-		drawCruiseCells(softCells, base.cellPath);
+		drawCruiseCells(solidCells, base.cellPath);
 		return;
 	}
 
-	// With "reliable only" on, unreliable cells are hidden entirely. With it
-	// off, they are drawn faint so the uncertainty stays visible.
 	const showUncertainty = mode.value === "decline" && !reliableOnly.value;
 	const visibleCells = mapData.value.gridCells.filter(
 		(cell) =>
@@ -756,27 +653,25 @@ function renderDataLayer() {
 	const cellPath = base.cellPath;
 	const drawCells = (
 		group: d3.Selection<SVGGElement, unknown, null, undefined>,
-		cells: MonicetGridCell[]
+		subset: MonicetGridCell[]
 	) =>
 		group
 			.selectAll("path")
-			.data(cells)
+			.data(subset)
 			.join("path")
 			.attr("d", cellPath)
 			.attr("fill", (cell) => encoding.color(encoding.value(cell)))
+			.attr("fill-opacity", 0.9)
+			.attr("stroke", "rgba(26,26,26,0.2)")
+			.attr("stroke-width", 0.5)
 			.on("mousemove", (event: MouseEvent, cell) =>
 				onCellHover(event, cell, encoding.value(cell))
 			)
 			.on("mouseleave", () => hideTooltip(tooltipRef.value));
 
-	const hasValue = (cell: MonicetGridCell) => encoding.value(cell) !== null;
 	drawCells(
-		softCells,
-		visibleCells.filter((cell) => !isFaint(cell) && hasValue(cell))
-	);
-	drawCells(
-		noValueCells,
-		visibleCells.filter((cell) => !isFaint(cell) && !hasValue(cell))
+		solidCells,
+		visibleCells.filter((cell) => !isFaint(cell))
 	);
 	drawCells(faintCells, visibleCells.filter(isFaint))
 		.attr("fill-opacity", 0.3)
@@ -787,16 +682,11 @@ function renderDataLayer() {
 
 // ─── Lifecycle ───────────────────────────────────────────────────────────────
 
-// The component can unmount while load() is still pending (e.g. a quick
-// click on "← MONICET"); onBeforeUnmount has then already run, so nothing
-// may be set up after an await once this is true.
 let unmounted = false;
 
 onMounted(async () => {
 	await load();
 	if (unmounted) return;
-	// Coastlines (4 KB): drawn by the wireframe and, on tiled basemaps, as
-	// the fallback under the tiles. Not awaited; redraw once they arrive.
 	void loadMapLines().then(() => {
 		if (!unmounted && !loading.value) renderMap();
 	});
@@ -818,50 +708,23 @@ onBeforeUnmount(() => {
 	window.removeEventListener("resize", renderMap);
 });
 
-watch(basemapId, () => {
-	if (!loading.value) renderMap();
-});
-
 watch([mode, selectedSpeciesId, selectedMonth, reliableOnly], () => {
 	if (!loading.value) renderDataLayer();
-});
-
-watch(dataLayerOpacity, applyDataLayerVisibility);
-
-// Toggling the data layer only hides it: no redraw, so tiles don't reload.
-watch(showObservationGrid, applyObservationGridVisibility);
-
-watch(showDataLayer, () => {
-	hideTooltip(tooltipRef.value);
-	applyDataLayerVisibility();
 });
 </script>
 
 <style scoped lang="scss">
 .monicet-explorer {
 	position: relative;
-	padding: 1.2rem;
-	border: 1px solid rgba($primary, 0.22);
-	background:
-		radial-gradient(
-			circle at 15% 10%,
-			rgba($secondary, 0.12),
-			transparent 36%
-		),
-		radial-gradient(
-			circle at 90% 0%,
-			rgba($primary, 0.18),
-			transparent 32%
-		),
-		linear-gradient(150deg, #f9f5ee, #f2f7f4 55%, #f8f3e8);
-	border-radius: 12px;
 }
 
 .toolbar {
 	display: flex;
-	flex-direction: column;
-	gap: 0.75rem;
-	margin-bottom: 1rem;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem 1rem;
+	margin-bottom: 0.85rem;
 }
 
 .controls-row {
@@ -879,25 +742,27 @@ watch(showDataLayer, () => {
 	label {
 		font-size: 0.84rem;
 		font-weight: 600;
-		color: $text-primary;
+		color: $text-secondary;
 	}
 
 	select {
-		padding: 0.35rem 0.5rem;
-		border-radius: 6px;
+		padding: 0.35rem 0.55rem;
+		border-radius: $radius-sm;
 		border: 1px solid $border;
 		font-size: 0.84rem;
-		min-width: 220px;
+		min-width: 210px;
 		background-color: $surface;
+		color: $text-primary;
 	}
 }
 
 .checkbox {
 	display: flex;
 	align-items: center;
-	gap: 0.4rem;
+	gap: 0.45rem;
 	font-size: 0.84rem;
-	color: $text-primary;
+	color: $text-secondary;
+	cursor: pointer;
 
 	input {
 		accent-color: $primary;
@@ -906,7 +771,7 @@ watch(showDataLayer, () => {
 
 .status {
 	padding: 2rem 0.5rem;
-	font-size: 0.95rem;
+	font-size: 0.92rem;
 	color: $text-secondary;
 
 	&.error {
@@ -916,33 +781,34 @@ watch(showDataLayer, () => {
 
 .layout {
 	display: grid;
-	grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
-	gap: 1rem;
+	grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr);
+	gap: 1.25rem;
+	align-items: start;
 }
 
 .map-shell {
 	position: relative;
-	border-radius: 10px;
+	border-radius: $radius-md;
 	overflow: hidden;
-	border: 1px solid rgba($primary, 0.2);
-	background: rgba($surface, 0.7);
+	border: 1px solid $border;
+	background: $surface;
 }
 
 .map-container {
-	min-height: 420px;
+	min-height: 380px;
+	line-height: 0;
 }
 
 .legend-shell {
-	padding: 0.5rem 0.75rem 0.65rem;
-	border-top: 1px solid rgba($primary, 0.16);
-	background: rgba($surface, 0.92);
+	padding: 0.6rem 0.85rem;
+	border-top: 1px solid $border;
+	background: $surface;
 }
 
 .legend-title {
 	font-size: 0.78rem;
-	font-weight: 700;
-	letter-spacing: 0.02em;
-	color: $text-primary;
+	font-weight: 600;
+	color: $text-secondary;
 	margin-bottom: 0.2rem;
 }
 
@@ -958,70 +824,72 @@ watch(showDataLayer, () => {
 	top: 0;
 	pointer-events: none;
 	opacity: 0;
-	padding: 0.55rem 0.65rem;
-	border-radius: 8px;
+	padding: 0.5rem 0.65rem;
+	border-radius: $radius-sm;
 	background: rgba(26, 26, 26, 0.92);
 	color: #fff;
-	font-size: 0.75rem;
-	line-height: 1.35;
+	font-size: 0.76rem;
+	line-height: 1.4;
 	transform: translate(-999px, -999px);
 	transition: opacity 0.08s linear;
-	box-shadow: 0 8px 18px rgba(0, 0, 0, 0.24);
 	max-width: 280px;
 }
 
 :deep(.tip-title) {
 	font-weight: 700;
-	margin-bottom: 0.25rem;
+	margin-bottom: 0.2rem;
 }
 
 .insight-panel {
-	background: rgba($surface, 0.92);
-	border: 1px solid rgba($primary, 0.2);
-	border-radius: 10px;
-	padding: 0.9rem;
+	background: $surface;
+	border: 1px solid $border;
+	border-radius: $radius-md;
+	padding: 1.05rem 1.15rem;
 	display: flex;
 	flex-direction: column;
-	gap: 0.7rem;
+	gap: 0.75rem;
 
 	h3 {
-		font-size: 1.03rem;
+		font-size: 0.98rem;
 		margin: 0;
-		color: $primary;
+		color: $text-primary;
 	}
 
 	p {
 		margin: 0;
-		font-size: 0.86rem;
-		line-height: 1.45;
-		color: $text-primary;
+		font-size: 0.84rem;
+		line-height: 1.5;
+		color: $text-secondary;
 	}
 
 	h4 {
-		font-size: 0.85rem;
-		margin: 0.25rem 0 0;
-		color: $text-primary;
+		font-size: 0.78rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		margin: 0.45rem 0 0.15rem;
+		color: $text-secondary;
 	}
 }
 
 .insight-block {
 	display: flex;
 	flex-direction: column;
-	gap: 0.45rem;
 }
 
 .metric-row {
 	display: flex;
 	justify-content: space-between;
-	align-items: center;
-	font-size: 0.82rem;
-	padding: 0.36rem 0.45rem;
-	background: rgba($background-darker, 0.82);
-	border-radius: 6px;
-	border: 1px solid rgba($border, 0.85);
+	align-items: baseline;
+	gap: 0.75rem;
+	font-size: 0.84rem;
+	padding: 0.42rem 0;
+	border-bottom: 1px solid $border;
+	color: $text-secondary;
 
 	strong {
-		color: $primary;
+		color: $text-primary;
+		font-variant-numeric: tabular-nums;
 	}
 }
 
@@ -1031,32 +899,38 @@ watch(showDataLayer, () => {
 	margin: 0;
 	display: flex;
 	flex-direction: column;
-	gap: 0.4rem;
 
 	li {
 		display: flex;
 		justify-content: space-between;
 		align-items: baseline;
 		gap: 0.5rem;
-		padding: 0.4rem 0.5rem;
-		border-radius: 6px;
-		background: rgba($background-darker, 0.58);
-		font-size: 0.8rem;
+		padding: 0.36rem 0;
+		margin: 0;
+		border-bottom: 1px solid rgba($border, 0.7);
+		font-size: 0.82rem;
+		color: $text-primary;
+
+		&:last-child {
+			border-bottom: none;
+		}
 
 		strong {
-			color: $secondary;
-			font-size: 0.8rem;
+			color: $text-secondary;
+			font-weight: 600;
+			font-variant-numeric: tabular-nums;
 			white-space: nowrap;
 		}
 	}
 }
 
 .caveat {
-	margin-top: auto;
-	font-size: 0.74rem;
+	margin-top: 0.25rem;
+	font-size: 0.76rem;
+	line-height: 1.5;
 	color: $text-secondary;
-	padding-top: 0.55rem;
-	border-top: 1px dashed rgba($border, 0.9);
+	padding-top: 0.65rem;
+	border-top: 1px solid $border;
 }
 
 @media (max-width: 1024px) {
@@ -1065,15 +939,11 @@ watch(showDataLayer, () => {
 	}
 
 	.map-container {
-		min-height: 360px;
+		min-height: 340px;
 	}
 }
 
 @media (max-width: 680px) {
-	.monicet-explorer {
-		padding: 0.9rem;
-	}
-
 	.control {
 		width: 100%;
 
@@ -1084,7 +954,7 @@ watch(showDataLayer, () => {
 	}
 
 	.map-container {
-		min-height: 300px;
+		min-height: 290px;
 	}
 }
 </style>

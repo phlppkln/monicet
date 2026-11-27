@@ -1,23 +1,14 @@
 <template>
 	<div class="d4-journal" :class="{ 'panel-open': !!selectedCell }">
-		<BasemapControls
-			class="toolbar"
-			v-model:basemap-id="basemapId"
-			v-model:show-data-layer="showDataLayer"
-			v-model:data-layer-opacity="dataLayerOpacity"
-			v-model:show-observation-grid="showObservationGrid"
-		/>
-
 		<div v-if="loading" class="status">Preparing field journal…</div>
 		<div v-else-if="error" class="status error">{{ error }}</div>
 
 		<div v-else class="layout">
 			<div class="map-shell">
 				<div ref="mapContainer" class="map-container"></div>
-				<MapAttribution :basemap-id="basemapId" />
 
-				<div v-show="showDataLayer" class="effort-legend">
-					<span class="effort-label">Survey coverage</span>
+				<div class="effort-legend">
+					<span class="effort-label">Active years</span>
 					<div class="swatches">
 						<span
 							v-for="stop in effortStops"
@@ -31,6 +22,9 @@
 							<span class="stop-text">{{ stop.label }}</span>
 						</span>
 					</div>
+					<span v-if="!selectedCell" class="select-hint">
+						Click any cell to open its record
+					</span>
 				</div>
 
 				<div ref="tooltipRef" class="tooltip"></div>
@@ -56,28 +50,18 @@
 				</div>
 
 				<div class="log-section">
-					<div class="log-line">Surveyed: {{ surveyRange }}</div>
 					<div class="log-line">
-						Active in {{ selectedCell.yearsWithEncounters }} of
-						{{ totalYears }} years.
-					</div>
-					<div class="log-line">
-						Total occurrence records:
-						{{ selectedCell.encounterCount.toLocaleString() }}
-					</div>
-					<div class="log-line confidence-line">
-						Confidence score:
-						{{ (selectedCell.confidenceScore * 100).toFixed(0) }}%
-						<span
-							class="reliable-badge"
-							:class="{ reliable: selectedCell.isReliable }"
+						<span>Years with sightings</span>
+						<strong
+							>{{ selectedCell.yearsWithEncounters }} /
+							{{ totalYears }} ({{ surveyRange }})</strong
 						>
-							{{
-								selectedCell.isReliable
-									? "reliable"
-									: "low data"
-							}}
-						</span>
+					</div>
+					<div class="log-line">
+						<span>Encounters</span>
+						<strong>{{
+							selectedCell.encounterCount.toLocaleString()
+						}}</strong>
 					</div>
 				</div>
 
@@ -131,21 +115,16 @@
 				</div>
 
 				<div class="log-caveat">
-					Counts are total occurrence records, not normalized by
-					cruise effort.
+					Raw encounter counts, not normalized by cruise effort.
 				</div>
 			</aside>
-
-			<div v-else class="prompt-panel">
-				<p>Select a cell on the map to open its field record.</p>
-			</div>
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-// The Observer (formerly D4, "The Field Journal"). The map shows how many years each
-// cell was active; clicking a cell opens its logbook record.
+// The Observer: active years per cell on a clean wireframe coastline.
+// Clicking a cell opens its field record.
 import * as d3 from "d3";
 import {
 	computed,
@@ -153,22 +132,14 @@ import {
 	onBeforeUnmount,
 	onMounted,
 	ref,
-	useId,
 	watch,
 } from "vue";
 
-import BasemapControls from "@/components/shared-ui/BasemapControls.vue";
-import MapAttribution from "@/components/shared-ui/MapAttribution.vue";
 import { activeYearRange, cellSpeciesList, yearRecord } from "@/data/selectors";
 import { useMonicetData } from "@/data/useMonicetData";
-import { CHART_PRIMARY } from "@/lib/chartTokens";
+import { CHART_SEQUENTIAL_TEAL, CHART_TEXT_PRIMARY } from "@/lib/chartTokens";
 import { formatCellLabel } from "@/lib/format";
-import {
-	addSoftEdgeFilter,
-	BASEMAPS,
-	drawBaseMap,
-	type BasemapId,
-} from "@/lib/map";
+import { drawBaseMap, WIREFRAME_THEME } from "@/lib/map";
 import { hideTooltip, showTooltip } from "@/lib/tooltip";
 import type { MonicetGridCell } from "@/types/monicet";
 
@@ -179,41 +150,18 @@ const { mapData, basemap, mapLines, error, load, loadMapLines } =
 	useMonicetData();
 const loading = ref(true);
 
-// Same basemaps as The External (docs/basemaps.md), with the cells as a
-// toggleable layer whose opacity lets the basemap show through.
-const basemapId = ref<BasemapId>("basic");
-const showDataLayer = ref(true);
-// 0.85, not lower: at 0.65 the ramp's light end blended into the basemap.
-const dataLayerOpacity = ref(0.85);
-// The grid the build sorts observations into (drawObservationGrid in
-// src/lib/map.ts). Off by default: it is an explanation, not data.
-const showObservationGrid = ref(false);
-
-// SVG ids (blur filter) are document-wide; prefix them per instance.
-const svgIdPrefix = `fj${useId()}`;
-
 const mapContainer = ref<HTMLElement | null>(null);
 const tooltipRef = ref<HTMLElement | null>(null);
 const selectedCell = ref<MonicetGridCell | null>(null);
 const showAllSpecies = ref(false);
 
-// Blues scale shared between map render and legend swatches. Only the
-// upper 65% of interpolateBlues: its bottom is near-white, and 9 cells
-// with a single active year came out almost invisible on the light
-// basemap. The domain starts at 1, the fewest years a cell can have.
-const BLUES_FLOOR = 0.35;
-const blueScale = d3
-	.scaleSequential((t) =>
-		d3.interpolateBlues(BLUES_FLOOR + (1 - BLUES_FLOOR) * t)
-	)
+const yearScale = d3
+	.scaleSequential(d3.interpolateRgb(...CHART_SEQUENTIAL_TEAL))
 	.domain([1, MAX_YEARS]);
 
-// Starts at 1: a cell exists only where something was seen (ISSUES.md
-// D-16), so no cell has 0 active years and a "0 yr" swatch would show a
-// state the map never draws.
 const effortStops = [1, 3, 6, 9, 12].map((y) => ({
 	years: y,
-	color: blueScale(y),
+	color: yearScale(y),
 	label: y === 1 ? "1 yr" : y === 12 ? "12 yr" : String(y),
 }));
 
@@ -262,84 +210,65 @@ function onCellHover(event: MouseEvent, cell: MonicetGridCell) {
 		event,
 		`
 		<div class="tip-title">${formatCellLabel(cell, { degrees: true })}</div>
-		<div class="tip-line">Active ${cell.yearsWithEncounters} / ${MAX_YEARS} years</div>
-		<div class="tip-line tip-hint">Click to open record</div>
+		<div class="tip-line">Active ${cell.yearsWithEncounters} / ${totalYears.value} years</div>
 	`
 	);
 }
 
 // ─── Render ──────────────────────────────────────────────────────────────────
 
-let dataLayer: d3.Selection<SVGGElement, unknown, null, undefined> | null =
-	null;
-
-let observationGrid: d3.Selection<
+let selectionOutline: d3.Selection<
 	SVGGElement,
 	unknown,
 	null,
 	undefined
 > | null = null;
+let currentCellPath:
+	((cell: Pick<MonicetGridCell, "polygon">) => string) | null = null;
 
-function applyObservationGridVisibility() {
-	observationGrid?.attr("display", showObservationGrid.value ? null : "none");
-}
-
-function applyDataLayerVisibility() {
-	dataLayer
-		?.attr("display", showDataLayer.value ? null : "none")
-		.attr("opacity", dataLayerOpacity.value);
+function updateSelectionOutline() {
+	if (!selectionOutline || !currentCellPath) return;
+	const cellPath = currentCellPath;
+	selectionOutline
+		.selectAll("path")
+		.data(selectedCell.value ? [selectedCell.value] : [])
+		.join("path")
+		.attr("d", cellPath)
+		.attr("fill", "none")
+		.attr("stroke", CHART_TEXT_PRIMARY)
+		.attr("stroke-width", 2);
 }
 
 function renderMap() {
 	if (!mapContainer.value || !mapData.value || !basemap.value) return;
 
 	hideTooltip(tooltipRef.value);
-	const { theme, tiles } = BASEMAPS[basemapId.value];
-	const {
-		svg,
-		cellPath,
-		cellWidthPx,
-		raiseLines,
-		insertDataLayer,
-		drawIslandLabels,
-		drawObservationGrid,
-		enableZoom,
-	} = drawBaseMap(mapContainer.value, basemap.value, {
-		theme,
-		tiles,
-		lines: mapLines.value,
-		fallbackWidth: 720,
-		minHeight: 380,
-		aspect: 0.68,
-	});
+	const { cellPath, raiseLines, insertDataLayer, drawIslandLabels } =
+		drawBaseMap(mapContainer.value, basemap.value, {
+			theme: WIREFRAME_THEME,
+			lines: mapLines.value,
+			fallbackWidth: 720,
+			minHeight: 380,
+			aspect: 0.62,
+		});
 
-	// Wireframe: coastlines and labels on top, cells inserted below them.
 	raiseLines();
 	drawIslandLabels();
-	observationGrid = drawObservationGrid(mapData.value);
-	applyObservationGridVisibility();
-	dataLayer = insertDataLayer();
-	applyDataLayerVisibility();
+	const dataLayer = insertDataLayer();
 
-	// Soft edges as in The External: cells are blurred and have no borders.
-	// The selected cell's outline sits on top, outside the blur, so it stays
-	// sharp. It ignores the pointer, so hover and click reach the cell below.
-	const softCells = dataLayer
-		.append("g")
-		.attr(
-			"filter",
-			addSoftEdgeFilter(svg, cellWidthPx, `${svgIdPrefix}-soft-cells`)
-		);
-	const selectionOutline = dataLayer
-		.append("g")
-		.attr("pointer-events", "none");
+	const cellsGroup = dataLayer.append("g");
+	selectionOutline = dataLayer.append("g").attr("pointer-events", "none");
+	currentCellPath = cellPath;
 
-	softCells
+	cellsGroup
 		.selectAll("path")
 		.data(mapData.value.gridCells)
 		.join("path")
 		.attr("d", cellPath)
-		.attr("fill", (cell) => blueScale(cell.yearsWithEncounters))
+		.attr("fill", (cell) => yearScale(cell.yearsWithEncounters))
+		.attr("fill-opacity", 0.9)
+		.attr("stroke", "rgba(26,26,26,0.2)")
+		.attr("stroke-width", 0.5)
 		.style("cursor", "pointer")
 		.on("mousemove", (event: MouseEvent, cell) => onCellHover(event, cell))
 		.on("mouseleave", () => hideTooltip(tooltipRef.value))
@@ -348,30 +277,16 @@ function renderMap() {
 			selectedCell.value = cell;
 		});
 
-	selectionOutline
-		.selectAll("path")
-		.data(selectedCell.value ? [selectedCell.value] : [])
-		.join("path")
-		.attr("d", cellPath)
-		.attr("fill", "none")
-		.attr("stroke", CHART_PRIMARY)
-		.attr("stroke-width", 1.8);
-
-	enableZoom();
+	updateSelectionOutline();
 }
 
 // ─── Lifecycle ───────────────────────────────────────────────────────────────
 
-// The component can unmount while load() is still pending (e.g. a quick
-// click on "← MONICET"); onBeforeUnmount has then already run, so nothing
-// may be set up after an await once this is true.
 let unmounted = false;
 
 onMounted(async () => {
 	await load();
 	if (unmounted) return;
-	// Coastlines: drawn by the wireframe and, on tiled basemaps, as the
-	// fallback under the tiles. Not awaited; redraw once they arrive.
 	void loadMapLines().then(() => {
 		if (!unmounted && !loading.value) renderMap();
 	});
@@ -389,43 +304,17 @@ onBeforeUnmount(() => {
 	window.removeEventListener("resize", renderMap);
 });
 
-watch(basemapId, () => {
-	if (!loading.value) renderMap();
-});
-
-watch(dataLayerOpacity, applyDataLayerVisibility);
-
-// Toggling the data layer only hides it: no redraw, so tiles don't reload.
-watch(showObservationGrid, applyObservationGridVisibility);
-
-watch(showDataLayer, () => {
-	hideTooltip(tooltipRef.value);
-	applyDataLayerVisibility();
-});
+watch(selectedCell, updateSelectionOutline);
 </script>
 
 <style scoped lang="scss">
 .d4-journal {
 	position: relative;
-	padding: 1.2rem;
-	border: 1px solid rgba($journal-accent, 0.25);
-	background:
-		radial-gradient(
-			circle at 10% 90%,
-			rgba($journal-accent, 0.08),
-			transparent 40%
-		),
-		linear-gradient(150deg, #f0f4f8, #f8f6f2);
-	border-radius: 12px;
-}
-
-.toolbar {
-	margin-bottom: 1rem;
 }
 
 .status {
 	padding: 2rem 0.5rem;
-	font-size: 0.95rem;
+	font-size: 0.92rem;
 	color: $text-secondary;
 	&.error {
 		color: $secondary;
@@ -435,8 +324,8 @@ watch(showDataLayer, () => {
 .layout {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr);
-	gap: 1rem;
-	transition: grid-template-columns 0.25s ease;
+	gap: 1.25rem;
+	align-items: start;
 }
 
 .d4-journal.panel-open .layout {
@@ -445,55 +334,61 @@ watch(showDataLayer, () => {
 
 .map-shell {
 	position: relative;
-	border-radius: 10px;
+	border-radius: $radius-md;
 	overflow: hidden;
-	border: 1px solid rgba($journal-accent, 0.2);
-	background: rgba($surface, 0.7);
+	border: 1px solid $border;
+	background: $surface;
 }
 
 .map-container {
-	min-height: 380px;
-	cursor: crosshair;
+	min-height: 360px;
+	line-height: 0;
 }
 
 .effort-legend {
 	display: flex;
 	align-items: center;
-	gap: 0.75rem;
-	padding: 0.45rem 0.75rem 0.5rem;
-	border-top: 1px solid rgba($journal-accent, 0.18);
-	background: rgba($surface, 0.92);
+	gap: 0.65rem 1rem;
+	padding: 0.55rem 0.85rem;
+	border-top: 1px solid $border;
+	background: $surface;
 	flex-wrap: wrap;
 }
 
 .effort-label {
-	font-size: 0.76rem;
-	font-weight: 700;
-	color: $text-primary;
+	font-size: 0.78rem;
+	font-weight: 600;
+	color: $text-secondary;
 	white-space: nowrap;
 }
 
 .swatches {
 	display: flex;
 	align-items: center;
-	gap: 0.5rem;
+	gap: 0.55rem;
 }
 
 .stop-item {
 	display: flex;
 	align-items: center;
-	gap: 0.22rem;
+	gap: 0.25rem;
 }
 
 .stop-swatch {
-	width: 14px;
-	height: 14px;
+	width: 12px;
+	height: 12px;
 	border-radius: 2px;
-	border: 1px solid rgba(0, 0, 0, 0.1);
+	border: 1px solid rgba(0, 0, 0, 0.12);
 }
 
 .stop-text {
-	font-size: 0.72rem;
+	font-size: 0.76rem;
+	color: $text-secondary;
+}
+
+.select-hint {
+	margin-left: auto;
+	font-size: 0.78rem;
 	color: $text-secondary;
 }
 
@@ -504,37 +399,31 @@ watch(showDataLayer, () => {
 	pointer-events: none;
 	opacity: 0;
 	padding: 0.5rem 0.6rem;
-	border-radius: 7px;
-	background: rgba(20, 30, 40, 0.92);
+	border-radius: $radius-sm;
+	background: rgba(26, 26, 26, 0.92);
 	color: #fff;
-	font-size: 0.74rem;
-	line-height: 1.38;
+	font-size: 0.76rem;
+	line-height: 1.4;
 	transform: translate(-999px, -999px);
 	transition: opacity 0.08s linear;
-	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.22);
-	max-width: 200px;
+	max-width: 220px;
 }
 
 :deep(.tip-title) {
 	font-weight: 700;
-	margin-bottom: 0.2rem;
-}
-:deep(.tip-hint) {
-	opacity: 0.65;
-	font-style: italic;
+	margin-bottom: 0.15rem;
 }
 
 // ─── Logbook panel ───────────────────────────────────────────────────────────
 
 .logbook-panel {
-	background: rgba($surface, 0.97);
-	border: 1px solid rgba($journal-accent, 0.22);
-	border-radius: 10px;
-	padding: 1rem;
+	background: $surface;
+	border: 1px solid $border;
+	border-radius: $radius-md;
+	padding: 1.05rem 1.15rem;
 	display: flex;
 	flex-direction: column;
-	gap: 1rem;
-	font-family: "Space Grotesk", monospace;
+	gap: 0.9rem;
 	overflow-y: auto;
 	max-height: 520px;
 }
@@ -542,14 +431,13 @@ watch(showDataLayer, () => {
 .logbook-header {
 	display: flex;
 	justify-content: space-between;
-	align-items: flex-start;
+	align-items: center;
 }
 
 .coords {
-	font-size: 1.05rem;
+	font-size: 1rem;
 	font-weight: 700;
 	color: $text-primary;
-	letter-spacing: 0.01em;
 }
 
 .close-btn {
@@ -559,14 +447,14 @@ watch(showDataLayer, () => {
 	font-size: 1.1rem;
 	width: 28px;
 	height: 28px;
-	border-radius: 6px;
+	border-radius: $radius-sm;
 	cursor: pointer;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	line-height: 1;
 	padding: 0;
-	transition: border-color 0.15s;
+	transition: border-color $transition-fast;
 
 	&:hover {
 		border-color: $text-primary;
@@ -579,38 +467,25 @@ watch(showDataLayer, () => {
 	flex-direction: column;
 	gap: 0.35rem;
 	border-top: 1px solid $border;
-	padding-top: 0.75rem;
+	padding-top: 0.7rem;
 }
 
 .log-line {
-	font-size: 0.83rem;
-	color: $text-primary;
-	line-height: 1.4;
-}
-
-.confidence-line {
 	display: flex;
-	align-items: center;
-	gap: 0.5rem;
-}
+	justify-content: space-between;
+	gap: 0.75rem;
+	font-size: 0.84rem;
+	color: $text-secondary;
 
-.reliable-badge {
-	font-size: 0.7rem;
-	padding: 0.1rem 0.4rem;
-	border-radius: 4px;
-	background: rgba($secondary, 0.12);
-	color: $secondary;
-	font-weight: 600;
-
-	&.reliable {
-		background: rgba($primary, 0.1);
-		color: $primary;
+	strong {
+		color: $text-primary;
+		font-variant-numeric: tabular-nums;
 	}
 }
 
 .log-heading {
-	font-size: 0.78rem;
-	font-weight: 700;
+	font-size: 0.76rem;
+	font-weight: 600;
 	color: $text-secondary;
 	letter-spacing: 0.04em;
 	text-transform: uppercase;
@@ -622,13 +497,14 @@ watch(showDataLayer, () => {
 	justify-content: space-between;
 	align-items: baseline;
 	gap: 0.5rem;
-	font-size: 0.8rem;
+	font-size: 0.82rem;
 }
 
 .sp-name {
 	color: $text-primary;
 	flex: 1;
 }
+
 .sp-count {
 	color: $text-secondary;
 	font-variant-numeric: tabular-nums;
@@ -673,45 +549,29 @@ watch(showDataLayer, () => {
 .yr-bar-track {
 	flex: 1;
 	height: 6px;
-	background: rgba($journal-accent, 0.1);
+	background: $background-darker;
 	border-radius: 3px;
 	overflow: hidden;
 }
 
-// A year with nothing logged keeps its row, so gaps in the record stay
-// visible; it is dimmed instead of dropped.
 .year-row.gap .yr-label,
 .year-row.gap .yr-count {
-	color: rgba($text-secondary, 0.6);
+	color: rgba($text-secondary, 0.55);
 }
 
 .yr-bar {
 	height: 100%;
-	background: rgba($journal-accent, 0.6);
+	background: $primary;
 	border-radius: 3px;
 	transition: width 0.2s ease;
 }
 
 .log-caveat {
-	font-size: 0.72rem;
+	font-size: 0.76rem;
 	color: $text-secondary;
-	padding-top: 0.5rem;
-	border-top: 1px dashed rgba($border, 0.9);
+	padding-top: 0.55rem;
+	border-top: 1px solid $border;
 	margin-top: auto;
-}
-
-// ─── Prompt panel (no cell selected) ─────────────────────────────────────────
-
-.prompt-panel {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: 2rem;
-	border: 1px dashed rgba($journal-accent, 0.3);
-	border-radius: 10px;
-	color: $text-secondary;
-	font-size: 0.88rem;
-	text-align: center;
 }
 
 @media (max-width: 1024px) {
@@ -722,14 +582,9 @@ watch(showDataLayer, () => {
 	.map-container {
 		min-height: 300px;
 	}
+
 	.logbook-panel {
 		max-height: none;
-	}
-}
-
-@media (max-width: 680px) {
-	.d4-journal {
-		padding: 0.9rem;
 	}
 }
 </style>

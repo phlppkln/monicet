@@ -1,15 +1,11 @@
 <template>
 	<div class="monicet-page">
 		<BackLink />
-		<h1>MONICET: Three Ways of Looking</h1>
+		<h1>Three Ways of Looking</h1>
 
 		<p class="intro">
-			MONICET is a long-running marine megafauna monitoring programme in
-			the waters around the Azores. Between 2009 and 2020, trained
-			observers recorded whale and dolphin encounters across 8,455
-			cruises. The same archive is explored here three times — each framed
-			by a different question. What you see depends entirely on what you
-			ask.
+			The same twelve-year MONICET archive (2009–2020, 8,455 cruises)
+			explored three ways — each framed by a different question.
 		</p>
 
 		<div class="compare-grid">
@@ -21,105 +17,72 @@
 				@click="scrollToSection(card.sectionId)"
 			>
 				<span class="compare-title">{{ card.title }}</span>
-				<span v-if="card.question" class="compare-question">
-					{{ card.question }}
-				</span>
-				<span v-else class="compare-question open">
-					Question still open
-				</span>
-				<span class="compare-entry">Entry: {{ card.entry }}</span>
-				<span class="compare-var">
-					Visual variable: {{ card.variable }}
-				</span>
+				<span class="compare-question">{{ card.question }}</span>
 			</button>
 		</div>
 
 		<ViewSection id="the-observer" title="The Observer">
 			<template #reflection>
-				The observer as the subject. The default map shows not what was
-				found, but where people went — cells shaded by how many of the
-				twelve years had any recorded survey activity. Click a cell to
-				open its field record: coordinates, active years, species list,
-				and a year-by-year count.
+				Where did observers log sightings across the twelve years? Click
+				any cell to open its field record.
 			</template>
 			<FieldJournal />
 		</ViewSection>
 
 		<ViewSection id="the-external" title="The External">
 			<template #reflection>
-				The map from outside. Where are the animals encountered, when in
-				the year, and where do the boats go? Switch to
-				<em>Where Do Boats Go?</em> to see the cells that cruises
-				reached. Positions are only logged at sightings, so this shows
-				where boats stopped for animals — not where they searched, which
-				the archive does not record.
+				Where are species met, when in the year, and where did boats
+				stop for sightings?
 			</template>
 			<CellMapExplorer :modes="['species', 'seasonality', 'boats']" />
 		</ViewSection>
 
 		<ViewSection id="the-animal" title="The Animal">
 			<template #reflection>
-				The animal as the entry point, not the map. If I were this
-				species, when would I be here, what would I be doing, would I
-				bring my young, and where would I go? The year chart answers the
-				first three from the archive; pick a month and the map shows
-				where I was met then.
+				Start from a species: when is it here, what is it doing, are
+				calves present, and where is it met each month?
 			</template>
 			<SpeciesAsCharacter />
 		</ViewSection>
 
 		<footer class="data-footer">
 			<strong>Data:</strong> MONICET Darwin Core Archive (2009–2020).
-			Counts are encounters and cruises per grid cell, not population
-			estimates.
+			Counts are opportunistic encounters and cruises per cell, not
+			population estimates.
 		</footer>
 	</div>
 </template>
 
 <script setup lang="ts">
-// Direction "Three Ways of Looking": one archive, three questions, three
-// visualisations — the observer, the external, the animal.
+// Direction "Three Ways of Looking": one archive, three questions, three views.
 import FieldJournal from "@/components/directions/three-ways-of-looking/FieldJournal.vue";
 import SpeciesAsCharacter from "@/components/directions/three-ways-of-looking/SpeciesAsCharacter.vue";
 import ViewSection from "@/components/directions/three-ways-of-looking/ViewSection.vue";
 import BackLink from "@/components/shared-ui/BackLink.vue";
 import CellMapExplorer from "@/components/shared-ui/CellMapExplorer.vue";
 
-// question: null renders as "Question still open".
-// sectionId matches the id on the view's <ViewSection>; clicking the card
-// scrolls there.
 const compareCards: {
 	title: string;
 	sectionId: string;
-	question: string | null;
-	entry: string;
-	variable: string;
+	question: string;
 }[] = [
 	{
 		title: "The Observer",
 		sectionId: "the-observer",
-		question: "What did I see?",
-		entry: "a location",
-		variable: "survey effort",
+		question: "What was seen at each location?",
 	},
 	{
 		title: "The External",
 		sectionId: "the-external",
-		question: null,
-		entry: "the map",
-		variable: "encounters and cruises per cell",
+		question: "Where, when, and where did boats go?",
 	},
 	{
 		title: "The Animal",
 		sectionId: "the-animal",
-		question: "Where would I go, when, and why?",
-		entry: "a species",
-		variable: "season + behaviour + territory",
+		question: "If I were this species, when and where would I go?",
 	},
 ];
 
-// A button + scrollIntoView rather than an <a href="#id">: the hash router
-// owns location.hash, so a fragment link would navigate away from the page.
 function scrollToSection(sectionId: string) {
 	const prefersReducedMotion = window.matchMedia(
 		"(prefers-reduced-motion: reduce)"
@@ -134,27 +97,26 @@ function scrollToSection(sectionId: string) {
 <style scoped lang="scss">
 .monicet-page {
 	width: 100%;
-	max-width: 1340px;
+	max-width: 1120px;
 	margin: 0 auto;
 	padding: 2rem 1.5rem 4rem;
 	font-family: "Space Grotesk", sans-serif;
 }
 
 h1 {
-	font-size: clamp(1.9rem, 3vw, 2.6rem);
+	font-size: clamp(1.9rem, 3vw, 2.5rem);
 	font-weight: 700;
 	color: $text-primary;
-	margin-bottom: 0.75rem;
+	padding-top: 0;
+	margin-bottom: 0.65rem;
 }
 
 .intro {
 	color: $text-secondary;
 	line-height: 1.65;
-	max-width: 860px;
-	margin-bottom: 2rem;
+	max-width: 660px;
+	margin-bottom: 1.75rem;
 }
-
-// ── Comparison grid ─────────────────────────────────────────────────────────
 
 .compare-grid {
 	display: grid;
@@ -164,24 +126,20 @@ h1 {
 }
 
 .compare-card {
-	background: rgba($surface, 0.9);
+	background: $surface;
 	border: 1px solid $border;
-	border-radius: 10px;
+	border-radius: $radius-md;
 	padding: 0.9rem 1rem;
 	display: flex;
 	flex-direction: column;
-	gap: 0.3rem;
-	// Reset <button> defaults so the card looks as before.
+	gap: 0.25rem;
 	font: inherit;
 	text-align: left;
 	cursor: pointer;
-	transition:
-		border-color $transition-fast,
-		box-shadow $transition-fast;
+	transition: border-color $transition-fast;
 
 	&:hover {
 		border-color: $primary;
-		box-shadow: $shadow-sm;
 	}
 
 	&:focus-visible {
@@ -197,30 +155,17 @@ h1 {
 }
 
 .compare-question {
-	font-size: 0.85rem;
-	color: $text-secondary;
-	font-style: italic;
-
-	&.open {
-		opacity: 0.6;
-	}
-}
-
-.compare-entry,
-.compare-var {
-	font-size: 0.78rem;
+	font-size: 0.84rem;
 	color: $text-secondary;
 }
-
-// ── Footer ──────────────────────────────────────────────────────────────────
 
 .data-footer {
-	font-size: 0.78rem;
+	font-size: 0.8rem;
 	color: $text-secondary;
 	line-height: 1.5;
-	border-top: 1px dashed $border;
+	border-top: 1px solid $border;
 	padding-top: 1.2rem;
-	max-width: 860px;
+	max-width: 760px;
 }
 
 @media (max-width: 860px) {

@@ -7,6 +7,7 @@
 
 import type {
 	Behaviour,
+	IslandGroup,
 	MonicetCruiseCell,
 	MonicetGridCell,
 	MonicetMapData,
@@ -57,6 +58,41 @@ export function averageDecline(cells: MonicetGridCell[]): number | null {
 	const values = reliableDeclineCells(cells).map((c) => c.declinePct ?? 0);
 	if (!values.length) return null;
 	return values.reduce((sum, v) => sum + v, 0) / values.length;
+}
+
+/** Cells that pass the D-1/D-2 baseline guard and have a log2 ratio. */
+export function fixedChangeCells(cells: MonicetGridCell[]) {
+	return cells.filter((c) => c.changeLog2Ratio !== null);
+}
+
+/** Median of changeLog2Ratio across cells with a baseline; null if none. */
+export function medianLog2Change(cells: MonicetGridCell[]): number | null {
+	const values = fixedChangeCells(cells)
+		.map((c) => c.changeLog2Ratio as number)
+		.sort((a, b) => a - b);
+	if (!values.length) return null;
+	const mid = Math.floor(values.length / 2);
+	return values.length % 2 === 1
+		? values[mid]
+		: (values[mid - 1] + values[mid]) / 2;
+}
+
+/** Share of total cruises per island group for a set of years. */
+export function islandCruiseShares(
+	yearlyCruisesByIsland: Record<IslandGroup, Record<string, number>>,
+	years: number[]
+): { island: IslandGroup; cruises: number; share: number }[] {
+	const islands: IslandGroup[] = ["São Miguel", "Faial/Pico", "Terceira"];
+	const counts = islands.map((island) => {
+		const byYear = yearlyCruisesByIsland[island] ?? {};
+		const cruises = years.reduce((s, y) => s + (byYear[String(y)] ?? 0), 0);
+		return { island, cruises };
+	});
+	const total = counts.reduce((s, entry) => s + entry.cruises, 0);
+	return counts.map((entry) => ({
+		...entry,
+		share: total > 0 ? entry.cruises / total : 0,
+	}));
 }
 
 /** Reliable cells sorted from strongest decline upwards. */
@@ -304,4 +340,78 @@ export function speciesCellCountsFor(
 	return monthIndex === null
 		? species.cellCounts
 		: species.monthlyCellCounts[monthIndex];
+}
+
+// ─── Yearly exploration ──────────────────────────────────────────────────────
+
+export interface YearlyIslandPoint {
+	year: number;
+	cruises: number;
+	encounters: number;
+	/** Encounters per cruise for this island in this year; null when no cruises ran. */
+	rate: number | null;
+}
+
+export interface YearlyIslandSeries {
+	island: IslandGroup;
+	points: YearlyIslandPoint[];
+}
+
+/**
+ * Encounters per cruise for each island group and year, dividing each island's
+ * encounters only by that island's own cruises. Zero-cruise years return null
+ * so gaps stay gaps instead of dropping to zero.
+ */
+export function yearlyIslandRates(
+	cells: MonicetGridCell[],
+	yearlyCruisesByIsland: Record<IslandGroup, Record<string, number>>,
+	years: number[]
+): YearlyIslandSeries[] {
+	const islands: IslandGroup[] = ["São Miguel", "Faial/Pico", "Terceira"];
+	return islands.map((island) => {
+		const islandCells = cells.filter(
+			(c) => c.reachableIslands[0] === island
+		);
+		const byYear = yearlyCruisesByIsland[island] ?? {};
+		const points = years.map((year) => {
+			const y = String(year);
+			const cruises = byYear[y] ?? 0;
+			const encounters = islandCells.reduce(
+				(sum, c) => sum + (c.yearlyEncounters[y] ?? 0),
+				0
+			);
+			return {
+				year,
+				cruises,
+				encounters,
+				rate: cruises > 0 ? encounters / cruises : null,
+			};
+		});
+		return { island, points };
+	});
+}
+
+/**
+ * Encounters per reachable-island cruise for a single grid cell in one year.
+ * Returns rate = null when reachable islands ran fewer than minCruises trips
+ * that year (so unmonitored island-years show as gaps, not zero).
+ */
+export function yearlyCellRate(
+	cell: MonicetGridCell,
+	yearlyCruisesByIsland: Record<IslandGroup, Record<string, number>>,
+	year: number,
+	minCruises = MIN_CRUISES_FOR_RATE
+): { encounters: number; cruises: number; rate: number | null } {
+	const y = String(year);
+	const cruises = cell.reachableIslands.reduce(
+		(sum, island) => sum + (yearlyCruisesByIsland[island]?.[y] ?? 0),
+		0
+	);
+	const encounters = cell.yearlyEncounters[y] ?? 0;
+	return {
+		encounters,
+		cruises,
+		rate:
+			cruises >= minCruises && cruises > 0 ? encounters / cruises : null,
+	};
 }

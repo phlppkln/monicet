@@ -23,31 +23,22 @@ Numbers quoted below come from `docs/data-profile.md` (`pnpm data:profile`).
 
 ## 1. Data & methodology
 
-### D-1 The "decline" metric mostly measures changes in who was recording [verified]
+### ~~D-1 The "decline" metric mostly measures changes in who was recording~~ [fixed in `cell-change.ts`]
 
-`scripts/build-data.ts` (§3–4) divides a cell's encounters by **all cruises
-in the archive** for that period, from every island. But the set of islands
-changed a lot: until 2010 only São Miguel contributed; Faial/Pico joined in
-2011; Terceira in 2015; Faial/Pico cruises tripled in 2017
-(see _Cruises per island group_ in the profile).
+Fixed via `scripts/lib/cell-change.ts` (`reachableIslands`, `reachEarlyRate`,
+`reachLateRate`): each cell is now normalised by cruises from the island
+group(s) that regularly reach it (≥ 5% of visiting cruises, filtering single
+stray D-18 merge slips). The naive `earlyRate`/`lateRate`/`declinePct` fields
+are kept alongside so the main story ("The +1,037% that wasn't") can show the
+before/after comparison.
 
-Consequences:
+### ~~D-2 Percent change on tiny baselines is unstable~~ [fixed in `cell-change.ts`]
 
-- São Miguel cells get a larger denominator in 2015–2020 just because other
-  islands were added → an artificial "decline".
-- Faial/Pico/Terceira cells had almost no early encounters → `earlyRate` is
-  tiny and the % change explodes. This is why the legend runs to ±12,809% and
-  the "Average change" reads **+1037.3%**.
-
-Fix direction: normalise each cell by cruises from the island group(s) that
-can actually reach it, or model it (see `docs/missing-data.md` §4).
-
-### D-2 Percent change on tiny baselines is unstable [verified]
-
-`declinePct = (late − early) / early`. With a near-zero `early` the ratio
-becomes huge. The `isReliable` filter does not guard against this, because it
-checks total encounters, not the early-period baseline. Consider a log ratio,
-a minimum baseline, or shrinkage (empirical Bayes).
+Fixed via `changeLog2Ratio` (`log2(reachLateRate / reachEarlyRate)`) guarded by
+a minimum baseline of 50 reachable cruises and 5 encounters in both early and
+late periods (`meta.thresholds.changeMinPeriodCruises` /
+`changeMinPeriodEncounters`). Cells below the floor return `null` and render
+hatched as "no baseline".
 
 ### D-3 Early/late split is arbitrary and includes the 2020 collapse [verified]
 

@@ -13,6 +13,8 @@ import {
 	cellRate,
 	MIN_CRUISES_FOR_RATE,
 	cellDominance,
+	islandCruiseShares,
+	medianLog2Change,
 	MIN_BEHAVIOUR_RECORDS,
 	MIN_LIFE_STAGE_RECORDS,
 	monthActivity,
@@ -21,6 +23,8 @@ import {
 	speciesCellCountsFor,
 	topCruiseCells,
 	topDecliningCells,
+	yearlyCellRate,
+	yearlyIslandRates,
 	yearlyRates,
 	yearRecord,
 } from "./selectors.ts";
@@ -42,6 +46,14 @@ function cell(overrides: Partial<MonicetGridCell>): MonicetGridCell {
 		earlyRate: null,
 		lateRate: null,
 		declinePct: null,
+		reachableIslands: [],
+		earlyEncounters: 0,
+		lateEncounters: 0,
+		earlyReachCruises: 0,
+		lateReachCruises: 0,
+		reachEarlyRate: null,
+		reachLateRate: null,
+		changeLog2Ratio: null,
 		trendSlope: 0,
 		yearsWithEncounters: 0,
 		confidenceScore: 0,
@@ -68,6 +80,43 @@ test("averageDecline only uses reliable cells with a defined change", () => {
 	];
 	assert.equal(averageDecline(cells), -5);
 	assert.equal(averageDecline([]), null);
+});
+
+test("medianLog2Change ignores null cells and handles odd/even counts", () => {
+	assert.equal(
+		medianLog2Change([
+			cell({ changeLog2Ratio: -1 }),
+			cell({ changeLog2Ratio: 0.2 }),
+			cell({ changeLog2Ratio: 3 }),
+			cell({ changeLog2Ratio: null }),
+		]),
+		0.2
+	);
+	assert.equal(
+		medianLog2Change([
+			cell({ changeLog2Ratio: -1 }),
+			cell({ changeLog2Ratio: 1 }),
+		]),
+		0
+	);
+	assert.equal(medianLog2Change([cell({ changeLog2Ratio: null })]), null);
+});
+
+test("islandCruiseShares computes cruise shares for a period", () => {
+	const shares = islandCruiseShares(
+		{
+			"São Miguel": { "2009": 80, "2010": 0 },
+			"Faial/Pico": { "2009": 20, "2010": 0 },
+			Terceira: { "2009": 0, "2010": 0 },
+		},
+		[2009, 2010]
+	);
+	assert.equal(shares[0].island, "São Miguel");
+	assert.equal(shares[0].share, 0.8);
+	assert.equal(shares[1].island, "Faial/Pico");
+	assert.equal(shares[1].share, 0.2);
+	assert.equal(shares[2].island, "Terceira");
+	assert.equal(shares[2].share, 0);
 });
 
 test("topDecliningCells sorts strongest decline first and limits", () => {
@@ -220,4 +269,44 @@ test("speciesCellCountsFor: null month means all year", () => {
 	s.monthlyCellCounts[1] = { b: 2 };
 	assert.deepEqual(speciesCellCountsFor(s, null), { a: 9 });
 	assert.deepEqual(speciesCellCountsFor(s, 1), { b: 2 });
+});
+
+test("yearlyIslandRates divides by each island's own cruises and leaves gaps null", () => {
+	const cells = [
+		cell({
+			id: "sm",
+			reachableIslands: ["São Miguel"],
+			yearlyEncounters: { "2009": 100, "2010": 50 },
+		}),
+		cell({
+			id: "te",
+			reachableIslands: ["Terceira"],
+			yearlyEncounters: { "2010": 40 },
+		}),
+	];
+	const cruises = {
+		"São Miguel": { "2009": 50, "2010": 25 },
+		"Faial/Pico": { "2009": 0, "2010": 0 },
+		Terceira: { "2009": 0, "2010": 20 },
+	};
+	const series = yearlyIslandRates(cells, cruises, [2009, 2010]);
+	assert.equal(series[0].points[0].rate, 2);
+	assert.equal(series[0].points[1].rate, 2);
+	assert.equal(series[1].points[0].rate, null);
+	assert.equal(series[2].points[0].rate, null);
+	assert.equal(series[2].points[1].rate, 2);
+});
+
+test("yearlyCellRate guards against unmonitored years", () => {
+	const c = cell({
+		reachableIslands: ["Terceira"],
+		yearlyEncounters: { "2014": 0, "2015": 20 },
+	});
+	const cruises = {
+		"São Miguel": { "2014": 200, "2015": 200 },
+		"Faial/Pico": { "2014": 100, "2015": 100 },
+		Terceira: { "2014": 0, "2015": 80 },
+	};
+	assert.equal(yearlyCellRate(c, cruises, 2014).rate, null);
+	assert.equal(yearlyCellRate(c, cruises, 2015).rate, 0.25);
 });
